@@ -8,7 +8,7 @@ import { useState } from "react";
 export default function Footer() {
   const pathname = usePathname();
   const [copied, setCopied] = useState(false);
-  const emailAddress = "admin@tradyx.ai";
+  const emailAddress = "admin@tradersmarket.io";
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (pathname === href) {

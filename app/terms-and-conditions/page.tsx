@@ -4,7 +4,7 @@ import { useState } from "react";
 
 export default function TermsAndConditions() {
   const [copied, setCopied] = useState(false);
-  const emailAddress = "admin@tradyx.ai";
+  const emailAddress = "admin@tradersmarket.io";
 
   const handleCopyEmail = async () => {
     try {
