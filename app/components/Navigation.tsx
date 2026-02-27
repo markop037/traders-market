@@ -82,6 +82,13 @@ export default function Navigation() {
             Bundle Offer
           </Link>
           <Link
+            href="/bot-picker"
+            className="text-sm font-medium text-white transition-colors hover:text-blue-400 hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.7)]"
+            onClick={(e) => handleNavLinkClick(e, "/bot-picker")}
+          >
+            Bot Picker
+          </Link>
+          <Link
             href="/blogs"
             className="text-sm font-medium text-white transition-colors hover:text-blue-400 hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.7)]"
             onClick={(e) => handleNavLinkClick(e, "/blogs")}
@@ -215,6 +222,13 @@ export default function Navigation() {
             onClick={(e) => { handleNavLinkClick(e, "/bundle"); setIsMobileMenuOpen(false); }}
           >
             Bundle Offer
+          </Link>
+          <Link
+            href="/bot-picker"
+            className="text-sm font-medium text-white transition-colors hover:text-blue-400 hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.7)]"
+            onClick={(e) => { handleNavLinkClick(e, "/bot-picker"); setIsMobileMenuOpen(false); }}
+          >
+            Bot Picker
           </Link>
           <Link
             href="/blogs"

@@ -5,6 +5,21 @@ import React, { useEffect, useRef, useState } from "react";
 import { ImageLightboxModal } from "../components/ImageLightboxModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import { tradingBots } from "@/lib/bot-picker/bots";
+import {
+  STRATEGY_LABELS,
+  TIMEFRAME_LABELS,
+  TRADE_FREQUENCY_LABELS,
+  STRATEGY_TAG_COLORS,
+  TIMEFRAME_TAG_COLORS,
+  FREQUENCY_TAG_COLORS,
+  TradingBot,
+} from "@/lib/bot-picker/types";
+
+// Lookup map: classificationId → TradingBot
+const botClassification = new Map<string, TradingBot>(
+  tradingBots.map((b) => [b.id, b])
+);
 
 // Custom hook for scroll-triggered animations
 function useScrollAnimation(options = { threshold: 0.15, rootMargin: '0px 0px -100px 0px' }) {
@@ -167,6 +182,7 @@ function ImageCarousel({ images, altPrefix, currencyLabel, strategyName }: { ima
 
 type Bot = {
   name: string;
+  classificationId: string;
   icon: React.ReactNode;
   indicator: string;
   signal: string;
@@ -177,6 +193,7 @@ type Bot = {
 const bots: Bot[] = [
   {
     name: "EMA Crossover with Price Action Confirmation",
+    classificationId: "ema-crossover",
     icon: (
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
         {/* Two moving averages crossing */}
@@ -193,6 +210,7 @@ const bots: Bot[] = [
   },
   {
     name: "RSI Overbought/Oversold with Price Action Confirmation",
+    classificationId: "rsi-overbought-oversold",
     icon: (
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
         {/* RSI gauge */}
@@ -210,6 +228,7 @@ const bots: Bot[] = [
   },
   {
     name: "MACD with Price Action Confirmation",
+    classificationId: "macd",
     icon: (
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
         {/* Histogram + signal line */}
@@ -226,6 +245,7 @@ const bots: Bot[] = [
   },
   {
     name: "Heiken Ashi with Price Action Confirmation",
+    classificationId: "heiken-ashi",
     icon: (
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
         {/* Candles */}
@@ -241,6 +261,7 @@ const bots: Bot[] = [
   },
   {
     name: "Inside Bar Breakout",
+    classificationId: "inside-bar-breakout",
     icon: (
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
         {/* Inside bar range + breakout */}
@@ -257,6 +278,7 @@ const bots: Bot[] = [
   },
   {
     name: "Stochastics with Price Action Confirmation",
+    classificationId: "stochastics",
     icon: (
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
         {/* Oscillator waves */}
@@ -272,6 +294,7 @@ const bots: Bot[] = [
   },
   {
     name: "Bollinger Bands with Price Action Confirmation",
+    classificationId: "bollinger-bands",
     icon: (
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
         {/* Bollinger channel */}
@@ -289,6 +312,7 @@ const bots: Bot[] = [
   },
   {
     name: "Fibonacci Retracement",
+    classificationId: "fibonacci-retracement",
     icon: (
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
         {/* Fib levels */}
@@ -304,6 +328,7 @@ const bots: Bot[] = [
   },
   {
     name: "Daily Range Breakout",
+    classificationId: "daily-range-breakout",
     icon: (
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
         {/* Range box + breakout arrow */}
@@ -320,6 +345,7 @@ const bots: Bot[] = [
   },
   {
     name: "Pivot Point with Price Action Confirmation",
+    classificationId: "pivot-point",
     icon: (
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
@@ -334,6 +360,7 @@ const bots: Bot[] = [
   },
   {
     name: "RSI Divergence with Price Action Confirmation",
+    classificationId: "rsi-divergence",
     icon: (
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7h16M4 17h16" />
@@ -470,6 +497,7 @@ export default function BundleInfoPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {bots.map((bot, index) => {
                   const isOpen = openIndex === index;
+                  const classification = botClassification.get(bot.classificationId);
                   return (
                     <article
                       key={bot.name}
@@ -518,6 +546,21 @@ export default function BundleInfoPage() {
                             </p>
                           </div>
                         </div>
+
+                        {/* Classification Tags — always visible */}
+                        {classification && (
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold border ${STRATEGY_TAG_COLORS[classification.strategyType]}`}>
+                              {STRATEGY_LABELS[classification.strategyType]}
+                            </span>
+                            <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold border ${TIMEFRAME_TAG_COLORS[classification.timeframePreference]}`}>
+                              {TIMEFRAME_LABELS[classification.timeframePreference]}
+                            </span>
+                            <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold border ${FREQUENCY_TAG_COLORS[classification.tradeFrequency]}`}>
+                              {TRADE_FREQUENCY_LABELS[classification.tradeFrequency]}
+                            </span>
+                          </div>
+                        )}
 
                         {/* Expandable Content */}
                         <div
@@ -628,13 +671,26 @@ export default function BundleInfoPage() {
                     </div>
 
                     {/* Bot Header */}
-                    <div className="mb-6">
+                    <div className="mb-4">
                       <h3 className="text-xl font-bold text-white mb-2">
                         NewYork–London Breakout
                       </h3>
                       <p className="text-amber-400/90 font-medium text-sm">
                         Session-based breakout strategy with ATR risk control and smart trade management
                       </p>
+                    </div>
+
+                    {/* Classification Tags */}
+                    <div className="mb-6 flex flex-wrap gap-2">
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold border ${STRATEGY_TAG_COLORS.BREAKOUT}`}>
+                        {STRATEGY_LABELS.BREAKOUT}
+                      </span>
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold border ${TIMEFRAME_TAG_COLORS.LOW}`}>
+                        {TIMEFRAME_LABELS.LOW}
+                      </span>
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold border ${FREQUENCY_TAG_COLORS.MEDIUM}`}>
+                        {TRADE_FREQUENCY_LABELS.MEDIUM}
+                      </span>
                     </div>
 
                     {/* Backtesting Results: 2 images EURUSD, 2 images GBPUSD */}
@@ -705,13 +761,26 @@ export default function BundleInfoPage() {
                     </div>
 
                     {/* Bot Header */}
-                    <div className="mb-6">
+                    <div className="mb-4">
                       <h3 className="text-xl font-bold text-white mb-2">
                         Grid
                       </h3>
                       <p className="text-amber-400/90 font-medium text-sm">
                         Anchored grid trading strategy with dynamic lot sizing and profit-targeted cycle management
                       </p>
+                    </div>
+
+                    {/* Classification Tags */}
+                    <div className="mb-6 flex flex-wrap gap-2">
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold border ${STRATEGY_TAG_COLORS.MEAN_REVERSION}`}>
+                        {STRATEGY_LABELS.MEAN_REVERSION}
+                      </span>
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold border ${TIMEFRAME_TAG_COLORS.LOW}`}>
+                        {TIMEFRAME_LABELS.LOW}
+                      </span>
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold border ${FREQUENCY_TAG_COLORS.HIGH}`}>
+                        {TRADE_FREQUENCY_LABELS.HIGH}
+                      </span>
                     </div>
 
                     {/* Backtesting Results: 2 images EURUSD, 2 images GBPUSD */}

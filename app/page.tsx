@@ -928,7 +928,138 @@ export default function Home() {
         )}
       </AnimatedSection>
 
-      {/* Transition Divider - No One-Size-Fits-All to Full Strategy Arsenal */}
+      {/* Transition Divider - No One-Size-Fits-All to Bot Picker CTA */}
+      <div className="relative h-6 bg-gradient-to-b from-[#050816] via-[#0a0e27] to-[#050816]">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/10 to-transparent"></div>
+      </div>
+
+      {/* Bot Picker CTA Section */}
+      <AnimatedSection>
+        {(isVisible) => (
+          <section className="relative bg-gradient-to-br from-[#050816] via-[#0f172a] to-[#050816] py-24 overflow-hidden">
+            {/* Subtle background accents */}
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/5 rounded-full blur-3xl"></div>
+            </div>
+
+            <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+              <div className={`rounded-2xl border border-blue-500/30 bg-gradient-to-br from-blue-950/40 via-[#0f1f4a]/30 to-blue-900/30 p-8 sm:p-12 backdrop-blur-sm transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                  {/* Left – Copy */}
+                  <div>
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/15 border border-blue-500/30 mb-6">
+                      <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                      <span className="text-blue-400 font-semibold text-sm uppercase tracking-wide">Free Tool</span>
+                    </div>
+
+                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight">
+                      Not Sure Which Bot <br className="hidden sm:block" />
+                      <span className="bg-gradient-to-r from-blue-400 to-blue-300 bg-clip-text text-transparent">Fits Your Style?</span>
+                    </h2>
+
+                    <p className="text-gray-300 text-lg mb-6 leading-relaxed">
+                      Answer 3 quick questions about your trading preferences and our <span className="text-white font-medium">Bot Picker</span> will recommend the best strategies for you — with a match score for every bot.
+                    </p>
+
+                    <ul className="space-y-3 mb-8">
+                      {[
+                        "Pick your preferred strategy type",
+                        "Choose your ideal timeframe",
+                        "Set your trade frequency preference",
+                      ].map((step, idx) => (
+                        <li key={idx} className="flex items-center gap-3">
+                          <span className="flex-shrink-0 w-7 h-7 rounded-full bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-xs font-bold text-blue-400">
+                            {idx + 1}
+                          </span>
+                          <span className="text-gray-300 text-sm">{step}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <Link
+                      href="/bot-picker"
+                      className="group relative inline-flex items-center gap-2 overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:scale-105 border border-blue-600/30"
+                    >
+                      <span className="relative z-10">Find My Perfect Bot</span>
+                      <svg className="relative z-10 w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-700 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+                    </Link>
+                  </div>
+
+                  {/* Right – Visual preview card */}
+                  <div className={`transition-all duration-700 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-6'}`} style={{ transitionDelay: isVisible ? '200ms' : '0ms' }}>
+                    <div className="relative rounded-xl border border-blue-600/30 bg-gradient-to-br from-slate-950/90 to-[#0a0e27]/90 p-6 backdrop-blur-sm shadow-2xl">
+                      {/* Mock header */}
+                      <div className="flex items-center gap-2 mb-5">
+                        <div className="w-3 h-3 rounded-full bg-red-500/60"></div>
+                        <div className="w-3 h-3 rounded-full bg-yellow-500/60"></div>
+                        <div className="w-3 h-3 rounded-full bg-green-500/60"></div>
+                        <span className="ml-2 text-xs text-gray-500 font-mono">bot-picker</span>
+                      </div>
+
+                      {/* Simulated result cards */}
+                      {[
+                        { name: "EMA Crossover", match: 100, tags: ["Trend Following", "Intraday", "Moderate"] },
+                        { name: "RSI Mean Reversion", match: 67, tags: ["Mean Reversion", "Scalping", "Many Trades"] },
+                        { name: "Bollinger Breakout", match: 33, tags: ["Breakout", "Swing", "Few Trades"] },
+                      ].map((bot, idx) => (
+                        <div
+                          key={idx}
+                          className={`mb-3 last:mb-0 rounded-lg border p-4 transition-all duration-500 ${
+                            idx === 0
+                              ? "border-blue-500/40 bg-blue-500/10"
+                              : "border-blue-600/20 bg-blue-950/20"
+                          } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}
+                          style={{ transitionDelay: isVisible ? `${400 + idx * 150}ms` : '0ms' }}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-white font-semibold text-sm">{bot.name}</span>
+                            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                              bot.match === 100
+                                ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                                : bot.match >= 67
+                                ? "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                                : "bg-gray-500/20 text-gray-400 border border-gray-500/30"
+                            }`}>
+                              {bot.match}% match
+                            </span>
+                          </div>
+                          {/* Match bar */}
+                          <div className="w-full h-1.5 rounded-full bg-blue-950/50 mb-2.5">
+                            <div
+                              className={`h-full rounded-full transition-all duration-1000 ${
+                                bot.match === 100
+                                  ? "bg-gradient-to-r from-green-500 to-emerald-400"
+                                  : bot.match >= 67
+                                  ? "bg-gradient-to-r from-blue-500 to-blue-400"
+                                  : "bg-gradient-to-r from-gray-500 to-gray-400"
+                              }`}
+                              style={{ width: isVisible ? `${bot.match}%` : '0%', transitionDelay: isVisible ? `${600 + idx * 150}ms` : '0ms' }}
+                            ></div>
+                          </div>
+                          <div className="flex flex-wrap gap-1.5">
+                            {bot.tags.map((tag, tIdx) => (
+                              <span key={tIdx} className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-500/10 text-blue-300 border border-blue-500/20">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+      </AnimatedSection>
+
+      {/* Transition Divider - Bot Picker CTA to Full Strategy Arsenal */}
       <div className="relative h-6 bg-gradient-to-b from-[#050816] via-[#0a0e27] to-[#0b1b40]">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/10 to-transparent"></div>
       </div>
