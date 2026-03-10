@@ -16,10 +16,15 @@ export const startTrace = (traceName: string): PerformanceTrace | null => {
   }
 
   try {
-    // Check if trace is already active
+    // Stop any existing trace with the same name before starting a new one
+    // (handles React Strict Mode's double-invocation of effects in development)
     if (activeTraces.has(traceName)) {
-      console.warn(`Trace "${traceName}" is already active`);
-      return activeTraces.get(traceName) || null;
+      try {
+        activeTraces.get(traceName)!.stop();
+      } catch {
+        // ignore stop errors on the stale trace
+      }
+      activeTraces.delete(traceName);
     }
 
     const customTrace = trace(firebasePerformance, traceName);
@@ -40,7 +45,6 @@ export const stopTrace = (traceName: string): void => {
   const customTrace = activeTraces.get(traceName);
   
   if (!customTrace) {
-    console.warn(`No active trace found with name "${traceName}"`);
     return;
   }
 
