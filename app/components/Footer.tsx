@@ -74,6 +74,24 @@ export default function Footer() {
               </li>
               <li>
                 <Link
+                  href="/tools"
+                  onClick={(e) => handleLinkClick(e, "/tools")}
+                  className="text-gray-400 hover:text-blue-400 transition-colors text-sm"
+                >
+                  Tools
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/bot-picker"
+                  onClick={(e) => handleLinkClick(e, "/bot-picker")}
+                  className="text-gray-400 hover:text-blue-400 transition-colors text-sm"
+                >
+                  Bot Picker
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/blogs"
                   onClick={(e) => handleLinkClick(e, "/blogs")}
                   className="text-gray-400 hover:text-blue-400 transition-colors text-sm"
