@@ -105,23 +105,8 @@ export default function BotsDashboardPage() {
                 subscription_status: 'premium',
               });
             }
-            
-            // Redirect to checkout if not paid
-            if (!paid && user?.email) {
-              const checkoutUrl = `http://localhost:3001/checkout?email=${encodeURIComponent(user.email)}`;
-              window.location.href = checkoutUrl;
-              return;
-            } else if (!paid) {
-              router.push('/dashboard');
-            }
           } else {
-            // Redirect to checkout if user doc doesn't exist
-            if (user?.email) {
-              const checkoutUrl = `http://localhost:3001/checkout?email=${encodeURIComponent(user.email)}`;
-              window.location.href = checkoutUrl;
-              return;
-            }
-            router.push('/dashboard');
+            setHasPaid(false);
           }
         } catch (error) {
           console.error('Error loading subscription status:', error);
@@ -129,7 +114,7 @@ export default function BotsDashboardPage() {
             'loadSubscriptionStatus',
             error instanceof Error ? error.message : 'Unknown error'
           );
-          router.push('/dashboard');
+          setHasPaid(false);
         } finally {
           setIsLoadingStatus(false);
         }
@@ -145,6 +130,50 @@ export default function BotsDashboardPage() {
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-400">Loading...</p>
+        </div>
+      </main>
+    );
+  }
+
+  const CHECKOUT_BASE = 'https://www.momentumdigital.online/checkout';
+  const checkoutHref = user?.email
+    ? `${CHECKOUT_BASE}?email=${encodeURIComponent(user.email)}`
+    : CHECKOUT_BASE;
+
+  if (!hasPaid) {
+    return (
+      <main className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl">
+          <div className="relative overflow-hidden rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-950/20 via-[#0f1f4a]/25 to-blue-900/20 p-8 shadow-2xl">
+            <div className="absolute top-6 right-6">
+              <span className="rounded-full border border-amber-500/40 bg-amber-500/20 px-3 py-1 text-xs font-semibold text-amber-300 uppercase tracking-wider">
+                Premium
+              </span>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-6 inline-flex p-4 rounded-xl bg-amber-500/20 border border-amber-500/40">
+                <svg className="w-12 h-12 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <h1 className="text-2xl font-bold text-white sm:text-3xl">Bots are locked</h1>
+              <p className="mt-3 text-gray-400">
+                Unlock access to all 10+ trading bots with a one-time payment. Download and use every bot in the bundle.
+              </p>
+              <a
+                href={checkoutHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 px-6 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:from-amber-500 hover:to-amber-400 hover:shadow-amber-500/30 sm:w-auto"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                Unlock Bots – $259
+              </a>
+              <p className="mt-4 text-sm text-gray-500">One-time payment · Lifetime access</p>
+            </div>
+          </div>
         </div>
       </main>
     );

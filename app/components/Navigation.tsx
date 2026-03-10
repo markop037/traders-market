@@ -9,8 +9,8 @@ import { useRouter, usePathname } from "next/navigation";
 export default function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const { user, loading, hasActiveSubscription, signOut } = useAuth();
-  const dashboardHref = hasActiveSubscription ? "/dashboard/bots" : "/dashboard";
+  const { user, loading, signOut } = useAuth();
+  const dashboardHref = "/dashboard";
   const router = useRouter();
   const pathname = usePathname();
   const userMenuRef = useRef<HTMLDivElement>(null);

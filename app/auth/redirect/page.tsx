@@ -20,8 +20,8 @@ export default function AuthRedirectPage() {
     }
     // Subscription status loaded from Firestore in AuthContext
     if (hasActiveSubscription === undefined) return;
-    const path = hasActiveSubscription ? "/dashboard/bots" : "/dashboard";
-    router.replace(path);
+    // Everyone lands on dashboard (sidebar: Tools + Bots); default tab is Tools
+    router.replace("/dashboard");
   }, [user, loading, hasActiveSubscription, router]);
 
   return (
