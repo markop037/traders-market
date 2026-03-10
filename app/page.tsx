@@ -1095,11 +1095,19 @@ export default function Home() {
               <div className="mb-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {[
-                    "EMA Crossover Strategy",
-                    "RSI Overbought/Oversold",
+                    "NewYork–London Breakout",
                     "Grid",
-                    "London Breakout",
-                    "New York Session Breakout",
+                    "EMA Crossover with Price Action Confirmation",
+                    "RSI Overbought/Oversold with Price Action Confirmation",
+                    "MACD with Price Action Confirmation",
+                    "Heiken Ashi with Price Action Confirmation",
+                    "Inside Bar Breakout",
+                    "Stochastics with Price Action Confirmation",
+                    "Bollinger Bands with Price Action Confirmation",
+                    "Fibonacci Retracement",
+                    "Daily Range Breakout",
+                    "Pivot Point with Price Action Confirmation",
+                    "RSI Divergence with Price Action Confirmation",
                   ].map((strategy, index) => (
                     <div
                       key={index}
