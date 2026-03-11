@@ -38,11 +38,15 @@ export default function RootLayout({
         <ErrorBoundary>
           <MonitoringProvider>
             <AuthProvider>
-              <ScrollToTop />
-              <Navigation />
-              {children}
-              <Footer />
-              <FirstTimeVisitorModal />
+              <div className="min-h-screen flex flex-col">
+                <ScrollToTop />
+                <Navigation />
+                <main className="flex-1 w-full">
+                  {children}
+                </main>
+                <Footer />
+                <FirstTimeVisitorModal />
+              </div>
             </AuthProvider>
           </MonitoringProvider>
         </ErrorBoundary>

@@ -90,9 +90,9 @@ export default function DashboardLayout({
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col md:flex-row">
       {/* Sidebar */}
-      <aside className="w-64 flex-shrink-0 border-r border-blue-900/40 bg-gradient-to-b from-[#050816] to-[#0f172a] py-6 px-4">
+      <aside className="w-full md:w-64 flex-shrink-0 border-b md:border-b-0 md:border-r border-blue-900/40 bg-gradient-to-b from-[#050816] to-[#0f172a] py-6 px-4">
         <div className="space-y-1">
           {navItem(
             "/dashboard/tools",
@@ -171,7 +171,7 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main content */}
-      <div className="flex-1 min-w-0">{children}</div>
+      <div className="flex-1 min-w-0 w-full">{children}</div>
     </div>
   );
 }
