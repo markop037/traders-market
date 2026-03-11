@@ -28,11 +28,14 @@ export function MonitoringProvider({ children }: MonitoringProviderProps) {
     initializeErrorTracking();
   }, []);
 
-  // Track page views on route changes
+  // Track page views on route changes (delayed to let Next.js update document.title)
   useEffect(() => {
     if (pathname) {
-      const pageTitle = document.title || pathname;
-      logPageView(pathname, pageTitle);
+      const timer = requestAnimationFrame(() => {
+        const pageTitle = document.title || pathname;
+        logPageView(pathname, pageTitle);
+      });
+      return () => cancelAnimationFrame(timer);
     }
   }, [pathname]);
 

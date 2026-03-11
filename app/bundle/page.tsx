@@ -6,6 +6,7 @@ import { ImageLightboxModal } from "../components/ImageLightboxModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { tradingBots } from "@/lib/bot-picker/bots";
+import { logAnalyticsEvent, logCheckoutEvent, logCtaClick, logPdfGuideRequest } from "@/lib/analytics";
 import {
   STRATEGY_LABELS,
   TIMEFRAME_LABELS,
@@ -380,13 +381,16 @@ export default function BundleInfoPage() {
   const { user } = useAuth();
   const router = useRouter();
 
+  useEffect(() => {
+    logAnalyticsEvent('bundle_view', { page: 'bundle', price: 259 });
+  }, []);
+
   const handleGetBundle = () => {
+    logCheckoutEvent('checkout_initiated', 259, 'USD');
     if (user?.email) {
-      // If logged in, go directly to Stripe checkout
       const checkoutUrl = `https://www.momentumdigital.online/checkout?email=${encodeURIComponent(user.email)}`;
       window.location.href = checkoutUrl;
     } else {
-      // If not logged in, go to bundle-offer page (which will prompt login)
       router.push('/bundle-offer');
     }
   };
@@ -1382,6 +1386,7 @@ function EmailSubscriptionSection() {
 
       setIsSubmitted(true);
       setIsSubmitting(false);
+      logPdfGuideRequest('bundle_page');
 
       // Reset after 5 seconds
       setTimeout(() => {
@@ -1401,7 +1406,7 @@ function EmailSubscriptionSection() {
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 animate-fade-in">
           <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl mb-4">
-            Get Your Copy of "Top 5 Trading Bots for MT5" PDF!
+            Get Your Copy of &quot;Top 5 Trading Bots for MT5&quot; PDF!
           </h2>
           <p className="text-lg sm:text-xl text-gray-300">
             Enter your email and we&apos;ll send it right over.

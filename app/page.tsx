@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { ImageLightboxModal } from "./components/ImageLightboxModal";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { logCtaClick, logPdfGuideRequest } from "@/lib/analytics";
 
 // Custom hook for scroll-triggered animations
 function useScrollAnimation(options = { threshold: 0.15, rootMargin: '0px 0px -100px 0px' }) {
@@ -206,6 +207,7 @@ export default function Home() {
               <div className="mt-10 flex justify-center lg:justify-start">
                 <Link
                   href="/bundle"
+                  onClick={() => logCtaClick('Buy for $259', 'home_hero', '/bundle')}
                   className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:scale-105 border border-blue-600/30"
                 >
                   <span className="relative z-10 flex flex-col items-center leading-tight">
@@ -694,6 +696,7 @@ export default function Home() {
                 </p>
                 <Link
                   href="/bundle"
+                  onClick={() => logCtaClick('Get Premium Access Now', 'home_premium_section', '/bundle')}
                   className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-amber-600 to-yellow-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:from-amber-500 hover:to-yellow-500 hover:shadow-[0_0_30px_rgba(251,191,36,0.5)] hover:scale-105 border border-amber-500/30"
                 >
                   <span className="relative z-10">Get Premium Access Now</span>
@@ -980,6 +983,7 @@ export default function Home() {
 
                     <Link
                       href="/bot-picker"
+                      onClick={() => logCtaClick('Find My Perfect Bot', 'home_bot_picker_section', '/bot-picker')}
                       className="group relative inline-flex items-center gap-2 overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:scale-105 border border-blue-600/30"
                     >
                       <span className="relative z-10">Find My Perfect Bot</span>
@@ -1138,6 +1142,7 @@ export default function Home() {
                    style={{ transitionDelay: isVisible ? '400ms' : '0ms' }}>
                 <Link
                   href="/bundle"
+                  onClick={() => logCtaClick('Get Full Strategy Arsenal', 'home_strategy_section', '/bundle')}
                   className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:scale-105 border border-blue-600/30"
                 >
                   <span className="relative z-10">Get Full Strategy Arsenal</span>
@@ -1277,6 +1282,7 @@ export default function Home() {
                      style={{ transitionDelay: isVisible ? '200ms' : '0ms' }}>
                   <Link
                     href="/bundle"
+                    onClick={() => logCtaClick('Get the Bundle Now', 'home_test_section', '/bundle')}
                     className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:scale-105 border border-blue-600/30"
                   >
                     <span className="relative z-10">Get the Bundle Now</span>
@@ -1446,7 +1452,8 @@ function EmailSubscriptionSection() {
 
       setIsSubmitted(true);
       setIsSubmitting(false);
-      
+      logPdfGuideRequest('home_page');
+
       // Reset after 5 seconds
       setTimeout(() => {
         setIsSubmitted(false);

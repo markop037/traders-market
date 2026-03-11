@@ -13,6 +13,7 @@ import {
   TRADE_FREQUENCY_LABELS,
 } from "@/lib/bot-picker/types";
 import { getTopMatches } from "@/lib/bot-picker/matching";
+import { logBotPickerComplete } from "@/lib/analytics";
 
 // ─── Scroll-triggered animation (site-wide pattern) ─────────────────────────
 function useScrollAnimation(
@@ -311,7 +312,15 @@ export default function BotPickerPage() {
     setResults(matches);
     setShowResults(true);
 
-    // Smooth-scroll to results
+    logBotPickerComplete(
+      {
+        strategy: preferences.strategyType || undefined,
+        timeframe: preferences.timeframePreference || undefined,
+        frequency: preferences.tradeFrequency || undefined,
+      },
+      matches.length
+    );
+
     setTimeout(() => {
       resultsContainerRef.current?.scrollIntoView({
         behavior: "smooth",

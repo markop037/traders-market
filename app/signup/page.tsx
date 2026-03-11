@@ -9,6 +9,7 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, googleProvider, db } from '@/lib/firebase';
+import { logAuthEvent } from '@/lib/analytics';
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -48,6 +49,7 @@ export default function SignUpPage() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await createUserDocument(userCredential.user.uid, userCredential.user.email || email);
+      logAuthEvent('signup', 'email');
       router.replace('/auth/redirect');
     } catch (error: any) {
       console.error('Sign up error:', error);
@@ -72,6 +74,7 @@ export default function SignUpPage() {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       await createUserDocument(result.user.uid, result.user.email || '');
+      logAuthEvent('signup', 'google');
       router.replace('/auth/redirect');
     } catch (error: any) {
       console.error('Google sign up error:', error);

@@ -1,9 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
+import BlogViewTracker from "../BlogViewTracker";
 
 export default function BlogPost() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#050816] via-[#0f172a] via-[#0f1f4a] to-[#050816]">
+      <BlogViewTracker title="The Future of Algorithmic Trading for Retail Traders" slug="future-algorithmic-trading-retail-traders" />
       <article className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Back Button */}
         <Link

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import { logAnalyticsEvent, logCheckoutEvent, logPdfGuideRequest } from "@/lib/analytics";
 
 const CHECKOUT_BASE = "https://www.momentumdigital.online/checkout";
 
@@ -15,7 +16,12 @@ export default function BundleOffer() {
     ? `${CHECKOUT_BASE}?email=${encodeURIComponent(user.email)}`
     : CHECKOUT_BASE;
 
+  useEffect(() => {
+    logAnalyticsEvent('bundle_view', { page: 'bundle_offer', price: 259 });
+  }, []);
+
   const handlePurchase = () => {
+    logCheckoutEvent('checkout_initiated', 259, 'USD');
     if (!user) {
       router.push("/login?redirect=/bundle-offer");
       return;
@@ -24,7 +30,6 @@ export default function BundleOffer() {
       router.push("/dashboard/bots");
       return;
     }
-    // Same destination as dashboard when user has not paid: external checkout (new tab)
     window.open(checkoutHref, "_blank", "noopener,noreferrer");
   };
   return (
@@ -225,7 +230,8 @@ function EmailSubscriptionSection() {
 
       setIsSubmitted(true);
       setIsSubmitting(false);
-      
+      logPdfGuideRequest('bundle_offer_page');
+
       // Reset after 5 seconds
       setTimeout(() => {
         setIsSubmitted(false);

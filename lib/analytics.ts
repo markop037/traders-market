@@ -22,7 +22,13 @@ export type TraderMarketEvent =
   | 'bundle_view'
   | 'dashboard_access'
   | 'error_occurred'
-  | 'custom_trace_complete';
+  | 'custom_trace_complete'
+  | 'bot_picker_complete'
+  | 'cta_click'
+  | 'pdf_guide_request'
+  | 'bot_download'
+  | 'bot_download_all'
+  | 'external_link_click';
 
 interface EventParams {
   [key: string]: string | number | boolean | undefined;
@@ -49,6 +55,18 @@ export const logAnalyticsEvent = (
   }
 };
 
+function getPageCategory(path: string): string {
+  if (path === '/') return 'home';
+  if (path.startsWith('/bundle')) return 'product';
+  if (path.startsWith('/blog')) return 'blog';
+  if (path.startsWith('/dashboard')) return 'dashboard';
+  if (path.startsWith('/bot-picker') || path.startsWith('/tools')) return 'tool';
+  if (path.startsWith('/login') || path.startsWith('/signup')) return 'auth';
+  if (path.startsWith('/payment')) return 'payment';
+  if (path.startsWith('/privacy') || path.startsWith('/terms')) return 'legal';
+  return 'other';
+}
+
 /**
  * Track page views
  */
@@ -56,6 +74,7 @@ export const logPageView = (pagePath: string, pageTitle: string) => {
   logAnalyticsEvent('page_view', {
     page_path: pagePath,
     page_title: pageTitle,
+    page_category: getPageCategory(pagePath),
   });
 };
 
@@ -190,5 +209,76 @@ export const logCustomMetric = (
     metric_name: metricName,
     value,
     unit: unit || 'ms',
+  });
+};
+
+/**
+ * Track bot picker quiz completion
+ */
+export const logBotPickerComplete = (
+  preferences: { strategy?: string; timeframe?: string; frequency?: string },
+  resultsCount: number
+) => {
+  logAnalyticsEvent('bot_picker_complete', {
+    strategy: preferences.strategy || 'none',
+    timeframe: preferences.timeframe || 'none',
+    frequency: preferences.frequency || 'none',
+    results_count: resultsCount,
+  });
+};
+
+/**
+ * Track CTA button clicks
+ */
+export const logCtaClick = (
+  ctaText: string,
+  ctaLocation: string,
+  destination?: string
+) => {
+  logAnalyticsEvent('cta_click', {
+    cta_text: ctaText,
+    cta_location: ctaLocation,
+    destination: destination || '',
+  });
+};
+
+/**
+ * Track PDF guide requests (lead capture)
+ */
+export const logPdfGuideRequest = (source: string) => {
+  logAnalyticsEvent('pdf_guide_request', {
+    source,
+  });
+};
+
+/**
+ * Track bot downloads
+ */
+export const logBotDownload = (
+  botName: string,
+  fileName: string
+) => {
+  logAnalyticsEvent('bot_download', {
+    bot_name: botName,
+    file_name: fileName,
+  });
+};
+
+/**
+ * Track download-all action
+ */
+export const logBotDownloadAll = (botCount: number) => {
+  logAnalyticsEvent('bot_download_all', {
+    bot_count: botCount,
+  });
+};
+
+/**
+ * Track external link clicks
+ */
+export const logExternalLinkClick = (url: string, label: string) => {
+  logAnalyticsEvent('external_link_click', {
+    url,
+    label,
   });
 };

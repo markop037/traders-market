@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
+import { logCheckoutEvent } from '@/lib/analytics';
 
 function PaymentDoneContent() {
   const { user, loading } = useAuth();
@@ -39,7 +40,7 @@ function PaymentDoneContent() {
           
           if (data.hasPaid === true) {
             setStatus('success');
-            // Redirect to bots dashboard after showing success message
+            logCheckoutEvent('payment_success', 259, 'USD');
             setTimeout(() => {
               router.push('/dashboard/bots');
             }, 1500);
@@ -52,13 +53,12 @@ function PaymentDoneContent() {
         
         if (checkCountRef.current < MAX_CHECKS) {
           setStatus('waiting');
-          // Check again after 2 seconds
           setTimeout(() => {
             checkPaymentStatus();
           }, 2000);
         } else {
-          // Max attempts reached - show error
           setStatus('error');
+          logCheckoutEvent('payment_failed', 259, 'USD', 'Payment verification timed out');
         }
       } catch (error) {
         checkCountRef.current += 1;

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { logAnalyticsEvent } from '@/lib/analytics';
+import { logAnalyticsEvent, logBotDownload, logBotDownloadAll, logCheckoutEvent } from '@/lib/analytics';
 import { measureOperation, TraderMarketTraces } from '@/lib/performance';
 import { trackFirestoreError } from '@/lib/errorTracking';
 import { useRenderPerformance } from '@/hooks/usePerformance';
@@ -98,13 +98,10 @@ export default function BotsDashboardPage() {
             const paid = data.hasPaid === true;
             setHasPaid(paid);
             
-            // Log dashboard access event
-            if (paid) {
-              logAnalyticsEvent('dashboard_access', {
-                page: 'bots',
-                subscription_status: 'premium',
-              });
-            }
+            logAnalyticsEvent('dashboard_access', {
+              page: 'bots',
+              subscription_status: paid ? 'premium' : 'free',
+            });
           } else {
             setHasPaid(false);
           }
@@ -164,6 +161,7 @@ export default function BotsDashboardPage() {
                 href={checkoutHref}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => logCheckoutEvent('checkout_initiated', 259, 'USD')}
                 className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 px-6 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:from-amber-500 hover:to-amber-400 hover:shadow-amber-500/30 sm:w-auto"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -197,6 +195,7 @@ export default function BotsDashboardPage() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      logBotDownloadAll(PREMIUM_BOTS.length + STRATEGY_BOTS.length);
     } catch (e) {
       setDownloadError(e instanceof Error ? e.message : 'Download failed');
     } finally {
@@ -223,6 +222,8 @@ export default function BotsDashboardPage() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      const botName = Object.entries(BOT_NAME_TO_FILE).find(([, f]) => f === filename)?.[0] || filename;
+      logBotDownload(botName, filename);
     } catch (e) {
       setDownloadError(e instanceof Error ? e.message : 'Download failed');
     } finally {
