@@ -1063,6 +1063,94 @@ export default function Home() {
         )}
       </AnimatedSection>
 
+      {/* Tools Page Highlight Section */}
+      <AnimatedSection>
+        {(isVisible) => (
+          <section className="relative overflow-hidden bg-gradient-to-br from-[#050816] via-[#0b1026] to-[#050816] py-20 border-t border-blue-900/30">
+            <div className="pointer-events-none absolute inset-0">
+              <div className="absolute -top-24 left-1/2 h-64 w-[38rem] -translate-x-1/2 rounded-full bg-blue-600/10 blur-3xl" />
+              <div className="absolute -bottom-24 right-[-6rem] h-56 w-56 rounded-full bg-blue-800/10 blur-3xl" />
+            </div>
+
+            <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div
+                className={`text-center mb-10 transition-all duration-700 ${
+                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                }`}
+              >
+                <p className="inline-flex items-center rounded-full border border-blue-500/40 bg-blue-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-blue-200/90">
+                  Tools
+                </p>
+                <h2 className="mt-4 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                  Explore the Traders Market Tools Page
+                </h2>
+                <p className="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
+                  Go deeper with Bot Picker and our upcoming utilities like the Strategy Optimizer and Risk &amp; Position Size
+                  Wizard — all in one dedicated tools hub.
+                </p>
+              </div>
+
+              <div
+                className={`grid grid-cols-1 gap-6 md:grid-cols-3 transition-all duration-700 ${
+                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                }`}
+                style={{ transitionDelay: isVisible ? "150ms" : "0ms" }}
+              >
+                <div className="rounded-xl border border-blue-600/30 bg-gradient-to-br from-blue-950/40 via-[#0f172a]/40 to-blue-900/30 p-6">
+                  <h3 className="text-lg font-semibold text-white mb-2">Bot Picker</h3>
+                  <p className="text-sm text-gray-300">
+                    Your starting point for choosing the right bots based on your strategy type, timeframe, and trade frequency.
+                  </p>
+                </div>
+                <div className="rounded-xl border border-blue-600/20 bg-gradient-to-br from-blue-950/20 via-[#0f172a]/30 to-blue-900/20 p-6">
+                  <h3 className="text-lg font-semibold text-white mb-2">
+                    Strategy Optimizer{" "}
+                    <span className="text-amber-300 text-[11px] uppercase tracking-wide">(Coming Soon)</span>
+                  </h3>
+                  <p className="text-sm text-gray-300">
+                    Turn raw MT5 backtests into clear visuals so you can see which pairs, timeframes, and risk settings actually
+                    work.
+                  </p>
+                </div>
+                <div className="rounded-xl border border-blue-600/20 bg-gradient-to-br from-blue-950/20 via-[#0f172a]/30 to-blue-900/20 p-6">
+                  <h3 className="text-lg font-semibold text-white mb-2">
+                    Risk &amp; Position Size Wizard{" "}
+                    <span className="text-amber-300 text-[11px] uppercase tracking-wide">(Coming Soon)</span>
+                  </h3>
+                  <p className="text-sm text-gray-300">
+                    Convert your account size and risk per trade into precise lot sizes and position plans — no spreadsheets
+                    needed.
+                  </p>
+                </div>
+              </div>
+
+              <div
+                className={`mt-10 flex justify-center transition-all duration-700 ${
+                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                }`}
+                style={{ transitionDelay: isVisible ? "250ms" : "0ms" }}
+              >
+                <Link
+                  href="/tools"
+                  className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:scale-105 border border-blue-600/30"
+                >
+                  <span className="relative z-10">Visit the Tools Page</span>
+                  <svg
+                    className="relative z-10 ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-700 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
+      </AnimatedSection>
+
       {/* Transition Divider - Bot Picker CTA to Full Strategy Arsenal */}
       <div className="relative h-6 bg-gradient-to-b from-[#050816] via-[#0a0e27] to-[#0b1b40]">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/10 to-transparent"></div>

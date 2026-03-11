@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { db, auth } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
+import { logAnalyticsEvent } from '@/lib/analytics';
 
 interface UserProfile {
   firstName: string;
@@ -45,6 +46,14 @@ export default function SettingsPage() {
       router.push('/login');
     }
   }, [user, loading, router]);
+
+  useEffect(() => {
+    if (!user || loading) return;
+
+    logAnalyticsEvent('dashboard_access', {
+      page: 'settings',
+    });
+  }, [user, loading]);
 
   // Store original values for canceling
   const [originalProfile, setOriginalProfile] = useState<UserProfile>({

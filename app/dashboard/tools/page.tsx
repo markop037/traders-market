@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { logAnalyticsEvent } from "@/lib/analytics";
 
 // Sample tools – to be replaced with real tools and file URLs when implemented
 const SAMPLE_TOOLS = [
@@ -35,6 +36,14 @@ export default function DashboardToolsPage() {
   const { user } = useAuth();
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+
+    logAnalyticsEvent("dashboard_access", {
+      page: "tools",
+    });
+  }, [user]);
 
   const handleDownload = async (toolId: string) => {
     if (!user) return;

@@ -97,11 +97,6 @@ export default function BotsDashboardPage() {
           if (data) {
             const paid = data.hasPaid === true;
             setHasPaid(paid);
-            
-            logAnalyticsEvent('dashboard_access', {
-              page: 'bots',
-              subscription_status: paid ? 'premium' : 'free',
-            });
           } else {
             setHasPaid(false);
           }
@@ -120,6 +115,14 @@ export default function BotsDashboardPage() {
 
     loadSubscriptionStatus();
   }, [user, loading, router]);
+
+  useEffect(() => {
+    if (!user || loading || isLoadingStatus) return;
+
+    logAnalyticsEvent('dashboard_access', {
+      page: 'bots',
+    });
+  }, [user, loading, isLoadingStatus]);
 
   if (loading || isLoadingStatus) {
     return (
