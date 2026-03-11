@@ -2,7 +2,6 @@ import {
   logEvent, 
   setUserId, 
   setUserProperties,
-  Analytics 
 } from 'firebase/analytics';
 import { analytics } from './firebase';
 
@@ -12,8 +11,6 @@ export type TraderMarketEvent =
   | 'login'
   | 'signup'
   | 'logout'
-  | 'bot_view'
-  | 'bot_secret_reveal'
   | 'navigation_click'
   | 'checkout_initiated'
   | 'payment_success'
@@ -22,7 +19,6 @@ export type TraderMarketEvent =
   | 'bundle_view'
   | 'dashboard_access'
   | 'error_occurred'
-  | 'custom_trace_complete'
   | 'bot_picker_complete'
   | 'cta_click'
   | 'pdf_guide_request'
@@ -47,8 +43,6 @@ export const logAnalyticsEvent = (
     // Firebase SDK types only include a subset of events; custom names (e.g. page_view, login) are valid at runtime
     logEvent(analytics, eventName as Parameters<typeof logEvent>[1], {
       ...params,
-      timestamp: Date.now(),
-      app_name: 'Traders Market',
     });
   } catch {
     // Silently ignore analytics logging errors
@@ -87,20 +81,6 @@ export const logAuthEvent = (
 ) => {
   logAnalyticsEvent(eventType, {
     method: method || 'email',
-  });
-};
-
-/**
- * Track bot-related events
- */
-export const logBotEvent = (
-  eventType: 'bot_view' | 'bot_secret_reveal',
-  botId: string,
-  botName: string
-) => {
-  logAnalyticsEvent(eventType, {
-    bot_id: botId,
-    bot_name: botName,
   });
 };
 
@@ -185,7 +165,6 @@ export const setAnalyticsUserProperties = (properties: {
   subscription_status?: 'free' | 'premium';
   has_paid?: boolean;
   signup_date?: string;
-  user_type?: string;
   [key: string]: string | boolean | undefined;
 }) => {
   if (!analytics) return;
@@ -195,21 +174,6 @@ export const setAnalyticsUserProperties = (properties: {
   } catch {
     // Silently ignore analytics user properties errors
   }
-};
-
-/**
- * Track custom business metrics
- */
-export const logCustomMetric = (
-  metricName: string,
-  value: number,
-  unit?: string
-) => {
-  logAnalyticsEvent('custom_trace_complete', {
-    metric_name: metricName,
-    value,
-    unit: unit || 'ms',
-  });
 };
 
 /**
