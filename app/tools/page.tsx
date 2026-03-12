@@ -2,28 +2,23 @@ import Link from "next/link";
 
 const TOOLS = [
   {
-    id: "bot-picker",
-    name: "Bot Picker",
+    id: "previous-high-low-toolkit",
+    name: "Previous High/Low Toolkit",
     description:
-      "Answer a few questions about your trading style and goals, and instantly get matched with the bots that fit you best.",
-    href: "/bot-picker",
-    status: "Live",
+      "Automatically displays Yesterday, Last Week, and Last Month High/Low levels directly on the chart for quick market reference.",
   },
   {
-    id: "coming-soon-optimizer",
-    name: "Strategy Optimizer (Coming Soon)",
+    id: "previous-high-low-toolkit-sessions",
+    name: "Previous High/Low Toolkit (Session Timezones)",
     description:
-      "Upload your backtest results and get a clear, visual breakdown of performance across pairs, timeframes, and risk settings.",
-    href: "#",
-    status: "Coming soon",
+      "Shows High and Low levels for the Asian, London, and New York trading sessions based on their respective timezones.",
   },
   {
-    id: "coming-soon-tester",
-    name: "Risk & Position Size Wizard (Coming Soon)",
+    id: "sessions-marker",
+    name: "Sessions Marker",
     description:
-      "Turn your account size and risk tolerance into exact lot sizes and position plans for each trade — no spreadsheets required.",
-    href: "#",
-    status: "Coming soon",
+      "Highlights the Asian, London, and New York trading sessions directly on the chart by coloring the background, making it easy to see when each session is active.",
+    status: "Coming Soon",
   },
 ];
 
@@ -43,11 +38,10 @@ export default function ToolsPage() {
               Tools
             </p>
             <h1 className="mt-4 text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
-              Trading Tools Built Around Real Strategies
+              Trading Tools Built Around Real Levels
             </h1>
             <p className="mt-6 text-lg leading-8 text-gray-300 sm:text-xl">
-              This is where every tool we build for Traders Market lives. Explore live tools you can use today and get a sneak
-              peek at what&apos;s coming next.
+              Our indicators and utilities help you visualize important market levels and trading sessions directly on the chart — from yesterday’s high and low to session-based ranges and when each session is active — so you spend less time calculating and more time trading.
             </p>
           </div>
         </div>
@@ -63,8 +57,7 @@ export default function ToolsPage() {
                 Your Trading Toolbox
               </h2>
               <p className="mt-2 max-w-2xl text-sm text-gray-300 sm:text-base">
-                Each tool is designed to solve one specific problem traders actually face — from choosing the right bot to
-                sizing risk correctly. More tools will be added here over time.
+                The tools below are designed to help you quickly identify key price levels and trading sessions on the chart. Each one focuses on a single job so you get clear, chart-ready context without the guesswork.
               </p>
             </div>
           </div>
@@ -79,15 +72,13 @@ export default function ToolsPage() {
                   <h3 className="text-lg font-semibold text-white sm:text-xl">
                     {tool.name}
                   </h3>
-                  <span
-                    className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium ${
-                      tool.status === "Live"
-                        ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-300"
-                        : "border-amber-400/30 bg-amber-500/10 text-amber-200"
-                    }`}
-                  >
-                    {tool.status}
-                  </span>
+                  {tool.status && (
+                    <span
+                      className="inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium border-amber-400/30 bg-amber-500/10 text-amber-200"
+                    >
+                      {tool.status}
+                    </span>
+                  )}
                 </div>
 
                 <p className="mb-6 flex-1 text-sm leading-relaxed text-gray-300">
@@ -102,28 +93,7 @@ export default function ToolsPage() {
                     <span>Part of the Traders Market toolkit</span>
                   </div>
 
-                  {tool.href !== "#" ? (
-                    <Link
-                      href={tool.href}
-                      className="inline-flex items-center gap-2 rounded-lg border border-blue-500/50 bg-blue-600/80 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-all duration-200 hover:border-blue-300 hover:bg-blue-500"
-                    >
-                      <span>Open tool</span>
-                      <svg
-                        className="h-3.5 w-3.5"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M5 15L15 5M9 5H15V11"
-                          stroke="currentColor"
-                          strokeWidth="1.6"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </Link>
-                  ) : (
+                  {tool.status === "Coming Soon" && (
                     <button
                       type="button"
                       disabled

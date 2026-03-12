@@ -954,7 +954,7 @@ export default function Home() {
                       <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                       </svg>
-                      <span className="text-blue-400 font-semibold text-sm uppercase tracking-wide">Free Tool</span>
+                      <span className="text-blue-400 font-semibold text-sm uppercase tracking-wide">Bot Picker Tool</span>
                     </div>
 
                     <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight">
@@ -1085,8 +1085,7 @@ export default function Home() {
                   Explore the Traders Market Tools Page
                 </h2>
                 <p className="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
-                  Go deeper with Bot Picker and our upcoming utilities like the Strategy Optimizer and Risk &amp; Position Size
-                  Wizard — all in one dedicated tools hub.
+                  Discover precision trading indicators and utilities designed to give you clearer levels, smarter context, and better trade decisions.
                 </p>
               </div>
 
@@ -1097,29 +1096,26 @@ export default function Home() {
                 style={{ transitionDelay: isVisible ? "150ms" : "0ms" }}
               >
                 <div className="rounded-xl border border-blue-600/30 bg-gradient-to-br from-blue-950/40 via-[#0f172a]/40 to-blue-900/30 p-6">
-                  <h3 className="text-lg font-semibold text-white mb-2">Bot Picker</h3>
+                  <h3 className="text-lg font-semibold text-white mb-2">Previous High/Low Toolkit</h3>
                   <p className="text-sm text-gray-300">
-                    Your starting point for choosing the right bots based on your strategy type, timeframe, and trade frequency.
+                    Automatically displays Yesterday, Last Week, and Last Month High/Low levels directly on the chart for quick market reference.
                   </p>
                 </div>
                 <div className="rounded-xl border border-blue-600/20 bg-gradient-to-br from-blue-950/20 via-[#0f172a]/30 to-blue-900/20 p-6">
                   <h3 className="text-lg font-semibold text-white mb-2">
-                    Strategy Optimizer{" "}
-                    <span className="text-amber-300 text-[11px] uppercase tracking-wide">(Coming Soon)</span>
+                    Previous High/Low Toolkit (Session Timezones)
                   </h3>
                   <p className="text-sm text-gray-300">
-                    Turn raw MT5 backtests into clear visuals so you can see which pairs, timeframes, and risk settings actually
-                    work.
+                    Shows High and Low levels for the Asian, London, and New York trading sessions based on their respective timezones.
                   </p>
                 </div>
                 <div className="rounded-xl border border-blue-600/20 bg-gradient-to-br from-blue-950/20 via-[#0f172a]/30 to-blue-900/20 p-6">
                   <h3 className="text-lg font-semibold text-white mb-2">
-                    Risk &amp; Position Size Wizard{" "}
+                    Sessions Marker{" "}
                     <span className="text-amber-300 text-[11px] uppercase tracking-wide">(Coming Soon)</span>
                   </h3>
                   <p className="text-sm text-gray-300">
-                    Convert your account size and risk per trade into precise lot sizes and position plans — no spreadsheets
-                    needed.
+                    Highlights the Asian, London, and New York trading sessions directly on the chart by coloring the background, making it easy to see when each session is active.
                   </p>
                 </div>
               </div>

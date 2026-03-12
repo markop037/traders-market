@@ -23,4 +23,5 @@ export function createR2Client() {
 export const R2 = {
   BUCKET: 'ea-traders-market',
   BOTS_PREFIX: 'Bots/',
+  INDICATORS_PREFIX: 'Indicators/',
 } as const;

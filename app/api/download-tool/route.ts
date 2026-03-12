@@ -1,27 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Readable } from "stream";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { adminAuth } from "@/lib/firebase-admin";
+import { createR2Client, R2 } from "@/lib/cloudflare";
 
-// Map toolId to filename and placeholder content (replace with real files when implemented)
-const TOOL_PLACEHOLDERS: Record<
-  string,
-  { filename: string; contentType: string; body: string }
-> = {
-  "position-size-calculator": {
-    filename: "position-size-calculator.txt",
-    contentType: "text/plain",
-    body: "Position Size Calculator – Coming soon.\n\nThis tool will be available here once implemented. Stay tuned!",
+// Map toolId to R2 key (path in Indicators folder) and download filename
+const INDICATOR_TOOLS: Record<string, { r2Key: string; filename: string }> = {
+  "previous-high-low-toolkit": {
+    r2Key: `${R2.INDICATORS_PREFIX}Previous HighLow Toolkit.ex5`,
+    filename: "Previous HighLow Toolkit.ex5",
   },
-  "risk-reward-helper": {
-    filename: "risk-reward-helper.txt",
-    contentType: "text/plain",
-    body: "Risk/Reward Helper – Coming soon.\n\nThis tool will be available here once implemented. Stay tuned!",
-  },
-  "session-times-cheatsheet": {
-    filename: "session-times-cheatsheet.txt",
-    contentType: "text/plain",
-    body: "Trading Session Times Cheatsheet – Coming soon.\n\nThis tool will be available here once implemented. Stay tuned!",
+  "previous-high-low-toolkit-sessions": {
+    r2Key: `${R2.INDICATORS_PREFIX}Previous_HighLow_Toolkit_TZ.ex5`,
+    filename: "Previous_HighLow_Toolkit_TZ.ex5",
   },
 };
+
+async function streamToBuffer(stream: Readable): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    stream.on("data", (chunk: Buffer) => chunks.push(chunk));
+    stream.on("end", () => resolve(Buffer.concat(chunks)));
+    stream.on("error", reject);
+  });
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -38,16 +40,34 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Missing toolId" }, { status: 400 });
     }
 
-    const placeholder = TOOL_PLACEHOLDERS[toolId];
-    if (!placeholder) {
+    const indicator = INDICATOR_TOOLS[toolId];
+    if (!indicator) {
       return NextResponse.json({ error: "Unknown tool" }, { status: 404 });
     }
 
-    return new NextResponse(placeholder.body, {
+    const r2 = createR2Client();
+    let body: Readable;
+    try {
+      const result = await r2.send(
+        new GetObjectCommand({ Bucket: R2.BUCKET, Key: indicator.r2Key })
+      );
+      body = result.Body as Readable;
+    } catch {
+      return NextResponse.json({ error: "File not found" }, { status: 404 });
+    }
+
+    if (!body) {
+      return NextResponse.json({ error: "No data" }, { status: 404 });
+    }
+
+    const buffer = await streamToBuffer(body);
+
+    return new NextResponse(new Uint8Array(buffer), {
       status: 200,
       headers: {
-        "Content-Type": placeholder.contentType,
-        "Content-Disposition": `attachment; filename="${placeholder.filename}"`,
+        "Content-Type": "application/octet-stream",
+        "Content-Disposition": `attachment; filename="${indicator.filename}"`,
+        "Content-Length": String(buffer.length),
       },
     });
   } catch (error: unknown) {

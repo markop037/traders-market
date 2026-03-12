@@ -4,31 +4,25 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { logAnalyticsEvent } from "@/lib/analytics";
 
-// Sample tools – to be replaced with real tools and file URLs when implemented
-const SAMPLE_TOOLS = [
+const TOOLS = [
   {
-    id: "position-size-calculator",
-    name: "Position Size Calculator",
+    id: "previous-high-low-toolkit",
+    name: "Previous High/Low Toolkit",
     description:
-      "Calculate lot sizes based on account balance, risk percentage, and stop loss. Ensures you never risk more than you intend per trade.",
-    format: "Spreadsheet",
-    status: "Coming soon",
+      "Automatically displays Yesterday, Last Week, and Last Month High/Low levels directly on the chart for quick market reference.",
   },
   {
-    id: "risk-reward-helper",
-    name: "Risk/Reward Helper",
+    id: "previous-high-low-toolkit-sessions",
+    name: "Previous High/Low Toolkit (Session Timezones)",
     description:
-      "Quick reference for setting take-profit and stop-loss levels to maintain consistent risk-reward ratios across timeframes.",
-    format: "PDF",
-    status: "Coming soon",
+      "Shows High and Low levels for the Asian, London, and New York trading sessions based on their respective timezones.",
   },
   {
-    id: "session-times-cheatsheet",
-    name: "Trading Session Times Cheatsheet",
+    id: "sessions-marker",
+    name: "Sessions Marker",
     description:
-      "London, New York, and Asian session open/close times in your timezone. Handy for session-based strategies.",
-    format: "PDF",
-    status: "Coming soon",
+      "Highlights the Asian, London, and New York trading sessions directly on the chart by coloring the background, making it easy to see when each session is active.",
+    status: "Coming Soon",
   },
 ];
 
@@ -36,6 +30,12 @@ export default function DashboardToolsPage() {
   const { user } = useAuth();
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    }
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -63,7 +63,7 @@ export default function DashboardToolsPage() {
       const blob = await res.blob();
       const disposition = res.headers.get("Content-Disposition");
       const match = disposition?.match(/filename="?([^";]+)"?/);
-      const filename = match ? match[1] : `${toolId}.txt`;
+      const filename = match ? match[1] : `${toolId}.ex5`;
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -96,7 +96,7 @@ export default function DashboardToolsPage() {
         )}
 
         <div className="space-y-6">
-          {SAMPLE_TOOLS.map((tool) => (
+          {TOOLS.map((tool) => (
             <article
               key={tool.id}
               className="rounded-2xl border border-blue-600/25 bg-gradient-to-br from-blue-950/30 via-[#0f1f4a]/25 to-blue-900/20 p-6 shadow-xl"
@@ -105,64 +105,67 @@ export default function DashboardToolsPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <h2 className="text-xl font-semibold text-white">{tool.name}</h2>
-                    <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-300">
-                      {tool.status}
-                    </span>
+                    {tool.status && (
+                      <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-300">
+                        {tool.status}
+                      </span>
+                    )}
                   </div>
                   <p className="mt-2 text-gray-400 text-sm leading-relaxed">{tool.description}</p>
-                  <p className="mt-2 text-xs text-gray-500">Format: {tool.format}</p>
                 </div>
-                <div className="flex-shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => handleDownload(tool.id)}
-                    disabled={downloadingId !== null}
-                    className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {downloadingId === tool.id ? (
-                      <>
-                        <svg
-                          className="h-4 w-4 animate-spin"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          aria-hidden
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
+                {!tool.status && (
+                  <div className="flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleDownload(tool.id)}
+                      disabled={downloadingId !== null}
+                      className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {downloadingId === tool.id ? (
+                        <>
+                          <svg
+                            className="h-4 w-4 animate-spin"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            aria-hidden
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
+                          </svg>
+                          Downloading…
+                        </>
+                      ) : (
+                        <>
+                          <svg
+                            className="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
                             stroke="currentColor"
-                            strokeWidth="4"
-                          />
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          />
-                        </svg>
-                        Downloading…
-                      </>
-                    ) : (
-                      <>
-                        <svg
-                          className="h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                          />
-                        </svg>
-                        Download
-                      </>
-                    )}
-                  </button>
-                </div>
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                            />
+                          </svg>
+                          Download
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
               </div>
             </article>
           ))}
