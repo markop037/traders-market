@@ -1063,64 +1063,60 @@ export default function Home() {
         )}
       </AnimatedSection>
 
-      {/* Indicators Highlight Section */}
+      {/* Indicators Highlight Section - preview of /indicators page */}
       <AnimatedSection>
         {(isVisible) => (
-          <section className="relative overflow-hidden bg-gradient-to-br from-[#050816] via-[#020617] to-[#050816] py-20 border-t border-blue-900/30">
-            <div className="pointer-events-none absolute inset-0">
-              <div className="absolute -top-24 left-1/2 h-64 w-[38rem] -translate-x-1/2 rounded-full bg-blue-600/10 blur-3xl" />
-              <div className="absolute -bottom-24 right-[-6rem] h-56 w-56 rounded-full bg-blue-800/10 blur-3xl" />
-            </div>
-
-            <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <section className="relative overflow-hidden border-t border-blue-900/40 bg-gradient-to-b from-[#050816] to-[#020617] py-14 sm:py-16 lg:py-20">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(15,118,110,0.08),transparent_55%)]" />
+            <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
               <div
-                className={`text-center mb-10 transition-all duration-700 ${
+                className={`text-center mb-8 transition-all duration-700 ${
                   isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                 }`}
               >
-                <p className="inline-flex items-center rounded-full border border-blue-500/40 bg-blue-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-blue-200/90">
-                  Indicators
+                <p className="inline-flex items-center rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-blue-200/90">
+                  MT5 Trader Toolkit
                 </p>
-                <h2 className="mt-4 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                  See Your Charts the Way
-                  <span className="block bg-gradient-to-r from-blue-400 via-cyan-300 to-emerald-300 bg-clip-text text-transparent">
-                    serious traders actually trade them
-                  </span>
+                <h2 className="mt-4 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                  Free MT5 Trader Toolkit
                 </h2>
-                <p className="mt-4 text-base sm:text-lg text-gray-300 max-w-2xl mx-auto">
-                  The Traders Market indicator suite turns raw MT5 price data into a clean visual framework of
-                  structure, sessions, and key levels — so every decision starts from clear, objective context
-                  instead of guesswork.
+                <p className="mt-3 text-sm text-gray-300 max-w-2xl mx-auto sm:text-base">
+                  Practical indicators and utilities for MetaTrader&nbsp;5 — sessions markers, drawdown limiters, trade analytics and more. Download free after signup.
                 </p>
               </div>
 
               <div
-                className={`grid grid-cols-1 gap-6 md:grid-cols-3 transition-all duration-700 ${
-                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                className={`grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-3 transition-all duration-700 ${
+                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
                 }`}
-                style={{ transitionDelay: isVisible ? "150ms" : "0ms" }}
+                style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}
               >
-                <div className="rounded-xl border border-blue-600/30 bg-gradient-to-br from-blue-950/40 via-[#0f172a]/40 to-blue-900/30 p-6">
-                  <h3 className="text-lg font-semibold text-white mb-2">Read structure at a glance</h3>
-                  <p className="text-sm text-gray-300">
+                <div
+                  className={`group flex flex-col rounded-2xl border border-blue-700/30 bg-gradient-to-br from-blue-950/40 via-[#0b1120] to-blue-900/20 p-4 shadow-[0_0_20px_rgba(15,23,42,0.8)] transition-all duration-700 hover:-translate-y-1 hover:border-blue-500/50 hover:shadow-[0_0_28px_rgba(59,130,246,0.3)] sm:p-5 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+                  style={{ transitionDelay: isVisible ? "180ms" : "0ms" }}
+                >
+                  <h3 className="text-base font-semibold text-white sm:text-lg">Read structure at a glance</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-300">
                     See where price sits within recent swings, ranges, and key zones instead of trying to
                     reconstruct the entire story from raw candles every time you open a chart.
                   </p>
                 </div>
-                <div className="rounded-xl border border-blue-600/25 bg-gradient-to-br from-blue-950/25 via-[#0f172a]/35 to-blue-900/25 p-6">
-                  <h3 className="text-lg font-semibold text-white mb-2">
-                    Understand sessions & volatility
-                  </h3>
-                  <p className="text-sm text-gray-300">
+                <div
+                  className={`group flex flex-col rounded-2xl border border-blue-700/30 bg-gradient-to-br from-blue-950/40 via-[#0b1120] to-blue-900/20 p-4 shadow-[0_0_20px_rgba(15,23,42,0.8)] transition-all duration-700 hover:-translate-y-1 hover:border-blue-500/50 hover:shadow-[0_0_28px_rgba(59,130,246,0.3)] sm:p-5 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+                  style={{ transitionDelay: isVisible ? "260ms" : "0ms" }}
+                >
+                  <h3 className="text-base font-semibold text-white sm:text-lg">Understand sessions &amp; volatility</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-300">
                     Easily spot when Asian, London, or New York flow is driving the market, how far each
                     session expanded, and when conditions actually fit your playbook.
                   </p>
                 </div>
-                <div className="rounded-xl border border-blue-600/20 bg-gradient-to-br from-blue-950/20 via-[#0f172a]/30 to-blue-900/20 p-6">
-                  <h3 className="text-lg font-semibold text-white mb-2">
-                    Make faster, cleaner decisions
-                  </h3>
-                  <p className="text-sm text-gray-300">
+                <div
+                  className={`group flex flex-col rounded-2xl border border-blue-700/30 bg-gradient-to-br from-blue-950/40 via-[#0b1120] to-blue-900/20 p-4 shadow-[0_0_20px_rgba(15,23,42,0.8)] transition-all duration-700 hover:-translate-y-1 hover:border-blue-500/50 hover:shadow-[0_0_28px_rgba(59,130,246,0.3)] sm:p-5 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+                  style={{ transitionDelay: isVisible ? "340ms" : "0ms" }}
+                >
+                  <h3 className="text-base font-semibold text-white sm:text-lg">Make faster, cleaner decisions</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-300">
                     With levels, sessions, and context handled for you, you can focus on execution, risk, and
                     trade management — not redrawing the same information over and over.
                   </p>
@@ -1128,25 +1124,19 @@ export default function Home() {
               </div>
 
               <div
-                className={`mt-10 flex justify-center transition-all duration-700 ${
+                className={`mt-8 flex justify-center transition-all duration-700 ${
                   isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                 }`}
-                style={{ transitionDelay: isVisible ? "250ms" : "0ms" }}
+                style={{ transitionDelay: isVisible ? "400ms" : "0ms" }}
               >
                 <Link
                   href="/indicators"
-                  className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:scale-105 border border-blue-600/30"
+                  className="group inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_24px_rgba(59,130,246,0.5)] hover:scale-[1.02] border border-blue-600/40 sm:px-8 sm:py-3.5 sm:text-base"
                 >
-                  <span className="relative z-10">Explore the full indicator suite</span>
-                  <svg
-                    className="relative z-10 ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
+                  View full toolkit &amp; download
+                  <svg className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-700 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                 </Link>
               </div>
             </div>

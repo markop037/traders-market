@@ -94,10 +94,6 @@ export default function DashboardIndicatorsPage() {
               session context, and more confident trade decisions inside MetaTrader 5.
             </p>
           </div>
-          <div className="text-xs sm:text-sm text-gray-400">
-            <p className="text-gray-300 font-medium">Status: Logged‑in access</p>
-            <p>Platform: MetaTrader 5 (MT5)</p>
-          </div>
         </div>
 
         {error && (
