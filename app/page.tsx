@@ -1063,10 +1063,10 @@ export default function Home() {
         )}
       </AnimatedSection>
 
-      {/* Tools Page Highlight Section */}
+      {/* Indicators Highlight Section */}
       <AnimatedSection>
         {(isVisible) => (
-          <section className="relative overflow-hidden bg-gradient-to-br from-[#050816] via-[#0b1026] to-[#050816] py-20 border-t border-blue-900/30">
+          <section className="relative overflow-hidden bg-gradient-to-br from-[#050816] via-[#020617] to-[#050816] py-20 border-t border-blue-900/30">
             <div className="pointer-events-none absolute inset-0">
               <div className="absolute -top-24 left-1/2 h-64 w-[38rem] -translate-x-1/2 rounded-full bg-blue-600/10 blur-3xl" />
               <div className="absolute -bottom-24 right-[-6rem] h-56 w-56 rounded-full bg-blue-800/10 blur-3xl" />
@@ -1079,13 +1079,18 @@ export default function Home() {
                 }`}
               >
                 <p className="inline-flex items-center rounded-full border border-blue-500/40 bg-blue-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-blue-200/90">
-                  Tools
+                  Indicators
                 </p>
                 <h2 className="mt-4 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                  Explore the Traders Market Tools Page
+                  See Your Charts the Way
+                  <span className="block bg-gradient-to-r from-blue-400 via-cyan-300 to-emerald-300 bg-clip-text text-transparent">
+                    serious traders actually trade them
+                  </span>
                 </h2>
-                <p className="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
-                  Discover precision trading indicators and utilities designed to give you clearer levels, smarter context, and better trade decisions.
+                <p className="mt-4 text-base sm:text-lg text-gray-300 max-w-2xl mx-auto">
+                  The Traders Market indicator suite turns raw MT5 price data into a clean visual framework of
+                  structure, sessions, and key levels — so every decision starts from clear, objective context
+                  instead of guesswork.
                 </p>
               </div>
 
@@ -1096,26 +1101,28 @@ export default function Home() {
                 style={{ transitionDelay: isVisible ? "150ms" : "0ms" }}
               >
                 <div className="rounded-xl border border-blue-600/30 bg-gradient-to-br from-blue-950/40 via-[#0f172a]/40 to-blue-900/30 p-6">
-                  <h3 className="text-lg font-semibold text-white mb-2">Previous High/Low Toolkit</h3>
+                  <h3 className="text-lg font-semibold text-white mb-2">Read structure at a glance</h3>
                   <p className="text-sm text-gray-300">
-                    Automatically displays Yesterday, Last Week, and Last Month High/Low levels directly on the chart for quick market reference.
+                    See where price sits within recent swings, ranges, and key zones instead of trying to
+                    reconstruct the entire story from raw candles every time you open a chart.
+                  </p>
+                </div>
+                <div className="rounded-xl border border-blue-600/25 bg-gradient-to-br from-blue-950/25 via-[#0f172a]/35 to-blue-900/25 p-6">
+                  <h3 className="text-lg font-semibold text-white mb-2">
+                    Understand sessions & volatility
+                  </h3>
+                  <p className="text-sm text-gray-300">
+                    Easily spot when Asian, London, or New York flow is driving the market, how far each
+                    session expanded, and when conditions actually fit your playbook.
                   </p>
                 </div>
                 <div className="rounded-xl border border-blue-600/20 bg-gradient-to-br from-blue-950/20 via-[#0f172a]/30 to-blue-900/20 p-6">
                   <h3 className="text-lg font-semibold text-white mb-2">
-                    Previous High/Low Toolkit (Session Timezones)
+                    Make faster, cleaner decisions
                   </h3>
                   <p className="text-sm text-gray-300">
-                    Shows High and Low levels for the Asian, London, and New York trading sessions based on their respective timezones.
-                  </p>
-                </div>
-                <div className="rounded-xl border border-blue-600/20 bg-gradient-to-br from-blue-950/20 via-[#0f172a]/30 to-blue-900/20 p-6">
-                  <h3 className="text-lg font-semibold text-white mb-2">
-                    Sessions Marker{" "}
-                    <span className="text-amber-300 text-[11px] uppercase tracking-wide">(Coming Soon)</span>
-                  </h3>
-                  <p className="text-sm text-gray-300">
-                    Highlights the Asian, London, and New York trading sessions directly on the chart by coloring the background, making it easy to see when each session is active.
+                    With levels, sessions, and context handled for you, you can focus on execution, risk, and
+                    trade management — not redrawing the same information over and over.
                   </p>
                 </div>
               </div>
@@ -1127,10 +1134,10 @@ export default function Home() {
                 style={{ transitionDelay: isVisible ? "250ms" : "0ms" }}
               >
                 <Link
-                  href="/tools"
+                  href="/indicators"
                   className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:scale-105 border border-blue-600/30"
                 >
-                  <span className="relative z-10">Visit the Tools Page</span>
+                  <span className="relative z-10">Explore the full indicator suite</span>
                   <svg
                     className="relative z-10 ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
                     fill="none"

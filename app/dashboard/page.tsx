@@ -13,9 +13,9 @@ function DashboardContent() {
       router.push('/login');
       return;
     }
-    // Everyone sees dashboard with sidebar; default content is Tools
+    // Everyone sees dashboard with sidebar; default content is Indicators
     if (user) {
-      router.replace('/dashboard/tools');
+      router.replace('/dashboard/indicators');
     }
   }, [user, loading, router]);
 
@@ -34,12 +34,12 @@ function DashboardContent() {
     return null;
   }
 
-  // Redirect to Tools (default dashboard tab)
+  // Redirect to Indicators (default dashboard tab)
   return (
     <main className="min-h-screen flex items-center justify-center">
       <div className="text-center">
         <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-gray-400 text-sm">Redirecting to Tools...</p>
+        <p className="text-gray-400 text-sm">Redirecting to Indicators...</p>
       </div>
     </main>
   );

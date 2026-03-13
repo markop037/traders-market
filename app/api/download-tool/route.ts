@@ -7,12 +7,16 @@ import { createR2Client, R2 } from "@/lib/cloudflare";
 // Map toolId to R2 key (path in Indicators folder) and download filename
 const INDICATOR_TOOLS: Record<string, { r2Key: string; filename: string }> = {
   "previous-high-low-toolkit": {
-    r2Key: `${R2.INDICATORS_PREFIX}Previous HighLow Toolkit.ex5`,
-    filename: "Previous HighLow Toolkit.ex5",
+    r2Key: `${R2.INDICATORS_PREFIX}DailyWeeklyMonthly HighLow Indicator.ex5`,
+    filename: "DailyWeeklyMonthly HighLow Indicator.ex5",
   },
   "previous-high-low-toolkit-sessions": {
-    r2Key: `${R2.INDICATORS_PREFIX}Previous_HighLow_Toolkit_TZ.ex5`,
-    filename: "Previous_HighLow_Toolkit_TZ.ex5",
+    r2Key: `${R2.INDICATORS_PREFIX}Session HighLow Indicator.ex5`,
+    filename: "Session HighLow Indicator.ex5",
+  },
+  "session-marker": {
+    r2Key: `${R2.INDICATORS_PREFIX}SessionMarker.ex5`,
+    filename: "SessionMarker.ex5",
   },
 };
 

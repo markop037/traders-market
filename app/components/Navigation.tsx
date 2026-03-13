@@ -84,11 +84,11 @@ export default function Navigation() {
             Bundle Offer
           </Link>
           <Link
-            href="/tools"
+            href="/indicators"
             className="text-sm font-medium text-white transition-colors hover:text-blue-400 hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.7)]"
-            onClick={(e) => handleNavLinkClick(e, "/tools")}
+            onClick={(e) => handleNavLinkClick(e, "/indicators")}
           >
-            Tools
+            Indicators
           </Link>
           <Link
             href="/bot-picker"
@@ -233,11 +233,11 @@ export default function Navigation() {
             Bundle Offer
           </Link>
           <Link
-            href="/tools"
+            href="/indicators"
             className="text-sm font-medium text-white transition-colors hover:text-blue-400 hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.7)]"
-            onClick={(e) => { handleNavLinkClick(e, "/tools", 'mobile_header'); setIsMobileMenuOpen(false); }}
+            onClick={(e) => { handleNavLinkClick(e, "/indicators", 'mobile_header'); setIsMobileMenuOpen(false); }}
           >
-            Tools
+            Indicators
           </Link>
           <Link
             href="/bot-picker"

@@ -95,8 +95,8 @@ export default function DashboardLayout({
       <aside className="w-full md:w-64 flex-shrink-0 border-b md:border-b-0 md:border-r border-blue-900/40 bg-gradient-to-b from-[#050816] to-[#0f172a] py-6 px-4">
         <div className="space-y-1">
           {navItem(
-            "/dashboard/tools",
-            "Tools",
+            "/dashboard/indicators",
+            "Indicators",
             <svg
               className="w-5 h-5 flex-shrink-0"
               fill="none"

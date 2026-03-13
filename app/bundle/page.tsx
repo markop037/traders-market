@@ -1198,7 +1198,7 @@ export default function BundleInfoPage() {
                         BONUS: Strategy Testing Guide Included
                       </h2>
                       <p className="mt-4 text-gray-300 text-base sm:text-lg leading-relaxed">
-                        Not sure how to test bots? We include a simple guide on how to run backtests in MT4 &amp; MT5, find
+                        Not sure how to test bots? We include a simple guide on how to run backtests in MT5, find
                         the best parameters, and analyze performance even if you’re just starting out.
                       </p>
                     </div>
