@@ -1,12 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ImageLightboxModal } from "../components/ImageLightboxModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { tradingBots } from "@/lib/bot-picker/bots";
-import { logAnalyticsEvent, logCheckoutEvent, logCtaClick, logPdfGuideRequest } from "@/lib/analytics";
 import {
   STRATEGY_LABELS,
   TIMEFRAME_LABELS,
@@ -16,6 +15,7 @@ import {
   FREQUENCY_TAG_COLORS,
   TradingBot,
 } from "@/lib/bot-picker/types";
+import { trackBundleInfoPageViewed, trackStrategyCardExpanded, trackPdfLeadFormViewed, trackPdfGuideRequested } from '@/lib/posthog';
 
 // Lookup map: classificationId → TradingBot
 const botClassification = new Map<string, TradingBot>(
@@ -382,11 +382,10 @@ export default function BundleInfoPage() {
   const router = useRouter();
 
   useEffect(() => {
-    logAnalyticsEvent('bundle_view', { page: 'bundle', price: 259 });
+    trackBundleInfoPageViewed();
   }, []);
 
   const handleGetBundle = () => {
-    logCheckoutEvent('checkout_initiated', 259, 'USD');
     if (user?.email) {
       const checkoutUrl = `https://www.momentumdigital.online/checkout?email=${encodeURIComponent(user.email)}`;
       window.location.href = checkoutUrl;
@@ -599,7 +598,10 @@ export default function BundleInfoPage() {
 
                         {/* Click to read more */}
                         <button
-                          onClick={() => setOpenIndex(isOpen ? null : index)}
+                          onClick={() => {
+                            if (!isOpen) trackStrategyCardExpanded(bot.name);
+                            setOpenIndex(isOpen ? null : index);
+                          }}
                           className={`mt-5 w-full rounded-xl border border-blue-600/15 bg-black/10 px-4 py-3 text-sm font-semibold transition-all duration-300 ${
                             isOpen
                               ? "text-blue-200 hover:text-white hover:border-blue-500/30"
@@ -1338,6 +1340,10 @@ function EmailSubscriptionSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailError, setEmailError] = useState("");
 
+  useEffect(() => {
+    trackPdfLeadFormViewed('bundle');
+  }, []);
+
   const validateEmail = (emailValue: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailValue.trim() || !emailRegex.test(emailValue)) {
@@ -1384,9 +1390,9 @@ function EmailSubscriptionSection() {
         return;
       }
 
+      trackPdfGuideRequested(email, 'bundle');
       setIsSubmitted(true);
       setIsSubmitting(false);
-      logPdfGuideRequest('bundle_page');
 
       // Reset after 5 seconds
       setTimeout(() => {

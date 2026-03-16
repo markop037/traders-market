@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { trackWelcomeModalShown, trackWelcomeModalDismissed, trackPdfLeadFormViewed, trackPdfGuideRequested } from '@/lib/posthog';
 
 const STORAGE_KEY = "traders-market-pdf-modal-seen";
 const SHOW_DELAY_MS = 800;
@@ -22,7 +23,11 @@ export function FirstTimeVisitorModal() {
     if (!isMounted || typeof window === "undefined") return;
     const seen = localStorage.getItem(STORAGE_KEY);
     if (seen) return;
-    const timer = setTimeout(() => setIsOpen(true), SHOW_DELAY_MS);
+    const timer = setTimeout(() => {
+      setIsOpen(true);
+      trackWelcomeModalShown();
+      trackPdfLeadFormViewed('welcome-modal');
+    }, SHOW_DELAY_MS);
     return () => clearTimeout(timer);
   }, [isMounted]);
 
@@ -40,6 +45,7 @@ export function FirstTimeVisitorModal() {
     if (typeof window !== "undefined") {
       localStorage.setItem(STORAGE_KEY, "true");
     }
+    trackWelcomeModalDismissed();
     setIsOpen(false);
   };
 
@@ -77,6 +83,7 @@ export function FirstTimeVisitorModal() {
         return;
       }
 
+      trackPdfGuideRequested(email, 'welcome-modal');
       setIsSubmitted(true);
       setIsSubmitting(false);
       if (typeof window !== "undefined") {

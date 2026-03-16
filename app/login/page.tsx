@@ -9,10 +9,10 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { auth, googleProvider, db } from '@/lib/firebase';
-import { logAuthEvent } from '@/lib/analytics';
 import { measureOperation, TraderMarketTraces } from '@/lib/performance';
 import { trackAuthError, trackFirestoreError } from '@/lib/errorTracking';
 import { useRenderPerformance } from '@/hooks/usePerformance';
+import { trackLoginStarted, trackLoginCompleted, trackLoginFailed } from '@/lib/posthog';
 
 export default function LoginPage() {
   // Track component render performance
@@ -55,6 +55,7 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     setLoading(true);
+    trackLoginStarted('email');
 
     try {
       // Measure login flow performance
@@ -63,9 +64,8 @@ export default function LoginPage() {
         async () => {
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
           await ensureUserDocument(userCredential.user.uid, userCredential.user.email || email);
+          trackLoginCompleted('email', userCredential.user.uid);
           
-          // Log successful login to analytics
-          logAuthEvent('login', 'email');
           // Redirect to /auth/redirect so hasActiveSubscription drives final destination (no /dashboard flash)
           router.replace('/auth/redirect');
         },
@@ -73,6 +73,7 @@ export default function LoginPage() {
       );
     } catch (error: any) {
       console.error('Login error:', error);
+      trackLoginFailed('email', error.message || 'Login failed');
       
       // Track authentication error
       trackAuthError(
@@ -98,6 +99,7 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setError('');
     setLoading(true);
+    trackLoginStarted('google');
 
     try {
       // Measure Google login flow performance
@@ -106,9 +108,8 @@ export default function LoginPage() {
         async () => {
           const result = await signInWithPopup(auth, googleProvider);
           await ensureUserDocument(result.user.uid, result.user.email || '');
+          trackLoginCompleted('google', result.user.uid);
           
-          // Log successful login to analytics
-          logAuthEvent('login', 'google');
           // Redirect to /auth/redirect so hasActiveSubscription drives final destination (no /dashboard flash)
           router.replace('/auth/redirect');
         },
@@ -116,6 +117,7 @@ export default function LoginPage() {
       );
     } catch (error: any) {
       console.error('Google login error:', error);
+      trackLoginFailed('google', error.message || 'Google login failed');
       
       // Track authentication error (except for user cancellation)
       if (error.code !== 'auth/popup-closed-by-user') {

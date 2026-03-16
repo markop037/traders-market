@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { logAnalyticsEvent } from "@/lib/analytics";
+import { trackIndicatorDownloaded, trackDashboardVisited } from '@/lib/posthog';
 
 const INDICATORS = [
   {
@@ -40,15 +40,8 @@ export default function DashboardIndicatorsPage() {
     if (typeof window !== "undefined") {
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     }
+    trackDashboardVisited('indicators');
   }, []);
-
-  useEffect(() => {
-    if (!user) return;
-
-    logAnalyticsEvent("dashboard_access", {
-      page: "indicators",
-    });
-  }, [user]);
 
   const handleDownload = async (indicatorId: string) => {
     if (!user) return;
@@ -68,6 +61,8 @@ export default function DashboardIndicatorsPage() {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || `Download failed (${res.status})`);
       }
+      const indicator = INDICATORS.find((i) => i.id === indicatorId);
+      trackIndicatorDownloaded(indicator?.name || indicatorId, indicatorId);
       const blob = await res.blob();
       const disposition = res.headers.get("Content-Disposition");
       const match = disposition?.match(/filename="?([^";]+)"?/);

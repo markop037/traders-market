@@ -9,7 +9,7 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, googleProvider, db } from '@/lib/firebase';
-import { logAuthEvent } from '@/lib/analytics';
+import { trackSignupStarted, trackSignupCompleted, trackSignupFailed } from '@/lib/posthog';
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -45,14 +45,16 @@ export default function SignUpPage() {
     }
 
     setLoading(true);
+    trackSignupStarted('email');
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await createUserDocument(userCredential.user.uid, userCredential.user.email || email);
-      logAuthEvent('signup', 'email');
+      trackSignupCompleted('email', userCredential.user.uid);
       router.replace('/auth/redirect');
     } catch (error: any) {
       console.error('Sign up error:', error);
+      trackSignupFailed('email', error.message || 'Sign up failed');
       if (error.code === 'auth/email-already-in-use') {
         setError('This email is already registered');
       } else if (error.code === 'auth/invalid-email') {
@@ -70,14 +72,16 @@ export default function SignUpPage() {
   const handleGoogleSignUp = async () => {
     setError('');
     setLoading(true);
+    trackSignupStarted('google');
 
     try {
       const result = await signInWithPopup(auth, googleProvider);
       await createUserDocument(result.user.uid, result.user.email || '');
-      logAuthEvent('signup', 'google');
+      trackSignupCompleted('google', result.user.uid);
       router.replace('/auth/redirect');
     } catch (error: any) {
       console.error('Google sign up error:', error);
+      trackSignupFailed('google', error.message || 'Google sign up failed');
       if (error.code === 'auth/popup-closed-by-user') {
         setError('Sign up cancelled');
       } else {

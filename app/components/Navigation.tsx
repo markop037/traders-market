@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter, usePathname } from "next/navigation";
-import { logNavigationClick } from "@/lib/analytics";
 
 export default function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -16,8 +15,7 @@ export default function Navigation() {
   const pathname = usePathname();
   const userMenuRef = useRef<HTMLDivElement>(null);
 
-  const handleNavLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, source = 'header') => {
-    logNavigationClick(href, source);
+  const handleNavLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (pathname === href) {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -221,35 +219,35 @@ export default function Navigation() {
           <Link
             href="/"
             className="text-sm font-medium text-white transition-colors hover:text-blue-400 hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.7)]"
-            onClick={(e) => { handleNavLinkClick(e, "/", 'mobile_header'); setIsMobileMenuOpen(false); }}
+            onClick={(e) => { handleNavLinkClick(e, "/"); setIsMobileMenuOpen(false); }}
           >
             Home
           </Link>
           <Link
             href="/bundle"
             className="text-sm font-medium text-white transition-colors hover:text-blue-400 hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.7)]"
-            onClick={(e) => { handleNavLinkClick(e, "/bundle", 'mobile_header'); setIsMobileMenuOpen(false); }}
+            onClick={(e) => { handleNavLinkClick(e, "/bundle"); setIsMobileMenuOpen(false); }}
           >
             Bundle Offer
           </Link>
           <Link
             href="/indicators"
             className="text-sm font-medium text-white transition-colors hover:text-blue-400 hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.7)]"
-            onClick={(e) => { handleNavLinkClick(e, "/indicators", 'mobile_header'); setIsMobileMenuOpen(false); }}
+            onClick={(e) => { handleNavLinkClick(e, "/indicators"); setIsMobileMenuOpen(false); }}
           >
             Indicators
           </Link>
           <Link
             href="/bot-picker"
             className="text-sm font-medium text-white transition-colors hover:text-blue-400 hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.7)]"
-            onClick={(e) => { handleNavLinkClick(e, "/bot-picker", 'mobile_header'); setIsMobileMenuOpen(false); }}
+            onClick={(e) => { handleNavLinkClick(e, "/bot-picker"); setIsMobileMenuOpen(false); }}
           >
             Bot Picker
           </Link>
           <Link
             href="/blogs"
             className="text-sm font-medium text-white transition-colors hover:text-blue-400 hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.7)]"
-            onClick={(e) => { handleNavLinkClick(e, "/blogs", 'mobile_header'); setIsMobileMenuOpen(false); }}
+            onClick={(e) => { handleNavLinkClick(e, "/blogs"); setIsMobileMenuOpen(false); }}
           >
             Blogs
           </Link>

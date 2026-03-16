@@ -5,10 +5,17 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { logAnalyticsEvent, logBotDownload, logBotDownloadAll, logCheckoutEvent } from '@/lib/analytics';
 import { measureOperation, TraderMarketTraces } from '@/lib/performance';
 import { trackFirestoreError } from '@/lib/errorTracking';
 import { useRenderPerformance } from '@/hooks/usePerformance';
+import {
+  trackBotDownloaded,
+  trackAllBotsDownloaded,
+  trackDashboardVisited,
+  trackBotsPaywallShown,
+  trackUnlockBotsClicked,
+  trackCheckoutInitiated,
+} from '@/lib/posthog';
 
 // Premium bots (gold styling, shown first)
 const PREMIUM_BOTS = [
@@ -79,6 +86,7 @@ export default function BotsDashboardPage() {
       router.push('/login');
       return;
     }
+    trackDashboardVisited('bots');
 
     const loadSubscriptionStatus = async () => {
       if (user) {
@@ -116,14 +124,6 @@ export default function BotsDashboardPage() {
     loadSubscriptionStatus();
   }, [user, loading, router]);
 
-  useEffect(() => {
-    if (!user || loading || isLoadingStatus) return;
-
-    logAnalyticsEvent('dashboard_access', {
-      page: 'bots',
-    });
-  }, [user, loading, isLoadingStatus]);
-
   if (loading || isLoadingStatus) {
     return (
       <main className="min-h-screen flex items-center justify-center">
@@ -141,6 +141,7 @@ export default function BotsDashboardPage() {
     : CHECKOUT_BASE;
 
   if (!hasPaid) {
+    trackBotsPaywallShown();
     return (
       <main className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl">
@@ -164,7 +165,10 @@ export default function BotsDashboardPage() {
                 href={checkoutHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => logCheckoutEvent('checkout_initiated', 259, 'USD')}
+                onClick={() => {
+                  trackUnlockBotsClicked();
+                  trackCheckoutInitiated('dashboard-bots', checkoutHref);
+                }}
                 className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 px-6 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:from-amber-500 hover:to-amber-400 hover:shadow-amber-500/30 sm:w-auto"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -189,6 +193,7 @@ export default function BotsDashboardPage() {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || `HTTP ${res.status}`);
       }
+      trackAllBotsDownloaded();
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -198,7 +203,6 @@ export default function BotsDashboardPage() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      logBotDownloadAll(PREMIUM_BOTS.length + STRATEGY_BOTS.length);
     } catch (e) {
       setDownloadError(e instanceof Error ? e.message : 'Download failed');
     } finally {
@@ -216,6 +220,8 @@ export default function BotsDashboardPage() {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || `HTTP ${res.status}`);
       }
+      const botName = Object.entries(BOT_NAME_TO_FILE).find(([, f]) => f === filename)?.[0] || filename;
+      trackBotDownloaded(botName);
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -225,8 +231,6 @@ export default function BotsDashboardPage() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      const botName = Object.entries(BOT_NAME_TO_FILE).find(([, f]) => f === filename)?.[0] || filename;
-      logBotDownload(botName, filename);
     } catch (e) {
       setDownloadError(e instanceof Error ? e.message : 'Download failed');
     } finally {

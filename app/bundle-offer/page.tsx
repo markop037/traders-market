@@ -3,8 +3,13 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import { logAnalyticsEvent, logCheckoutEvent, logPdfGuideRequest } from "@/lib/analytics";
-
+import {
+  trackBundleCheckoutPageViewed,
+  trackCheckoutInitiated,
+  trackCheckoutLoginRequired,
+  trackPdfLeadFormViewed,
+  trackPdfGuideRequested,
+} from '@/lib/posthog';
 const CHECKOUT_BASE = "https://www.momentumdigital.online/checkout";
 
 export default function BundleOffer() {
@@ -17,12 +22,12 @@ export default function BundleOffer() {
     : CHECKOUT_BASE;
 
   useEffect(() => {
-    logAnalyticsEvent('bundle_view', { page: 'bundle_offer', price: 259 });
-  }, []);
+    trackBundleCheckoutPageViewed(!!user, hasPaid);
+  }, [user, hasPaid]);
 
   const handlePurchase = () => {
-    logCheckoutEvent('checkout_initiated', 259, 'USD');
     if (!user) {
+      trackCheckoutLoginRequired();
       router.push("/login?redirect=/bundle-offer");
       return;
     }
@@ -30,6 +35,7 @@ export default function BundleOffer() {
       router.push("/dashboard/bots");
       return;
     }
+    trackCheckoutInitiated('bundle-offer', checkoutHref);
     window.open(checkoutHref, "_blank", "noopener,noreferrer");
   };
   return (
@@ -182,6 +188,10 @@ function EmailSubscriptionSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailError, setEmailError] = useState("");
 
+  useEffect(() => {
+    trackPdfLeadFormViewed('bundle-offer');
+  }, []);
+
   const validateEmail = (emailValue: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailValue.trim() || !emailRegex.test(emailValue)) {
@@ -228,9 +238,9 @@ function EmailSubscriptionSection() {
         return;
       }
 
+      trackPdfGuideRequested(email, 'bundle-offer');
       setIsSubmitted(true);
       setIsSubmitting(false);
-      logPdfGuideRequest('bundle_offer_page');
 
       // Reset after 5 seconds
       setTimeout(() => {

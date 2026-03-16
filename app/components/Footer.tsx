@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { logNavigationClick, logExternalLinkClick, logAnalyticsEvent } from "@/lib/analytics";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -12,7 +11,6 @@ export default function Footer() {
   const emailAddress = "admin@tradersmarket.io";
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    logNavigationClick(href, 'footer');
     if (pathname === href) {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -23,7 +21,6 @@ export default function Footer() {
     try {
       await navigator.clipboard.writeText(emailAddress);
       setCopied(true);
-      logAnalyticsEvent('external_link_click', { url: `mailto:${emailAddress}`, label: 'copy_email' });
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy email:", err);
@@ -160,7 +157,6 @@ export default function Footer() {
                 href="https://www.instagram.com/tradersmarket.io?igsh=N280MGY4aG1yZW13"
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => logExternalLinkClick('https://www.instagram.com/tradersmarket.io', 'instagram')}
                 className="flex items-center justify-center w-12 h-12 rounded-lg bg-blue-600/20 border border-blue-600/40 hover:bg-blue-600/30 hover:border-blue-500 transition-all duration-300 hover:scale-110"
                 aria-label="Visit our Instagram"
               >

@@ -2,6 +2,7 @@
 
 import { useEffect, useCallback, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { trackBacktestImageViewed } from '@/lib/posthog';
 
 export type ImageLightboxModalProps = {
   isOpen: boolean;
@@ -34,8 +35,9 @@ export function ImageLightboxModal({
   useEffect(() => {
     if (isOpen) {
       setCurrentIndex(Math.min(Math.max(0, initialIndex), images.length - 1));
+      if (strategyName) trackBacktestImageViewed(strategyName);
     }
-  }, [isOpen, initialIndex, images.length]);
+  }, [isOpen, initialIndex, images.length, strategyName]);
 
   // Lock body scroll when open so page position is preserved on close
   useEffect(() => {

@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { db, auth } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
-import { logAnalyticsEvent } from '@/lib/analytics';
+import { trackDashboardVisited, trackProfileUpdated, trackPasswordChanged } from '@/lib/posthog';
 
 interface UserProfile {
   firstName: string;
@@ -45,15 +45,8 @@ export default function SettingsPage() {
     if (!loading && !user) {
       router.push('/login');
     }
+    trackDashboardVisited('settings');
   }, [user, loading, router]);
-
-  useEffect(() => {
-    if (!user || loading) return;
-
-    logAnalyticsEvent('dashboard_access', {
-      page: 'settings',
-    });
-  }, [user, loading]);
 
   // Store original values for canceling
   const [originalProfile, setOriginalProfile] = useState<UserProfile>({
@@ -136,6 +129,10 @@ export default function SettingsPage() {
       }
 
       // Update original profile state
+      const changedFields = (Object.keys(profileData) as (keyof UserProfile)[]).filter(
+        (key) => profileData[key] !== originalProfile[key],
+      );
+      trackProfileUpdated(changedFields);
       setOriginalProfile(profileData);
 
       setProfileMessage({ type: 'success', text: 'Profile updated successfully!' });
@@ -204,8 +201,8 @@ export default function SettingsPage() {
       if (auth.currentUser) {
         await reauthenticateWithCredential(auth.currentUser, credential);
         
-        // Update password
         await updatePassword(auth.currentUser, newPassword);
+        trackPasswordChanged();
 
         setPasswordMessage({ 
           type: 'success', 

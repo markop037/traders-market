@@ -13,7 +13,13 @@ import {
   TRADE_FREQUENCY_LABELS,
 } from "@/lib/bot-picker/types";
 import { getTopMatches } from "@/lib/bot-picker/matching";
-import { logBotPickerComplete } from "@/lib/analytics";
+import {
+  trackBotPickerStarted,
+  trackBotPickerQuestionAnswered,
+  trackBotPickerCompleted,
+  trackBotPickerReset,
+  trackBotPickerCtaClicked,
+} from '@/lib/posthog';
 
 // ─── Scroll-triggered animation (site-wide pattern) ─────────────────────────
 function useScrollAnimation(
@@ -295,6 +301,7 @@ export default function BotPickerPage() {
 
   const [results, setResults] = useState<BotMatch[] | null>(null);
   const [showResults, setShowResults] = useState(false);
+  const hasStartedRef = useRef(false);
 
   const resultsContainerRef = useRef<HTMLDivElement>(null);
 
@@ -307,18 +314,22 @@ export default function BotPickerPage() {
 
   const canSubmit = answeredCount > 0;
 
+  const trackQuestionIfFirst = () => {
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackBotPickerStarted();
+    }
+  };
+
   const handleFindBots = () => {
     const matches = getTopMatches(preferences, 3);
     setResults(matches);
     setShowResults(true);
-
-    logBotPickerComplete(
-      {
-        strategy: preferences.strategyType || undefined,
-        timeframe: preferences.timeframePreference || undefined,
-        frequency: preferences.tradeFrequency || undefined,
-      },
-      matches.length
+    trackBotPickerCompleted(
+      preferences.strategyType,
+      preferences.timeframePreference,
+      preferences.tradeFrequency,
+      matches[0]?.bot.name || '',
     );
 
     setTimeout(() => {
@@ -337,6 +348,8 @@ export default function BotPickerPage() {
     });
     setResults(null);
     setShowResults(false);
+    hasStartedRef.current = false;
+    trackBotPickerReset();
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -419,13 +432,12 @@ export default function BotPickerPage() {
                   label={label}
                   sublabel={sublabel}
                   selected={preferences.strategyType === value}
-                  onClick={() =>
-                    setPreferences((p) => ({
-                      ...p,
-                      strategyType:
-                        p.strategyType === value ? null : value,
-                    }))
-                  }
+                  onClick={() => {
+                    trackQuestionIfFirst();
+                    const newVal = preferences.strategyType === value ? null : value;
+                    if (newVal) trackBotPickerQuestionAnswered('strategy_type', label);
+                    setPreferences((p) => ({ ...p, strategyType: newVal }));
+                  }}
                 />
               ))}
             </div>
@@ -454,13 +466,12 @@ export default function BotPickerPage() {
                   label={label}
                   sublabel={sublabel}
                   selected={preferences.timeframePreference === value}
-                  onClick={() =>
-                    setPreferences((p) => ({
-                      ...p,
-                      timeframePreference:
-                        p.timeframePreference === value ? null : value,
-                    }))
-                  }
+                  onClick={() => {
+                    trackQuestionIfFirst();
+                    const newVal = preferences.timeframePreference === value ? null : value;
+                    if (newVal) trackBotPickerQuestionAnswered('timeframe', label);
+                    setPreferences((p) => ({ ...p, timeframePreference: newVal }));
+                  }}
                 />
               ))}
             </div>
@@ -489,13 +500,12 @@ export default function BotPickerPage() {
                   label={label}
                   sublabel={sublabel}
                   selected={preferences.tradeFrequency === value}
-                  onClick={() =>
-                    setPreferences((p) => ({
-                      ...p,
-                      tradeFrequency:
-                        p.tradeFrequency === value ? null : value,
-                    }))
-                  }
+                  onClick={() => {
+                    trackQuestionIfFirst();
+                    const newVal = preferences.tradeFrequency === value ? null : value;
+                    if (newVal) trackBotPickerQuestionAnswered('trade_frequency', label);
+                    setPreferences((p) => ({ ...p, tradeFrequency: newVal }));
+                  }}
                 />
               ))}
             </div>
@@ -592,6 +602,7 @@ export default function BotPickerPage() {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link
                   href="/bundle"
+                  onClick={() => trackBotPickerCtaClicked('bundle')}
                   className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:scale-105 border border-blue-600/30"
                 >
                   <span className="relative z-10">

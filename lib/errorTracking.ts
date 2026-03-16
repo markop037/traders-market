@@ -1,4 +1,4 @@
-import { logErrorEvent } from './analytics';
+import { trackErrorEvent } from './posthog';
 
 export interface ErrorInfo {
   message: string;
@@ -34,15 +34,12 @@ class ErrorTracker {
       this.errors.shift();
     }
 
-    // Log to Firebase Analytics
-    logErrorEvent(
+    trackErrorEvent(
       errorWithTimestamp.message,
-      errorWithTimestamp.stack,
-      errorWithTimestamp.code,
-      errorWithTimestamp.severity
+      errorWithTimestamp.severity || 'medium',
+      errorWithTimestamp.context,
     );
 
-    // Also log to console in development
     if (process.env.NODE_ENV === 'development') {
       console.error('Error tracked:', errorWithTimestamp);
     }

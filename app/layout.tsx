@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { MonitoringProvider } from "@/components/MonitoringProvider";
 import { ScrollToTop } from "./components/ScrollToTop";
+import { PostHogProvider } from "@/components/PostHogProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-br from-[#050816] via-[#0f172a] to-[#050816] text-white`}
       >
         <ErrorBoundary>
+          <PostHogProvider>
           <MonitoringProvider>
             <AuthProvider>
               <div className="min-h-screen flex flex-col">
@@ -49,6 +51,7 @@ export default function RootLayout({
               </div>
             </AuthProvider>
           </MonitoringProvider>
+          </PostHogProvider>
         </ErrorBoundary>
       </body>
     </html>

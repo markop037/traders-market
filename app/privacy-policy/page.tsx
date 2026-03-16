@@ -154,25 +154,6 @@ export default function PrivacyPolicy() {
             </p>
 
             <h2 className="text-2xl font-bold text-white mt-8 mb-4">
-              Google
-            </h2>
-            <p>
-              We use Google Analytics on our website.
-            </p>
-            <p>
-              We have implemented the following:
-            </p>
-            <p>
-              Demographics and Interests Reporting
-            </p>
-            <p>
-              We, along with third-party vendors such as Google, use first-party cookies (such as the
-              Google Analytics cookies) and third-party cookies (such as the DoubleClick cookie) or
-              other third-party identifiers together to compile data regarding user interactions with ad
-              impressions, and other ad service functions as they relate to our website.
-            </p>
-
-            <h2 className="text-2xl font-bold text-white mt-8 mb-4">
               California Online Privacy Protection Act
             </h2>
             <p>

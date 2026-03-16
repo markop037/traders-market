@@ -8,12 +8,8 @@ import {
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { 
-  setAnalyticsUserId, 
-  setAnalyticsUserProperties,
-  logAuthEvent 
-} from '@/lib/analytics';
 import { trackAuthError } from '@/lib/errorTracking';
+import { identifyUser, resetUser, trackUserLoggedOut } from '@/lib/posthog';
 
 interface AuthContextType {
   user: User | null;
@@ -49,12 +45,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (!user) {
         setHasActiveSubscription(undefined);
-        setAnalyticsUserId(null);
+        resetUser();
         setLoading(false);
         return;
       }
-
-      setAnalyticsUserId(user.uid);
 
       try {
         const userDocRef = doc(db, 'users', user.uid);
@@ -64,28 +58,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const userData = userDoc.data();
           const paid = userData.hasPaid === true;
           setHasActiveSubscription(paid);
-          setAnalyticsUserProperties({
-            subscription_status: paid ? 'premium' : 'free',
+          identifyUser(user.uid, {
+            email: user.email,
             has_paid: paid,
-            signup_date: userData.createdAt || new Date().toISOString(),
-            email_verified: user.emailVerified,
+            created_at: userData.createdAt,
+            payment_date: userData.paymentDate,
+            payment_amount: userData.paymentAmount,
           });
         } else {
           setHasActiveSubscription(false);
-          setAnalyticsUserProperties({
-            subscription_status: 'free',
-            has_paid: false,
-            email_verified: user.emailVerified,
-          });
+          identifyUser(user.uid, { email: user.email, has_paid: false });
         }
       } catch (error) {
         console.error('Error loading user properties:', error);
         setHasActiveSubscription(false);
-        setAnalyticsUserProperties({
-          subscription_status: 'free',
-          has_paid: false,
-          email_verified: user.emailVerified,
-        });
       }
 
       setLoading(false);
@@ -96,9 +82,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
+      trackUserLoggedOut();
       await firebaseSignOut(auth);
-      // Log the logout event
-      logAuthEvent('logout');
     } catch (error) {
       console.error('Error signing out:', error);
       trackAuthError(

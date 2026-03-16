@@ -5,8 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { ImageLightboxModal } from "./components/ImageLightboxModal";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { logCtaClick, logPdfGuideRequest } from "@/lib/analytics";
-
+import { trackPdfLeadFormViewed, trackPdfGuideRequested, trackCtaClicked } from '@/lib/posthog';
 // Custom hook for scroll-triggered animations
 function useScrollAnimation(options = { threshold: 0.15, rootMargin: '0px 0px -100px 0px' }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -207,7 +206,7 @@ export default function Home() {
               <div className="mt-10 flex justify-center lg:justify-start">
                 <Link
                   href="/bundle"
-                  onClick={() => logCtaClick('Buy for $259', 'home_hero', '/bundle')}
+                  onClick={() => trackCtaClicked('hero_buy_bundle', 'Buy for $259', 'homepage_hero', '/bundle')}
                   className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:scale-105 border border-blue-600/30"
                 >
                   <span className="relative z-10 flex flex-col items-center leading-tight">
@@ -696,7 +695,7 @@ export default function Home() {
                 </p>
                 <Link
                   href="/bundle"
-                  onClick={() => logCtaClick('Get Premium Access Now', 'home_premium_section', '/bundle')}
+                  onClick={() => trackCtaClicked('homepage_premium_access', 'Get Premium Access Now', 'homepage_premium_bots', '/bundle')}
                   className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-amber-600 to-yellow-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:from-amber-500 hover:to-yellow-500 hover:shadow-[0_0_30px_rgba(251,191,36,0.5)] hover:scale-105 border border-amber-500/30"
                 >
                   <span className="relative z-10">Get Premium Access Now</span>
@@ -983,7 +982,7 @@ export default function Home() {
 
                     <Link
                       href="/bot-picker"
-                      onClick={() => logCtaClick('Find My Perfect Bot', 'home_bot_picker_section', '/bot-picker')}
+                      onClick={() => trackCtaClicked('homepage_find_bot', 'Find My Perfect Bot', 'homepage_bot_picker', '/bot-picker')}
                       className="group relative inline-flex items-center gap-2 overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:scale-105 border border-blue-600/30"
                     >
                       <span className="relative z-10">Find My Perfect Bot</span>
@@ -1131,6 +1130,7 @@ export default function Home() {
               >
                 <Link
                   href="/indicators"
+                  onClick={() => trackCtaClicked('homepage_view_toolkit', 'View full toolkit & download', 'homepage_indicators', '/indicators')}
                   className="group inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_24px_rgba(59,130,246,0.5)] hover:scale-[1.02] border border-blue-600/40 sm:px-8 sm:py-3.5 sm:text-base"
                 >
                   View full toolkit &amp; download
@@ -1223,7 +1223,7 @@ export default function Home() {
                    style={{ transitionDelay: isVisible ? '400ms' : '0ms' }}>
                 <Link
                   href="/bundle"
-                  onClick={() => logCtaClick('Get Full Strategy Arsenal', 'home_strategy_section', '/bundle')}
+                  onClick={() => trackCtaClicked('homepage_strategy_arsenal', 'Get Full Strategy Arsenal', 'homepage_strategy_list', '/bundle')}
                   className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:scale-105 border border-blue-600/30"
                 >
                   <span className="relative z-10">Get Full Strategy Arsenal</span>
@@ -1363,7 +1363,7 @@ export default function Home() {
                      style={{ transitionDelay: isVisible ? '200ms' : '0ms' }}>
                   <Link
                     href="/bundle"
-                    onClick={() => logCtaClick('Get the Bundle Now', 'home_test_section', '/bundle')}
+                    onClick={() => trackCtaClicked('homepage_get_bundle', 'Get the Bundle Now', 'homepage_test_yourself', '/bundle')}
                     className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:scale-105 border border-blue-600/30"
                   >
                     <span className="relative z-10">Get the Bundle Now</span>
@@ -1485,6 +1485,10 @@ function EmailSubscriptionSection() {
   const [emailError, setEmailError] = useState("");
   const [ref, isVisible] = useScrollAnimation();
 
+  useEffect(() => {
+    if (isVisible) trackPdfLeadFormViewed('home');
+  }, [isVisible]);
+
   const validateEmail = (emailValue: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailValue.trim() || !emailRegex.test(emailValue)) {
@@ -1531,9 +1535,9 @@ function EmailSubscriptionSection() {
         return;
       }
 
+      trackPdfGuideRequested(email, 'home');
       setIsSubmitted(true);
       setIsSubmitting(false);
-      logPdfGuideRequest('home_page');
 
       // Reset after 5 seconds
       setTimeout(() => {

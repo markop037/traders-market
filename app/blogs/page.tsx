@@ -1,5 +1,21 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { trackBlogPostSelected } from '@/lib/posthog';
+
+const BLOG_SLUGS = [
+  "future-algorithmic-trading-retail-traders",
+  "choose-right-trading-bot-trading-style",
+  "our-story-trading-bots-metatrader5",
+  "common-mistakes-trading-bots-avoid",
+  "logic-behind-trading-bots-transparency",
+  "automated-vs-manual-trading-pros-cons",
+  "risk-management-more-important-strategy",
+  "price-action-improve-trading-strategy",
+  "5-popular-trading-strategies-know",
+  "trading-bots-how-work-metatrader5",
+];
 
 export default function Blogs() {
   const blogPosts = [
@@ -114,189 +130,10 @@ export default function Blogs() {
                 {post.title}
               </h2>
               <p className="text-gray-400 mb-4">{post.excerpt}</p>
-              {index === 0 ? (
+              {BLOG_SLUGS[index] ? (
                 <Link
-                  href="/blogs/future-algorithmic-trading-retail-traders"
-                  className="inline-flex items-center text-sm font-medium text-blue-400 hover:text-[#1e40af] transition-colors cursor-pointer no-underline"
-                >
-                  Read more
-                  <svg
-                    className="ml-2 h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </Link>
-              ) : index === 1 ? (
-                <Link
-                  href="/blogs/choose-right-trading-bot-trading-style"
-                  className="inline-flex items-center text-sm font-medium text-blue-400 hover:text-[#1e40af] transition-colors cursor-pointer no-underline"
-                >
-                  Read more
-                  <svg
-                    className="ml-2 h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </Link>
-              ) : index === 2 ? (
-                <Link
-                  href="/blogs/our-story-trading-bots-metatrader5"
-                  className="inline-flex items-center text-sm font-medium text-blue-400 hover:text-[#1e40af] transition-colors cursor-pointer no-underline"
-                >
-                  Read more
-                  <svg
-                    className="ml-2 h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </Link>
-              ) : index === 3 ? (
-                <Link
-                  href="/blogs/common-mistakes-trading-bots-avoid"
-                  className="inline-flex items-center text-sm font-medium text-blue-400 hover:text-[#1e40af] transition-colors cursor-pointer no-underline"
-                >
-                  Read more
-                  <svg
-                    className="ml-2 h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </Link>
-              ) : index === 4 ? (
-                <Link
-                  href="/blogs/logic-behind-trading-bots-transparency"
-                  className="inline-flex items-center text-sm font-medium text-blue-400 hover:text-[#1e40af] transition-colors cursor-pointer no-underline"
-                >
-                  Read more
-                  <svg
-                    className="ml-2 h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </Link>
-              ) : index === 5 ? (
-                <Link
-                  href="/blogs/automated-vs-manual-trading-pros-cons"
-                  className="inline-flex items-center text-sm font-medium text-blue-400 hover:text-[#1e40af] transition-colors cursor-pointer no-underline"
-                >
-                  Read more
-                  <svg
-                    className="ml-2 h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </Link>
-              ) : index === 6 ? (
-                <Link
-                  href="/blogs/risk-management-more-important-strategy"
-                  className="inline-flex items-center text-sm font-medium text-blue-400 hover:text-[#1e40af] transition-colors cursor-pointer no-underline"
-                >
-                  Read more
-                  <svg
-                    className="ml-2 h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </Link>
-              ) : index === 7 ? (
-                <Link
-                  href="/blogs/price-action-improve-trading-strategy"
-                  className="inline-flex items-center text-sm font-medium text-blue-400 hover:text-[#1e40af] transition-colors cursor-pointer no-underline"
-                >
-                  Read more
-                  <svg
-                    className="ml-2 h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </Link>
-              ) : index === 8 ? (
-                <Link
-                  href="/blogs/5-popular-trading-strategies-know"
-                  className="inline-flex items-center text-sm font-medium text-blue-400 hover:text-[#1e40af] transition-colors cursor-pointer no-underline"
-                >
-                  Read more
-                  <svg
-                    className="ml-2 h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </Link>
-              ) : index === 9 ? (
-                <Link
-                  href="/blogs/trading-bots-how-work-metatrader5"
+                  href={`/blogs/${BLOG_SLUGS[index]}`}
+                  onClick={() => trackBlogPostSelected(BLOG_SLUGS[index], post.title)}
                   className="inline-flex items-center text-sm font-medium text-blue-400 hover:text-[#1e40af] transition-colors cursor-pointer no-underline"
                 >
                   Read more

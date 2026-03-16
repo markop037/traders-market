@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { logCheckoutEvent } from '@/lib/analytics';
+import { trackPaymentCompleted, trackPaymentStatusCheckFailed } from '@/lib/posthog';
 
 function PaymentDoneContent() {
   const { user, loading } = useAuth();
@@ -40,7 +40,11 @@ function PaymentDoneContent() {
           
           if (data.hasPaid === true) {
             setStatus('success');
-            logCheckoutEvent('payment_success', 259, 'USD');
+            trackPaymentCompleted(
+              data.paymentAmount || 259,
+              data.paymentCurrency || 'USD',
+              sessionId!,
+            );
             setTimeout(() => {
               router.push('/dashboard/bots');
             }, 1500);
@@ -58,7 +62,7 @@ function PaymentDoneContent() {
           }, 2000);
         } else {
           setStatus('error');
-          logCheckoutEvent('payment_failed', 259, 'USD', 'Payment verification timed out');
+          trackPaymentStatusCheckFailed(sessionId!, MAX_CHECKS);
         }
       } catch (error) {
         checkCountRef.current += 1;
@@ -69,6 +73,7 @@ function PaymentDoneContent() {
           }, 2000);
         } else {
           setStatus('error');
+          trackPaymentStatusCheckFailed(sessionId!, MAX_CHECKS);
         }
       }
     };
