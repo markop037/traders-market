@@ -9,19 +9,25 @@ const INDICATORS = [
     id: "previous-high-low-toolkit",
     name: "Daily/Weekly/Monthly High/Low Indicator",
     description:
-      "Automatically displays Yesterday, Last Week, and Last Month High/Low levels directly on the chart for quick market reference.",
+      "Displays the previous Daily, Weekly, and Monthly High and Low levels directly on the chart. The indicator automatically marks these key market levels and extends them until the first touch or break, helping traders easily identify important support and resistance zones based on higher-timeframe price action.",
   },
   {
     id: "previous-high-low-toolkit-sessions",
     name: "Session High/Low Indicator",
     description:
-      "Shows High and Low levels for the Asian, London, and New York trading sessions based on their respective timezones.",
+      "Displays the High and Low levels of major trading sessions directly on the chart. The indicator tracks sessions such as New York, London, and Tokyo and marks their price ranges, allowing traders to quickly identify session liquidity zones, potential breakout areas, and important intraday support and resistance levels.",
   },
   {
     id: "session-marker",
     name: "Session Marker Indicator",
     description:
-      "Highlights the Asian, London, and New York trading sessions directly on the chart by coloring the background, making it easy to see when each session is active.",
+      "Highlights the major trading sessions directly on the chart by shading the background for New York, London, and Tokyo sessions. This makes it easy to visually track when each market session is active and identify periods of increased volatility and trading opportunities.",
+  },
+  {
+    id: "atr-stop-loss-indicator",
+    name: "ATR Stop Loss Indicator",
+    description:
+      "Displays volatility-based stop loss levels directly on the chart using the Average True Range (ATR). The indicator calculates and shows multiple ATR-based levels for both BUY and SELL scenarios, helping traders quickly determine logical stop loss distances based on current market volatility.",
   },
 ];
 

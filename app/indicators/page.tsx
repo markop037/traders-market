@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { ImageLightboxModal } from "../components/ImageLightboxModal";
 
 /* ─── Scroll animation (same hook used across the site) ─── */
 
@@ -51,6 +52,125 @@ function AnimatedSection({
   return <div ref={ref}>{children(isVisible)}</div>;
 }
 
+/* ─── Indicator image slider (marketing page only) ─── */
+
+const INDICATOR_IMAGE_BASE: Record<string, string> = {
+  "session-marker": "SessionMarker",
+  "previous-high-low-toolkit-sessions": "SessionHighLow",
+  "previous-high-low-toolkit": "DailyWeeklyMonthlyHighLow",
+  "atr-stop-loss-indicator": "ATRStopLoss",
+};
+
+function getIndicatorImages(id: string) {
+  const base = INDICATOR_IMAGE_BASE[id];
+  if (!base) return [];
+  return [
+    `/Indicators sc/${base}-1.png`,
+    `/Indicators sc/${base}-2.png`,
+  ];
+}
+
+function IndicatorImageSlider({ id, name }: { id: string; name: string }) {
+  const images = getIndicatorImages(id);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+  if (images.length === 0) return null;
+
+  const goToPrevious = () => {
+    setCurrentIndex((prev) =>
+      prev === 0 ? images.length - 1 : prev - 1
+    );
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prev) =>
+      prev === images.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  return (
+    <div className="relative w-full mt-4">
+      <div className="relative aspect-[16/9] rounded-lg overflow-hidden bg-gradient-to-br from-slate-900/90 to-black/90 border border-blue-500/20">
+        <button
+          type="button"
+          onClick={() => setIsLightboxOpen(true)}
+          className="absolute inset-0 flex items-center justify-center w-full h-full cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-inset rounded-lg"
+          aria-label="View image full screen"
+        >
+          <img
+            src={images[currentIndex]}
+            alt={`${name} screenshot ${currentIndex + 1}`}
+            className="w-full h-full object-contain pointer-events-none"
+            loading="lazy"
+          />
+        </button>
+
+        {images.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={goToPrevious}
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm border border-blue-500/30 flex items-center justify-center text-white hover:bg-blue-600/30 hover:border-blue-500/50 transition-all duration-300 group/nav"
+              aria-label="Previous image"
+            >
+              <svg className="w-5 h-5 group-hover/nav:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              onClick={goToNext}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm border border-blue-500/30 flex items-center justify-center text-white hover:bg-blue-600/30 hover:border-blue-500/50 transition-all duration-300 group/nav"
+              aria-label="Next image"
+            >
+              <svg className="w-5 h-5 group-hover/nav:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </>
+        )}
+
+        {images.length > 1 && (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setCurrentIndex(i)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  i === currentIndex
+                    ? "bg-blue-400 w-6"
+                    : "bg-gray-500/50 hover:bg-gray-400/70"
+                }`}
+                aria-label={`Go to slide ${i + 1}`}
+              />
+            ))}
+          </div>
+        )}
+
+        {images.length > 1 && (
+          <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm border border-blue-500/30">
+            <span className="text-xs text-blue-400 font-mono">
+              {currentIndex + 1} / {images.length}
+            </span>
+          </div>
+        )}
+      </div>
+
+      <ImageLightboxModal
+        isOpen={isLightboxOpen}
+        onClose={() => setIsLightboxOpen(false)}
+        images={images}
+        initialIndex={currentIndex}
+        altPrefix={name}
+        strategyName={name}
+      />
+    </div>
+  );
+}
+
 /* ─── Data ─── */
 
 const TOOLS = [
@@ -58,19 +178,25 @@ const TOOLS = [
     id: "previous-high-low-toolkit",
     name: "Daily/Weekly/Monthly High/Low Indicator",
     description:
-      "Automatically displays Yesterday, Last Week, and Last Month High/Low levels directly on the chart for quick market reference.",
+      "Displays the previous Daily, Weekly, and Monthly High and Low levels directly on the chart. The indicator automatically marks these key market levels and extends them until the first touch or break, helping traders easily identify important support and resistance zones based on higher-timeframe price action.",
   },
   {
     id: "previous-high-low-toolkit-sessions",
     name: "Session High/Low Indicator",
     description:
-      "Shows High and Low levels for the Asian, London, and New York trading sessions based on their respective timezones.",
+      "Displays the High and Low levels of major trading sessions directly on the chart. The indicator tracks sessions such as New York, London, and Tokyo and marks their price ranges, allowing traders to quickly identify session liquidity zones, potential breakout areas, and important intraday support and resistance levels.",
   },
   {
     id: "session-marker",
     name: "Session Marker Indicator",
     description:
-      "Highlights the Asian, London, and New York trading sessions directly on the chart by coloring the background, making it easy to see when each session is active.",
+      "Highlights the major trading sessions directly on the chart by shading the background for New York, London, and Tokyo sessions. This makes it easy to visually track when each market session is active and identify periods of increased volatility and trading opportunities.",
+  },
+  {
+    id: "atr-stop-loss-indicator",
+    name: "ATR Stop Loss Indicator",
+    description:
+      "Displays volatility-based stop loss levels directly on the chart using the Average True Range (ATR). The indicator calculates and shows multiple ATR-based levels for both BUY and SELL scenarios, helping traders quickly determine logical stop loss distances based on current market volatility.",
   },
 ];
 
@@ -240,11 +366,11 @@ export default function IndicatorsPage() {
                 All indicators are for MetaTrader&nbsp;5 (.ex5).
               </p>
 
-              <div className="mt-8 grid gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-8 grid gap-6 sm:gap-7 md:grid-cols-2 lg:grid-cols-2">
                 {TOOLS.map((tool, i) => (
                   <div
                     key={tool.id}
-                    className={`group flex flex-col rounded-2xl border border-blue-700/30 bg-gradient-to-br from-blue-950/40 via-[#0b1120] to-blue-900/20 p-5 shadow-[0_0_20px_rgba(15,23,42,0.8)] transition-all duration-700 hover:-translate-y-1 hover:border-blue-500/50 hover:shadow-[0_0_28px_rgba(59,130,246,0.3)] sm:p-6 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+                    className={`group flex flex-col rounded-2xl border border-blue-700/30 bg-gradient-to-br from-blue-950/50 via-[#020617] to-blue-900/40 p-6 shadow-[0_0_24px_rgba(15,23,42,0.9)] transition-all duration-700 hover:-translate-y-1.5 hover:border-blue-500/60 hover:shadow-[0_0_32px_rgba(59,130,246,0.35)] sm:p-7 min-h-[360px] ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
                     style={{
                       transitionDelay: isVisible
                         ? `${200 + i * 120}ms`
@@ -257,6 +383,7 @@ export default function IndicatorsPage() {
                     <h3 className="mt-1.5 text-base font-semibold text-white sm:text-lg">
                       {tool.name}
                     </h3>
+                    <IndicatorImageSlider id={tool.id} name={tool.name} />
                     <p className="mt-3 flex-1 text-sm leading-relaxed text-gray-300">
                       {tool.description}
                     </p>
