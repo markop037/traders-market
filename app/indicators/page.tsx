@@ -61,6 +61,7 @@ const INDICATOR_IMAGE_BASE: Record<string, string> = {
   "atr-stop-loss-indicator": "ATRStopLoss",
   "drawdown-limiter-indicator": "DrawdownLimiter",
   "risk-reward-visualizer-indicator": "RiskRewardVisualizer",
+  "pair-history-analyzer-indicator": "PairHistoryAnalyzer",
 };
 
 function getIndicatorImages(id: string) {
@@ -211,6 +212,12 @@ const TOOLS = [
     name: "Risk Reward Visualizer Indicator",
     description:
       "Displays entry, stop loss, and multiple risk-to-reward target levels (1R, 2R, 3R, 5R) directly on the chart. The indicator dynamically calculates and visualizes trade structure, showing key price levels and an info panel with risk metrics, allowing traders to clearly plan and evaluate trade setups based on risk-to-reward ratios.",
+  },
+  {
+    id: "pair-history-analyzer-indicator",
+    name: "Pair History Analyzer Indicator",
+    description:
+      "Displays comprehensive statistics of closed trades for the current symbol directly on the chart. The indicator analyzes historical performance within a customizable date range and presents key metrics such as total number of trades, win rate, average profit and loss, risk-to-reward ratio, profit factor, and overall net result. With built-in filters for trade direction and flexible display options (pips, currency, or percentage), it helps traders quickly evaluate strategy effectiveness and gain deeper insight into their trading performance.",
   },
 ];
 

@@ -30,6 +30,10 @@ const INDICATOR_TOOLS: Record<string, { r2Key: string; filename: string }> = {
     r2Key: `${R2.INDICATORS_PREFIX}RiskRewardVisualizer.ex5`,
     filename: "RiskRewardVisualizer.ex5",
   },
+  "pair-history-analyzer-indicator": {
+    r2Key: `${R2.INDICATORS_PREFIX}PairHistoryAnalyzer.ex5`,
+    filename: "PairHistoryAnalyzer.ex5",
+  },
 };
 
 async function streamToBuffer(stream: Readable): Promise<Buffer> {
