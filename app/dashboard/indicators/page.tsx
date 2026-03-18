@@ -29,6 +29,20 @@ const INDICATORS = [
     description:
       "Displays volatility-based stop loss levels directly on the chart using the Average True Range (ATR). The indicator calculates and shows multiple ATR-based levels for both BUY and SELL scenarios, helping traders quickly determine logical stop loss distances based on current market volatility.",
   },
+  {
+    id: "drawdown-limiter-indicator",
+    name: "Drawdown Limiter Indicator",
+    downloadFilename: "DrawdownLimiter.ex5",
+    description:
+      "Monitors account equity in real time and tracks both drawdown and profit percentages based on peak or daily reset equity. The indicator displays a customizable on-chart info panel and automatically triggers alerts when predefined risk or profit thresholds are reached, helping traders stay within their risk management rules without executing any trades.",
+  },
+  {
+    id: "risk-reward-visualizer-indicator",
+    name: "Risk Reward Visualizer Indicator",
+    downloadFilename: "RiskRewardVisualizer.ex5",
+    description:
+      "Displays entry, stop loss, and multiple risk-to-reward target levels (1R, 2R, 3R, 5R) directly on the chart. The indicator dynamically calculates and visualizes trade structure, showing key price levels and an info panel with risk metrics, allowing traders to clearly plan and evaluate trade setups based on risk-to-reward ratios.",
+  },
 ];
 
 export default function DashboardIndicatorsPage() {
@@ -66,7 +80,8 @@ export default function DashboardIndicatorsPage() {
       const blob = await res.blob();
       const disposition = res.headers.get("Content-Disposition");
       const match = disposition?.match(/filename="?([^";]+)"?/);
-      const filename = match ? match[1] : `${indicatorId}.ex5`;
+      const filename =
+        indicator?.downloadFilename || (match ? match[1] : `${indicatorId}.ex5`);
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;

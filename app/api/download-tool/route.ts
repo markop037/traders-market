@@ -22,6 +22,14 @@ const INDICATOR_TOOLS: Record<string, { r2Key: string; filename: string }> = {
     r2Key: `${R2.INDICATORS_PREFIX}ATR StopLoss Indicator.ex5`,
     filename: "ATR StopLoss Indicator.ex5",
   },
+  "drawdown-limiter-indicator": {
+    r2Key: `${R2.INDICATORS_PREFIX}DrawdownLimiter.ex5`,
+    filename: "DrawdownLimiter.ex5",
+  },
+  "risk-reward-visualizer-indicator": {
+    r2Key: `${R2.INDICATORS_PREFIX}RiskRewardVisualizer.ex5`,
+    filename: "RiskRewardVisualizer.ex5",
+  },
 };
 
 async function streamToBuffer(stream: Readable): Promise<Buffer> {

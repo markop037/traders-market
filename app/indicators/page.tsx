@@ -59,6 +59,8 @@ const INDICATOR_IMAGE_BASE: Record<string, string> = {
   "previous-high-low-toolkit-sessions": "SessionHighLow",
   "previous-high-low-toolkit": "DailyWeeklyMonthlyHighLow",
   "atr-stop-loss-indicator": "ATRStopLoss",
+  "drawdown-limiter-indicator": "DrawdownLimiter",
+  "risk-reward-visualizer-indicator": "RiskRewardVisualizer",
 };
 
 function getIndicatorImages(id: string) {
@@ -197,6 +199,18 @@ const TOOLS = [
     name: "ATR Stop Loss Indicator",
     description:
       "Displays volatility-based stop loss levels directly on the chart using the Average True Range (ATR). The indicator calculates and shows multiple ATR-based levels for both BUY and SELL scenarios, helping traders quickly determine logical stop loss distances based on current market volatility.",
+  },
+  {
+    id: "drawdown-limiter-indicator",
+    name: "Drawdown Limiter Indicator",
+    description:
+      "Monitors account equity in real time and tracks both drawdown and profit percentages based on peak or daily reset equity. The indicator displays a customizable on-chart info panel and automatically triggers alerts when predefined risk or profit thresholds are reached, helping traders stay within their risk management rules without executing any trades.",
+  },
+  {
+    id: "risk-reward-visualizer-indicator",
+    name: "Risk Reward Visualizer Indicator",
+    description:
+      "Displays entry, stop loss, and multiple risk-to-reward target levels (1R, 2R, 3R, 5R) directly on the chart. The indicator dynamically calculates and visualizes trade structure, showing key price levels and an info panel with risk metrics, allowing traders to clearly plan and evaluate trade setups based on risk-to-reward ratios.",
   },
 ];
 
