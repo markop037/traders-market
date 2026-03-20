@@ -64,26 +64,94 @@ function HeroImageCarousel() {
   const slideCount = slides.length;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [shift, setShift] = useState<-1 | 0 | 1>(0);
+  const [isTransitionEnabled, setIsTransitionEnabled] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [direction, setDirection] = useState<-1 | 0 | 1>(0);
+  const hasHandledTransitionRef = useRef(false);
+  const transitionMs = 700;
+
+  const prevIndex = (currentIndex - 1 + slideCount) % slideCount;
+  const nextIndex = (currentIndex + 1) % slideCount;
+
+  const moveBy = (delta: -1 | 1) => {
+    if (slideCount <= 1 || isAnimating || !isTransitionEnabled) return;
+    hasHandledTransitionRef.current = false;
+    setIsAnimating(true);
+    setDirection(delta);
+    // Next moves track left; previous moves track right.
+    setShift(delta === 1 ? -1 : 1);
+  };
 
   useEffect(() => {
-    if (isPaused || slideCount <= 1) return;
+    if (isPaused || slideCount <= 1 || isAnimating || !isTransitionEnabled) return;
 
     const intervalId = window.setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % slideCount);
+      moveBy(1);
     }, 5000);
 
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [isPaused, slideCount]);
+  }, [isPaused, slideCount, isAnimating, isTransitionEnabled]);
 
   const goToPrevious = () => {
-    setCurrentIndex((prev) => (prev === 0 ? slideCount - 1 : prev - 1));
+    moveBy(-1);
   };
 
   const goToNext = () => {
-    setCurrentIndex((prev) => (prev === slideCount - 1 ? 0 : prev + 1));
+    moveBy(1);
   };
+
+  const handleTrackTransitionEnd = () => {
+    if (slideCount <= 1 || !isAnimating || hasHandledTransitionRef.current) return;
+    hasHandledTransitionRef.current = true;
+
+    setIsTransitionEnabled(false);
+    setCurrentIndex((prev) => {
+      if (direction === 1) return (prev + 1) % slideCount;
+      if (direction === -1) return (prev - 1 + slideCount) % slideCount;
+      return prev;
+    });
+    setShift(0);
+    setDirection(0);
+  };
+
+  useEffect(() => {
+    if (isTransitionEnabled) return;
+
+    const timeoutId = window.setTimeout(() => {
+      setIsTransitionEnabled(true);
+      setIsAnimating(false);
+      hasHandledTransitionRef.current = false;
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [isTransitionEnabled]);
+
+  useEffect(() => {
+    if (slideCount <= 1) return;
+    setIsTransitionEnabled(true);
+    setIsAnimating(false);
+    setShift(0);
+    setDirection(0);
+    setCurrentIndex(0);
+  }, [slideCount]);
+
+  if (slideCount <= 1) {
+    return (
+      <div className="relative z-10 w-full aspect-[4/3]" aria-label="Hero image">
+        <div className="relative w-full h-full overflow-hidden bg-[#050816]">
+          <img
+            src={slides[0].src}
+            alt={slides[0].alt}
+            className="w-full h-full object-contain block"
+            draggable={false}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -96,28 +164,25 @@ function HeroImageCarousel() {
       aria-label="Hero images"
     >
       <div className="relative w-full h-full overflow-hidden bg-[#050816]">
-        <div
-          className="flex h-full transition-transform duration-700 ease-in-out"
-          style={{
-            // Explicit track sizing prevents flex-basis ambiguity and keeps slide steps consistent.
-            width: `${slideCount * 100}%`,
-            transform: `translateX(-${currentIndex * (100 / slideCount)}%)`,
-          }}
-        >
-          {slides.map((slide) => (
+        {[prevIndex, currentIndex, nextIndex].map((slideIndex, slotIndex) => {
+          const slot = slotIndex - 1; // -1: prev, 0: current, 1: next
+          const slide = slides[slideIndex];
+          return (
             <img
-              key={slide.src}
+              key={`${slide.src}-${slot}`}
               src={slide.src}
               alt={slide.alt}
-              className="flex-none w-full h-full object-contain block origin-center"
+              className="absolute inset-0 w-full h-full object-contain block origin-center ease-in-out"
               style={{
-                width: `${100 / slideCount}%`,
-                margin: "0 auto",
+                transform: `translateX(${(slot + shift) * 100}%)`,
+                transitionProperty: "transform",
+                transitionDuration: isTransitionEnabled ? `${transitionMs}ms` : "0ms",
               }}
+              onTransitionEnd={handleTrackTransitionEnd}
               draggable={false}
             />
-          ))}
-        </div>
+          );
+        })}
 
         {slideCount > 1 && (
           <>
