@@ -87,7 +87,7 @@ function HeroImageCarousel() {
 
   return (
     <div
-      className="absolute inset-0 z-10"
+      className="relative z-10 w-full aspect-[4/3]"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onFocusCapture={() => setIsPaused(true)}
@@ -95,23 +95,27 @@ function HeroImageCarousel() {
       aria-roledescription="carousel"
       aria-label="Hero images"
     >
-      <div className="relative w-full h-full overflow-hidden">
+      <div className="relative w-full h-full overflow-hidden bg-[#050816]">
         <div
           className="flex h-full transition-transform duration-700 ease-in-out"
           style={{
-            // Each slide is `w-full` (100% of the viewport), so translating by 100% works.
-            transform: `translateX(-${currentIndex * 100}%)`,
+            // Explicit track sizing prevents flex-basis ambiguity and keeps slide steps consistent.
+            width: `${slideCount * 100}%`,
+            transform: `translateX(-${currentIndex * (100 / slideCount)}%)`,
           }}
         >
           {slides.map((slide) => (
-            <div key={slide.src} className="w-full h-full flex-none">
-              <img
-                src={slide.src}
-                alt={slide.alt}
-                className="w-full h-full object-contain bg-black/10"
-                draggable={false}
-              />
-            </div>
+            <img
+              key={slide.src}
+              src={slide.src}
+              alt={slide.alt}
+              className="flex-none w-full h-full object-contain block origin-center"
+              style={{
+                width: `${100 / slideCount}%`,
+                margin: "0 auto",
+              }}
+              draggable={false}
+            />
           ))}
         </div>
 
@@ -121,7 +125,7 @@ function HeroImageCarousel() {
               type="button"
               onClick={goToPrevious}
               aria-label="Previous hero image"
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm border border-blue-500/30 flex items-center justify-center text-white hover:bg-blue-600/30 hover:border-blue-500/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm border border-blue-500/30 flex items-center justify-center text-white hover:bg-blue-600/30 hover:border-blue-500/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 pointer-events-auto touch-manipulation"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M15 19l-7-7 7-7" />
@@ -132,7 +136,7 @@ function HeroImageCarousel() {
               type="button"
               onClick={goToNext}
               aria-label="Next hero image"
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm border border-blue-500/30 flex items-center justify-center text-white hover:bg-blue-600/30 hover:border-blue-500/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm border border-blue-500/30 flex items-center justify-center text-white hover:bg-blue-600/30 hover:border-blue-500/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 pointer-events-auto touch-manipulation"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 5l7 7-7 7" />
@@ -323,7 +327,7 @@ export default function Home() {
                 
                 {/* Professional Trading Dashboard */}
                 <div className="relative rounded-2xl bg-gradient-to-br from-slate-950/95 via-[#0a0e27]/95 to-slate-950/95 p-6 backdrop-blur-sm border border-blue-600/40 overflow-hidden shadow-lg">
-                  <div className="relative w-full aspect-[4/3]">
+                  <div className="relative w-full">
                     <HeroImageCarousel />
                     {/* Reduced overlays so the wallpaper stays bright/clear */}
                     <div className="absolute inset-0 z-0 bg-gradient-to-br from-slate-950/25 via-[#0a0e27]/18 to-slate-950/25"></div>
@@ -336,9 +340,9 @@ export default function Home() {
           </div>
 
           {/* Decorative elements - Darker blue with dark purple */}
-          <div className="absolute top-0 left-0 w-72 h-72 bg-blue-800/12 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-blob"></div>
-          <div className="absolute top-0 right-0 w-72 h-72 bg-blue-800/10 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-blob animation-delay-2000"></div>
-          <div className="absolute bottom-0 left-1/2 w-72 h-72 bg-blue-800/12 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-blob animation-delay-4000"></div>
+          <div className="absolute top-0 left-0 w-72 h-72 bg-blue-800/12 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-blob pointer-events-none"></div>
+          <div className="absolute top-0 right-0 w-72 h-72 bg-blue-800/10 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-blob animation-delay-2000 pointer-events-none"></div>
+          <div className="absolute bottom-0 left-1/2 w-72 h-72 bg-blue-800/12 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-blob animation-delay-4000 pointer-events-none"></div>
         </section>
         )}
       </AnimatedSection>
