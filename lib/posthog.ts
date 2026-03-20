@@ -9,7 +9,9 @@ export function initPostHog() {
   posthog.init(POSTHOG_KEY, {
     api_host: POSTHOG_HOST,
     person_profiles: 'identified_only',
-    capture_pageview: true,
+    // We manually emit `$pageview` on Next.js route changes (see `components/PostHogProvider.tsx`).
+    // Keeping PostHog's built-in capture disabled avoids duplicate `$pageview` events.
+    capture_pageview: false,
     capture_pageleave: true,
     autocapture: true,
   });
@@ -138,6 +140,14 @@ export function trackPdfLeadFormViewed(page: string) {
 }
 
 export function trackPdfGuideRequested(email: string, page: string) {
+  // Set/refresh email on the current (possibly anonymous) person so it’s available in PostHog before signup.
+  // When the user later signs up, `identifyUser()` will map the anonymous session onto their account id.
+  if (email) {
+    posthog.setPersonProperties({
+      email,
+      lead_page: page,
+    });
+  }
   capture('pdf_guide_requested', { email, page });
 }
 

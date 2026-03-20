@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { trackPaymentCompleted, trackPaymentStatusCheckFailed } from '@/lib/posthog';
+import { identifyUser, trackPaymentCompleted, trackPaymentStatusCheckFailed } from '@/lib/posthog';
 
 function PaymentDoneContent() {
   const { user, loading } = useAuth();
@@ -40,6 +40,16 @@ function PaymentDoneContent() {
           
           if (data.hasPaid === true) {
             setStatus('success');
+
+            // Payment completed happened without an auth state change, so re-identify to update PostHog person properties.
+            identifyUser(user.uid, {
+              email: user.email,
+              has_paid: true,
+              created_at: data.createdAt,
+              payment_date: data.paymentDate,
+              payment_amount: data.paymentAmount,
+            });
+
             trackPaymentCompleted(
               data.paymentAmount || 259,
               data.paymentCurrency || 'USD',
@@ -149,7 +159,26 @@ function PaymentDoneContent() {
                       const userDocRef = doc(db, 'users', user!.uid);
                       getDoc(userDocRef).then((userDoc) => {
                         if (userDoc.exists() && userDoc.data().hasPaid === true) {
+                          const data = userDoc.data();
+
                           setStatus('success');
+
+                          // Payment eventually became available after the initial polling window.
+                          // Emit `payment_completed` so funnels remain complete.
+                          identifyUser(user!.uid, {
+                            email: user!.email,
+                            has_paid: true,
+                            created_at: data.createdAt,
+                            payment_date: data.paymentDate,
+                            payment_amount: data.paymentAmount,
+                          });
+
+                          trackPaymentCompleted(
+                            data.paymentAmount || 259,
+                            data.paymentCurrency || 'USD',
+                            sessionId!,
+                          );
+
                           setTimeout(() => router.push('/dashboard/bots'), 1500);
                         } else {
                           setStatus('error');

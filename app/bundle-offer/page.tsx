@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import {
@@ -13,7 +13,7 @@ import {
 const CHECKOUT_BASE = "https://www.momentumdigital.online/checkout";
 
 export default function BundleOffer() {
-  const { user, hasActiveSubscription } = useAuth();
+  const { user, hasActiveSubscription, loading } = useAuth();
   const router = useRouter();
 
   const hasPaid = hasActiveSubscription === true;
@@ -21,9 +21,24 @@ export default function BundleOffer() {
     ? `${CHECKOUT_BASE}?email=${encodeURIComponent(user.email)}`
     : CHECKOUT_BASE;
 
+  const hasTrackedBundleCheckoutPageViewedRef = useRef(false);
   useEffect(() => {
-    trackBundleCheckoutPageViewed(!!user, hasPaid);
-  }, [user, hasPaid]);
+    if (hasTrackedBundleCheckoutPageViewedRef.current) return;
+    if (loading) return;
+
+    // At this point, AuthContext finished resolving auth status.
+    if (!user) {
+      hasTrackedBundleCheckoutPageViewedRef.current = true;
+      trackBundleCheckoutPageViewed(false, false);
+      return;
+    }
+
+    // Logged-in case: hasActiveSubscription should be a boolean once loading=false.
+    if (hasActiveSubscription === undefined) return;
+
+    hasTrackedBundleCheckoutPageViewedRef.current = true;
+    trackBundleCheckoutPageViewed(true, hasPaid);
+  }, [user, hasPaid, hasActiveSubscription, loading]);
 
   const handlePurchase = () => {
     if (!user) {

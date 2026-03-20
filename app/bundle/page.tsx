@@ -15,7 +15,13 @@ import {
   FREQUENCY_TAG_COLORS,
   TradingBot,
 } from "@/lib/bot-picker/types";
-import { trackBundleInfoPageViewed, trackStrategyCardExpanded, trackPdfLeadFormViewed, trackPdfGuideRequested } from '@/lib/posthog';
+import {
+  trackBundleInfoPageViewed,
+  trackStrategyCardExpanded,
+  trackPdfLeadFormViewed,
+  trackPdfGuideRequested,
+  trackCheckoutInitiated,
+} from '@/lib/posthog';
 
 // Lookup map: classificationId → TradingBot
 const botClassification = new Map<string, TradingBot>(
@@ -388,6 +394,7 @@ export default function BundleInfoPage() {
   const handleGetBundle = () => {
     if (user?.email) {
       const checkoutUrl = `https://www.momentumdigital.online/checkout?email=${encodeURIComponent(user.email)}`;
+      trackCheckoutInitiated('bundle', checkoutUrl);
       window.location.href = checkoutUrl;
     } else {
       router.push('/bundle-offer');

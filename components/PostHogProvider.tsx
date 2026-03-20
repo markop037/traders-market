@@ -1,17 +1,18 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import { PostHogProvider as PHProvider } from 'posthog-js/react';
 import { initPostHog, POSTHOG_KEY } from '@/lib/posthog';
 import { Suspense } from 'react';
 
-function PostHogPageView() {
+function PostHogPageView({ enabled }: { enabled: boolean }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   useEffect(() => {
+    if (!enabled) return;
     if (pathname && posthog) {
       let url = window.origin + pathname;
       if (searchParams?.toString()) {
@@ -19,14 +20,16 @@ function PostHogPageView() {
       }
       posthog.capture('$pageview', { $current_url: url });
     }
-  }, [pathname, searchParams]);
+  }, [enabled, pathname, searchParams]);
 
   return null;
 }
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
+  const [isPostHogReady, setIsPostHogReady] = useState(false);
   useEffect(() => {
     initPostHog();
+    setIsPostHogReady(true);
   }, []);
 
   if (!POSTHOG_KEY) {
@@ -36,7 +39,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
   return (
     <PHProvider client={posthog}>
       <Suspense fallback={null}>
-        <PostHogPageView />
+        <PostHogPageView enabled={isPostHogReady} />
       </Suspense>
       {children}
     </PHProvider>

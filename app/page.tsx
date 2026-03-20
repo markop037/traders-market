@@ -53,6 +53,102 @@ function AnimatedSection({ children }: { children: (isVisible: boolean) => React
   return <div ref={ref}>{children(isVisible)}</div>;
 }
 
+// Hero carousel: 3-slide, auto-rotating with manual arrow navigation
+function HeroImageCarousel() {
+  const slides = [
+    { src: "/Premium%20Bots%20sc.png", alt: "Premium Bots" },
+    { src: "/Standard%20Bots%20sc.png", alt: "Standard Bots" },
+    { src: "/Indicators%20sc.png", alt: "Indicators" },
+  ] as const;
+
+  const slideCount = slides.length;
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (isPaused || slideCount <= 1) return;
+
+    const intervalId = window.setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % slideCount);
+    }, 5000);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [isPaused, slideCount]);
+
+  const goToPrevious = () => {
+    setCurrentIndex((prev) => (prev === 0 ? slideCount - 1 : prev - 1));
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prev) => (prev === slideCount - 1 ? 0 : prev + 1));
+  };
+
+  return (
+    <div
+      className="absolute inset-0 z-10"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocusCapture={() => setIsPaused(true)}
+      onBlurCapture={() => setIsPaused(false)}
+      aria-roledescription="carousel"
+      aria-label="Hero images"
+    >
+      <div className="relative w-full h-full overflow-hidden">
+        <div
+          className="flex h-full transition-transform duration-700 ease-in-out"
+          style={{
+            // Each slide is `w-full` (100% of the viewport), so translating by 100% works.
+            transform: `translateX(-${currentIndex * 100}%)`,
+          }}
+        >
+          {slides.map((slide) => (
+            <div key={slide.src} className="w-full h-full flex-none">
+              <img
+                src={slide.src}
+                alt={slide.alt}
+                className="w-full h-full object-contain bg-black/10"
+                draggable={false}
+              />
+            </div>
+          ))}
+        </div>
+
+        {slideCount > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={goToPrevious}
+              aria-label="Previous hero image"
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm border border-blue-500/30 flex items-center justify-center text-white hover:bg-blue-600/30 hover:border-blue-500/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              onClick={goToNext}
+              aria-label="Next hero image"
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm border border-blue-500/30 flex items-center justify-center text-white hover:bg-blue-600/30 hover:border-blue-500/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </>
+        )}
+      </div>
+
+      <div className="sr-only" aria-live="polite">
+        Slide {currentIndex + 1} of {slideCount}
+      </div>
+    </div>
+  );
+}
+
 // Image Carousel Component for Backtesting Results (optional currencyLabel e.g. EURUSD / GBPUSD, strategyName for lightbox)
 function ImageCarousel({ images, altPrefix, currencyLabel, strategyName }: { images: string[]; altPrefix: string; currencyLabel?: string; strategyName?: string }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -189,7 +285,7 @@ export default function Home() {
         {(isVisible) => (
           <section className="relative overflow-hidden bg-gradient-to-br from-[#050816] via-[#0f172a] via-[#0f1f4a] to-[#0a0e27]">
             <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-32">
-              <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+            <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16 items-center">
                 {/* Left Column - Text Content */}
                 <div className={`text-center lg:text-left transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                   <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
@@ -228,14 +324,10 @@ export default function Home() {
                 {/* Professional Trading Dashboard */}
                 <div className="relative rounded-2xl bg-gradient-to-br from-slate-950/95 via-[#0a0e27]/95 to-slate-950/95 p-6 backdrop-blur-sm border border-blue-600/40 overflow-hidden shadow-lg">
                   <div className="relative w-full aspect-[4/3]">
-                    <img
-                      src="/forex-trading-wallpaper.png"
-                      alt="Forex trading wallpaper"
-                      className="absolute inset-0 h-full w-full object-cover"
-                    />
+                    <HeroImageCarousel />
                     {/* Reduced overlays so the wallpaper stays bright/clear */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-slate-950/25 via-[#0a0e27]/18 to-slate-950/25"></div>
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-blue-500/5"></div>
+                    <div className="absolute inset-0 z-0 bg-gradient-to-br from-slate-950/25 via-[#0a0e27]/18 to-slate-950/25"></div>
+                    <div className="absolute inset-0 z-0 bg-gradient-to-r from-blue-500/5 via-transparent to-blue-500/5"></div>
                   </div>
                   </div>
                 </div>

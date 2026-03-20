@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
@@ -76,6 +76,7 @@ export default function BotsDashboardPage() {
   const router = useRouter();
   const [hasPaid, setHasPaid] = useState<boolean>(false);
   const [isLoadingStatus, setIsLoadingStatus] = useState(true);
+  const hasTrackedPaywallShownRef = useRef(false);
   const [expandedStrategyIndex, setExpandedStrategyIndex] = useState<number | null>(null);
   const [downloadingAll, setDownloadingAll] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
@@ -124,6 +125,16 @@ export default function BotsDashboardPage() {
     loadSubscriptionStatus();
   }, [user, loading, router]);
 
+  // Ensure paywall impression is tracked only once per page visit.
+  useEffect(() => {
+    if (loading || isLoadingStatus) return;
+    if (!user) return;
+    if (hasPaid === false && !hasTrackedPaywallShownRef.current) {
+      hasTrackedPaywallShownRef.current = true;
+      trackBotsPaywallShown();
+    }
+  }, [loading, isLoadingStatus, user, hasPaid]);
+
   if (loading || isLoadingStatus) {
     return (
       <main className="min-h-screen flex items-center justify-center">
@@ -141,7 +152,6 @@ export default function BotsDashboardPage() {
     : CHECKOUT_BASE;
 
   if (!hasPaid) {
-    trackBotsPaywallShown();
     return (
       <main className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl">
