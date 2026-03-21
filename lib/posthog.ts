@@ -65,6 +65,9 @@ export function trackUserLoggedOut() {
   capture('user_logged_out');
 }
 
+/** UX path where the user opened external checkout (funnel filtering in PostHog). */
+export type CheckoutInitiatedSource = 'bundle' | 'bundle-offer' | 'dashboard-bots';
+
 // Purchase / checkout events
 export function trackBundleInfoPageViewed() {
   capture('bundle_info_page_viewed');
@@ -74,16 +77,44 @@ export function trackBundleCheckoutPageViewed(isLoggedIn: boolean, hasPaid: bool
   capture('bundle_checkout_page_viewed', { is_logged_in: isLoggedIn, has_paid: hasPaid });
 }
 
-export function trackCheckoutInitiated(source: string, checkoutUrl: string) {
-  capture('checkout_initiated', { source, is_external: true, checkout_url: checkoutUrl });
+export function trackCheckoutInitiated(source: CheckoutInitiatedSource, checkoutUrl: string) {
+  capture('checkout_initiated', {
+    source,
+    is_external: true,
+    checkout_url: checkoutUrl,
+  });
+}
+
+/**
+ * Logged-in user on /dashboard/bots with locked bots clicked through to external checkout.
+ * Use with `checkout_initiated` (source `dashboard-bots`) for paywall → checkout funnels.
+ */
+export function trackBotsDashboardPaywallCheckoutClicked(checkoutUrl: string) {
+  capture('bots_dashboard_paywall_checkout_clicked', {
+    source: 'dashboard-bots',
+    has_paid: false,
+    is_external_checkout: true,
+    checkout_url: checkoutUrl,
+  });
 }
 
 export function trackCheckoutLoginRequired() {
   capture('checkout_login_required');
 }
 
+/** Dedupe `payment_completed` per Stripe/session id (polling, Strict Mode, retries). */
+const paymentCompletedForSessionId = new Set<string>();
+
 export function trackPaymentCompleted(amount: number, currency: string, sessionId: string) {
-  capture('payment_completed', { amount, currency, session_id: sessionId });
+  if (paymentCompletedForSessionId.has(sessionId)) return;
+  paymentCompletedForSessionId.add(sessionId);
+
+  capture('payment_completed', {
+    amount,
+    currency,
+    session_id: sessionId,
+    confirmation_path: 'payment_done',
+  });
 }
 
 export function trackPaymentStatusCheckFailed(sessionId: string, retries: number) {

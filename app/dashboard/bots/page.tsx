@@ -15,6 +15,7 @@ import {
   trackBotsPaywallShown,
   trackUnlockBotsClicked,
   trackCheckoutInitiated,
+  trackBotsDashboardPaywallCheckoutClicked,
 } from '@/lib/posthog';
 
 // Premium bots (gold styling, shown first)
@@ -176,6 +177,7 @@ export default function BotsDashboardPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => {
+                  trackBotsDashboardPaywallCheckoutClicked(checkoutHref);
                   trackUnlockBotsClicked();
                   trackCheckoutInitiated('dashboard-bots', checkoutHref);
                 }}
