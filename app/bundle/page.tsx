@@ -20,7 +20,6 @@ import {
   trackStrategyCardExpanded,
   trackPdfLeadFormViewed,
   trackPdfGuideRequested,
-  trackCheckoutInitiated,
 } from '@/lib/posthog';
 
 // Lookup map: classificationId → TradingBot
@@ -394,7 +393,6 @@ export default function BundleInfoPage() {
   const handleGetBundle = () => {
     if (user?.email) {
       const checkoutUrl = `https://www.momentumdigital.online/checkout?email=${encodeURIComponent(user.email)}`;
-      trackCheckoutInitiated('bundle', checkoutUrl);
       window.location.href = checkoutUrl;
     } else {
       router.push('/bundle-offer');

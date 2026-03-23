@@ -14,7 +14,6 @@ import {
   trackDashboardVisited,
   trackBotsPaywallShown,
   trackUnlockBotsClicked,
-  trackCheckoutInitiated,
   trackBotsDashboardPaywallCheckoutClicked,
 } from '@/lib/posthog';
 
@@ -179,7 +178,6 @@ export default function BotsDashboardPage() {
                 onClick={() => {
                   trackBotsDashboardPaywallCheckoutClicked(checkoutHref);
                   trackUnlockBotsClicked();
-                  trackCheckoutInitiated('dashboard-bots', checkoutHref);
                 }}
                 className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 px-6 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:from-amber-500 hover:to-amber-400 hover:shadow-amber-500/30 sm:w-auto"
               >

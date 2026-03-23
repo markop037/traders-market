@@ -65,9 +65,6 @@ export function trackUserLoggedOut() {
   capture('user_logged_out');
 }
 
-/** UX path where the user opened external checkout (funnel filtering in PostHog). */
-export type CheckoutInitiatedSource = 'bundle' | 'bundle-offer' | 'dashboard-bots';
-
 // Purchase / checkout events
 export function trackBundleInfoPageViewed() {
   capture('bundle_info_page_viewed');
@@ -77,9 +74,13 @@ export function trackBundleCheckoutPageViewed(isLoggedIn: boolean, hasPaid: bool
   capture('bundle_checkout_page_viewed', { is_logged_in: isLoggedIn, has_paid: hasPaid });
 }
 
-export function trackCheckoutInitiated(source: CheckoutInitiatedSource, checkoutUrl: string) {
+/**
+ * `checkout_initiated` is intentionally restricted to the `/bundle-offer` CTA flow.
+ * Call only after confirming user is logged in and unpaid.
+ */
+export function trackCheckoutInitiated(checkoutUrl: string) {
   capture('checkout_initiated', {
-    source,
+    source: 'bundle-offer',
     is_external: true,
     checkout_url: checkoutUrl,
   });
@@ -87,7 +88,7 @@ export function trackCheckoutInitiated(source: CheckoutInitiatedSource, checkout
 
 /**
  * Logged-in user on /dashboard/bots with locked bots clicked through to external checkout.
- * Use with `checkout_initiated` (source `dashboard-bots`) for paywall → checkout funnels.
+ * Use this event itself for paywall → external checkout click funnels.
  */
 export function trackBotsDashboardPaywallCheckoutClicked(checkoutUrl: string) {
   capture('bots_dashboard_paywall_checkout_clicked', {

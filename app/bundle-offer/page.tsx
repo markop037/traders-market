@@ -50,7 +50,7 @@ export default function BundleOffer() {
       router.push("/dashboard/bots");
       return;
     }
-    trackCheckoutInitiated('bundle-offer', checkoutHref);
+    trackCheckoutInitiated(checkoutHref);
     window.open(checkoutHref, "_blank", "noopener,noreferrer");
   };
   return (
