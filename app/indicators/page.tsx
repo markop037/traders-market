@@ -8,7 +8,7 @@ import { ImageLightboxModal } from "../components/ImageLightboxModal";
 /* ─── Scroll animation (same hook used across the site) ─── */
 
 function useScrollAnimation(
-  options = { threshold: 0.15, rootMargin: "0px 0px -100px 0px" }
+  options = { threshold: 0, rootMargin: "0px 0px 0px 0px" }
 ) {
   const [isVisible, setIsVisible] = useState(false);
   const hasAnimated = useRef(false);
@@ -49,7 +49,11 @@ function AnimatedSection({
   children: (isVisible: boolean) => React.ReactNode;
 }) {
   const [ref, isVisible] = useScrollAnimation();
-  return <div ref={ref}>{children(isVisible)}</div>;
+  return (
+    <div ref={ref} className="w-full min-w-0">
+      {children(isVisible)}
+    </div>
+  );
 }
 
 /* ─── Indicator image slider (marketing page only) ─── */
@@ -68,10 +72,8 @@ const INDICATOR_IMAGE_BASE: Record<string, string> = {
 function getIndicatorImages(id: string) {
   const base = INDICATOR_IMAGE_BASE[id];
   if (!base) return [];
-  return [
-    `/Indicators sc/${base}-1.png`,
-    `/Indicators sc/${base}-2.png`,
-  ];
+  const folder = encodeURI("/Indicators sc");
+  return [`${folder}/${base}-1.png`, `${folder}/${base}-2.png`];
 }
 
 function IndicatorImageSlider({ id, name }: { id: string; name: string }) {
@@ -94,8 +96,8 @@ function IndicatorImageSlider({ id, name }: { id: string; name: string }) {
   };
 
   return (
-    <div className="relative w-full mt-4">
-      <div className="relative aspect-[16/9] rounded-lg overflow-hidden bg-gradient-to-br from-slate-900/90 to-black/90 border border-blue-500/20">
+    <div className="relative mt-4 w-full min-w-0 max-w-full">
+      <div className="relative aspect-[16/9] w-full max-w-full rounded-lg overflow-hidden bg-gradient-to-br from-slate-900/90 to-black/90 border border-blue-500/20">
         <button
           type="button"
           onClick={() => setIsLightboxOpen(true)}
@@ -105,8 +107,9 @@ function IndicatorImageSlider({ id, name }: { id: string; name: string }) {
           <img
             src={images[currentIndex]}
             alt={`${name} screenshot ${currentIndex + 1}`}
-            className="w-full h-full object-contain pointer-events-none"
+            className="max-h-full max-w-full h-full w-full object-contain pointer-events-none"
             loading="lazy"
+            decoding="async"
           />
         </button>
 
@@ -275,17 +278,17 @@ export default function IndicatorsPage() {
   const ctaLabelShort = user ? "Go to Downloads" : "Create Free Account";
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#050816] via-[#050816] to-[#020617]">
+    <div className="min-h-screen w-full min-w-0 max-w-[100vw] overflow-x-clip bg-gradient-to-b from-[#050816] via-[#050816] to-[#020617]">
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden border-b border-blue-900/40">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-32 left-1/2 h-72 w-[42rem] -translate-x-1/2 rounded-full bg-blue-700/20 blur-3xl" />
+      <section className="relative overflow-x-clip border-b border-blue-900/40">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -top-32 left-1/2 h-72 w-[min(42rem,100vw)] max-w-[100vw] -translate-x-1/2 rounded-full bg-blue-700/20 blur-3xl" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(59,130,246,0.12),transparent_60%)]" />
         </div>
 
         <div
           ref={heroRef}
-          className="relative mx-auto max-w-3xl px-4 pt-24 pb-16 text-center sm:px-6 sm:pt-28 sm:pb-20 lg:pt-32 lg:pb-24"
+          className="relative mx-auto w-full min-w-0 max-w-3xl px-4 pt-24 pb-16 text-center sm:px-6 sm:pt-28 sm:pb-20 lg:pt-32 lg:pb-24"
         >
           <p
             className={`inline-flex items-center rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-blue-200/90 transition-all duration-700 ${heroVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
@@ -345,9 +348,9 @@ export default function IndicatorsPage() {
       {/* ── What You Get ── */}
       <AnimatedSection>
         {(isVisible) => (
-          <section className="relative border-b border-blue-900/40 bg-gradient-to-b from-[#020617] to-[#050816] py-14 sm:py-20 lg:py-24">
+          <section className="relative overflow-x-clip border-b border-blue-900/40 bg-gradient-to-b from-[#020617] to-[#050816] py-14 sm:py-20 lg:py-24">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.08),transparent_55%)]" />
-            <div className="relative mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+            <div className="relative mx-auto w-full min-w-0 max-w-3xl px-4 sm:px-6 lg:px-8">
               <h2
                 className={`text-2xl font-bold text-white sm:text-3xl transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
               >
@@ -379,9 +382,9 @@ export default function IndicatorsPage() {
       {/* ── Indicator List ── */}
       <AnimatedSection>
         {(isVisible) => (
-          <section className="relative border-b border-blue-900/40 bg-gradient-to-b from-[#050816] to-[#020617] py-14 sm:py-20 lg:py-24">
+          <section className="relative overflow-x-clip border-b border-blue-900/40 bg-gradient-to-b from-[#050816] to-[#020617] py-14 sm:py-20 lg:py-24">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(15,118,110,0.1),transparent_60%)] opacity-70" />
-            <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+            <div className="relative mx-auto w-full min-w-0 max-w-5xl px-4 sm:px-6 lg:px-8">
               <h2
                 className={`text-2xl font-bold text-white sm:text-3xl transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
               >
@@ -394,11 +397,11 @@ export default function IndicatorsPage() {
                 All indicators are for MetaTrader&nbsp;5 (.ex5).
               </p>
 
-              <div className="mt-8 grid gap-6 sm:gap-7 md:grid-cols-2 lg:grid-cols-2">
+              <div className="mt-8 grid grid-cols-1 gap-6 sm:gap-7 md:grid-cols-2">
                 {TOOLS.map((tool, i) => (
                   <div
                     key={tool.id}
-                    className={`group flex flex-col rounded-2xl border border-blue-700/30 bg-gradient-to-br from-blue-950/50 via-[#020617] to-blue-900/40 p-6 shadow-[0_0_24px_rgba(15,23,42,0.9)] transition-all duration-700 hover:-translate-y-1.5 hover:border-blue-500/60 hover:shadow-[0_0_32px_rgba(59,130,246,0.35)] sm:p-7 min-h-[360px] ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+                    className={`group flex min-h-0 min-w-0 flex-col rounded-2xl border border-blue-700/30 bg-gradient-to-br from-blue-950/50 via-[#020617] to-blue-900/40 p-6 shadow-[0_0_24px_rgba(15,23,42,0.9)] transition-all duration-700 hover:-translate-y-1.5 hover:border-blue-500/60 hover:shadow-[0_0_32px_rgba(59,130,246,0.35)] sm:p-7 min-h-[360px] ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
                     style={{
                       transitionDelay: isVisible
                         ? `${200 + i * 120}ms`
@@ -412,7 +415,7 @@ export default function IndicatorsPage() {
                       {tool.name}
                     </h3>
                     <IndicatorImageSlider id={tool.id} name={tool.name} />
-                    <p className="mt-3 flex-1 text-sm leading-relaxed text-gray-300">
+                    <p className="mt-3 flex-1 break-words text-sm leading-relaxed text-gray-300">
                       {tool.description}
                     </p>
                     <div className="mt-5 flex items-center justify-between border-t border-blue-900/40 pt-4">
@@ -434,8 +437,8 @@ export default function IndicatorsPage() {
       {/* ── Who This Is For ── */}
       <AnimatedSection>
         {(isVisible) => (
-          <section className="relative border-b border-blue-900/40 bg-gradient-to-b from-[#020617] to-[#050816] py-14 sm:py-20 lg:py-24">
-            <div className="relative mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <section className="relative overflow-x-clip border-b border-blue-900/40 bg-gradient-to-b from-[#020617] to-[#050816] py-14 sm:py-20 lg:py-24">
+            <div className="relative mx-auto w-full min-w-0 max-w-3xl px-4 sm:px-6 lg:px-8">
               <h2
                 className={`text-2xl font-bold text-white sm:text-3xl transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
               >
@@ -467,9 +470,9 @@ export default function IndicatorsPage() {
       {/* ── How It Works ── */}
       <AnimatedSection>
         {(isVisible) => (
-          <section className="relative border-b border-blue-900/40 bg-gradient-to-b from-[#050816] to-[#020617] py-14 sm:py-20 lg:py-24">
+          <section className="relative overflow-x-clip border-b border-blue-900/40 bg-gradient-to-b from-[#050816] to-[#020617] py-14 sm:py-20 lg:py-24">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.06),transparent_55%)]" />
-            <div className="relative mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+            <div className="relative mx-auto w-full min-w-0 max-w-3xl px-4 sm:px-6 lg:px-8">
               <h2
                 className={`text-2xl font-bold text-white sm:text-3xl transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
               >
@@ -509,11 +512,11 @@ export default function IndicatorsPage() {
       {/* ── Final CTA ── */}
       <AnimatedSection>
         {(isVisible) => (
-          <section className="relative border-b border-blue-900/40 bg-gradient-to-b from-[#020617] to-[#050816] py-14 sm:py-20 lg:py-24">
-            <div className="pointer-events-none absolute inset-0">
-              <div className="absolute bottom-0 left-1/2 h-60 w-[36rem] -translate-x-1/2 rounded-full bg-blue-700/10 blur-3xl" />
+          <section className="relative overflow-x-clip border-b border-blue-900/40 bg-gradient-to-b from-[#020617] to-[#050816] py-14 sm:py-20 lg:py-24">
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+              <div className="absolute bottom-0 left-1/2 h-60 w-[min(36rem,100vw)] max-w-[100vw] -translate-x-1/2 rounded-full bg-blue-700/10 blur-3xl" />
             </div>
-            <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
+            <div className="relative mx-auto w-full min-w-0 max-w-3xl px-4 text-center sm:px-6 lg:px-8">
               <h2
                 className={`text-2xl font-bold text-white sm:text-3xl transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
               >
@@ -551,8 +554,8 @@ export default function IndicatorsPage() {
       {/* ── Trust ── */}
       <AnimatedSection>
         {(isVisible) => (
-          <section className="py-14 sm:py-20 lg:py-24">
-            <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
+          <section className="overflow-x-clip py-14 sm:py-20 lg:py-24">
+            <div className="mx-auto w-full min-w-0 max-w-3xl px-4 text-center sm:px-6 lg:px-8">
               <div
                 className={`rounded-2xl border border-blue-900/30 bg-blue-950/20 px-5 py-7 transition-all duration-700 sm:px-6 sm:py-8 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
               >
@@ -568,6 +571,6 @@ export default function IndicatorsPage() {
           </section>
         )}
       </AnimatedSection>
-    </main>
+    </div>
   );
 }

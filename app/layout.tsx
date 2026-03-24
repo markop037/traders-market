@@ -43,7 +43,7 @@ export default function RootLayout({
               <div className="min-h-screen flex flex-col">
                 <ScrollToTop />
                 <Navigation />
-                <main className="flex-1 w-full">
+                <main className="flex min-h-0 min-w-0 flex-1 flex-col w-full">
                   {children}
                 </main>
                 <Footer />
