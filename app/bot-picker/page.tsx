@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import {
   UserPreferences,
@@ -20,40 +20,7 @@ import {
   trackBotPickerReset,
   trackBotPickerCtaClicked,
 } from '@/lib/posthog';
-
-// ─── Scroll-triggered animation (site-wide pattern) ─────────────────────────
-function useScrollAnimation(
-  options = { threshold: 0.15, rootMargin: "0px 0px -100px 0px" }
-) {
-  const [isVisible, setIsVisible] = useState(false);
-  const hasAnimated = useRef(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const optionsRef = useRef(options);
-
-  useEffect(() => {
-    optionsRef.current = options;
-  }, [options.threshold, options.rootMargin]);
-
-  useEffect(() => {
-    if (hasAnimated.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          setIsVisible(true);
-          hasAnimated.current = true;
-        }
-      },
-      optionsRef.current
-    );
-    const el = ref.current;
-    if (el) observer.observe(el);
-    return () => {
-      if (el) observer.unobserve(el);
-    };
-  }, []);
-
-  return [ref, isVisible] as const;
-}
+import { useScrollReveal, reveal } from "@/lib/scrollReveal";
 
 // ─── Option Card (reusable radio-style selector) ────────────────────────────
 function OptionCard({
@@ -287,10 +254,9 @@ function ResultCard({
 
 // ─── Main Page ───────────────────────────────────────────────────────────────
 export default function BotPickerPage() {
-  const [heroRef, heroVisible] = useScrollAnimation();
-  const [resultsRef, resultsVisible] = useScrollAnimation({
-    threshold: 0.05,
-    rootMargin: "0px",
+  const [heroRef, heroVisible, heroAnimateEntrance] = useScrollReveal({
+    threshold: 0,
+    rootMargin: "0px 0px 0px 0px",
   });
 
   const [preferences, setPreferences] = useState<UserPreferences>({
@@ -301,6 +267,12 @@ export default function BotPickerPage() {
 
   const [results, setResults] = useState<BotMatch[] | null>(null);
   const [showResults, setShowResults] = useState(false);
+
+  const [resultsRef, resultsVisible, resultsAnimateEntrance] = useScrollReveal({
+    threshold: 0.05,
+    rootMargin: "0px",
+    observeKey: showResults,
+  });
   const hasStartedRef = useRef(false);
 
   const resultsContainerRef = useRef<HTMLDivElement>(null);
@@ -367,11 +339,7 @@ export default function BotPickerPage() {
           className="mx-auto max-w-4xl px-4 pt-20 pb-12 sm:px-6 lg:px-8"
         >
           <div
-            className={`text-center transition-all duration-700 ${
-              heroVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-4"
-            }`}
+            className={`text-center ${reveal(heroVisible, heroAnimateEntrance)("opacity-0 translate-y-4", "opacity-100 translate-y-0")}`}
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/20 to-blue-600/20 border border-blue-500/30 mb-6">
               <svg
@@ -567,11 +535,7 @@ export default function BotPickerPage() {
           >
             {/* Results Header */}
             <div
-              className={`text-center mb-10 transition-all duration-700 ${
-                resultsVisible
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-4"
-              }`}
+              className={`text-center mb-10 ${reveal(resultsVisible, resultsAnimateEntrance)("opacity-0 translate-y-4", "opacity-100 translate-y-0")}`}
             >
               <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
                 Your Top Matches

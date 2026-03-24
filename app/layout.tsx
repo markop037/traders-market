@@ -40,15 +40,16 @@ export default function RootLayout({
           <PostHogProvider>
           <MonitoringProvider>
             <AuthProvider>
-              <div className="min-h-screen flex flex-col">
-                <ScrollToTop />
-                <Navigation />
-                <main className="flex min-h-0 min-w-0 flex-1 flex-col w-full">
-                  {children}
-                </main>
-                <Footer />
-                <FirstTimeVisitorModal />
-              </div>
+              <ScrollToTop>
+                <div className="min-h-screen flex flex-col">
+                  <Navigation />
+                  <main className="flex min-h-0 min-w-0 flex-1 flex-col w-full">
+                    {children}
+                  </main>
+                  <Footer />
+                  <FirstTimeVisitorModal />
+                </div>
+              </ScrollToTop>
             </AuthProvider>
           </MonitoringProvider>
           </PostHogProvider>

@@ -4,57 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { ImageLightboxModal } from "../components/ImageLightboxModal";
-
-/* ─── Scroll animation (same hook used across the site) ─── */
-
-function useScrollAnimation(
-  options = { threshold: 0, rootMargin: "0px 0px 0px 0px" }
-) {
-  const [isVisible, setIsVisible] = useState(false);
-  const hasAnimated = useRef(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const optionsRef = useRef(options);
-
-  useEffect(() => {
-    optionsRef.current = options;
-  }, [options.threshold, options.rootMargin]);
-
-  useEffect(() => {
-    if (hasAnimated.current) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          setIsVisible(true);
-          hasAnimated.current = true;
-        }
-      },
-      optionsRef.current
-    );
-
-    const currentRef = ref.current;
-    if (currentRef) observer.observe(currentRef);
-
-    return () => {
-      if (currentRef) observer.unobserve(currentRef);
-    };
-  }, []);
-
-  return [ref, isVisible] as const;
-}
-
-function AnimatedSection({
-  children,
-}: {
-  children: (isVisible: boolean) => React.ReactNode;
-}) {
-  const [ref, isVisible] = useScrollAnimation();
-  return (
-    <div ref={ref} className="w-full min-w-0">
-      {children(isVisible)}
-    </div>
-  );
-}
+import { AnimatedSection, reveal } from "@/lib/scrollReveal";
 
 /* ─── Indicator image slider (marketing page only) ─── */
 
@@ -261,7 +211,6 @@ const AUDIENCE = [
 export default function IndicatorsPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
-  const [heroRef, heroVisible] = useScrollAnimation();
 
   const handleCtaClick = () => {
     if (loading) return;
@@ -286,41 +235,27 @@ export default function IndicatorsPage() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(59,130,246,0.12),transparent_60%)]" />
         </div>
 
-        <div
-          ref={heroRef}
-          className="relative mx-auto w-full min-w-0 max-w-3xl px-4 pt-24 pb-16 text-center sm:px-6 sm:pt-28 sm:pb-20 lg:pt-32 lg:pb-24"
-        >
-          <p
-            className={`inline-flex items-center rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-blue-200/90 transition-all duration-700 ${heroVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
-          >
+        <div className="relative mx-auto w-full min-w-0 max-w-3xl px-4 pt-24 pb-16 text-center sm:px-6 sm:pt-28 sm:pb-20 lg:pt-32 lg:pb-24">
+          <p className="inline-flex items-center rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-blue-200/90">
             MT5 Trader Toolkit
           </p>
 
-          <h1
-            className={`mt-5 text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl transition-all duration-700 ${heroVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
-            style={{ transitionDelay: heroVisible ? "100ms" : "0ms" }}
-          >
+          <h1 className="mt-5 text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl">
             Free MT5 Trader Toolkit
           </h1>
-          <p
-            className={`mx-auto mt-5 max-w-2xl text-base leading-relaxed text-gray-300 sm:text-lg transition-all duration-700 ${heroVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
-            style={{ transitionDelay: heroVisible ? "200ms" : "0ms" }}
-          >
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-gray-300 sm:text-lg">
             Download a bundle of practical indicators and utilities for
             MetaTrader&nbsp;5 — designed for discretionary traders.
             <br className="hidden sm:block" />
             Sessions markers, drawdown limiters, trade analytics and more.
           </p>
 
-          <div
-            className={`mt-8 flex flex-col items-center gap-3 transition-all duration-700 ${heroVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
-            style={{ transitionDelay: heroVisible ? "300ms" : "0ms" }}
-          >
+          <div className="mt-8 flex flex-col items-center gap-3">
             <button
               type="button"
               onClick={handleCtaClick}
               disabled={loading}
-              className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_24px_rgba(59,130,246,0.5)] hover:scale-[1.02] border border-blue-600/40 disabled:opacity-50 disabled:cursor-not-allowed sm:px-8 sm:py-3.5 sm:text-base"
+              className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-6 py-3 text-sm font-semibold text-white transition-[transform,box-shadow,background-color] duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_24px_rgba(59,130,246,0.5)] hover:scale-[1.02] border border-blue-600/40 disabled:opacity-50 disabled:cursor-not-allowed sm:px-8 sm:py-3.5 sm:text-base"
             >
               {ctaLabel}
             </button>
@@ -329,10 +264,7 @@ export default function IndicatorsPage() {
             </p>
           </div>
 
-          <div
-            className={`mt-7 flex flex-col items-center gap-2 text-sm text-gray-300 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-6 sm:gap-y-2 transition-all duration-700 ${heroVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
-            style={{ transitionDelay: heroVisible ? "400ms" : "0ms" }}
-          >
+          <div className="mt-7 flex flex-col items-center gap-2 text-sm text-gray-300 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-6 sm:gap-y-2">
             {["MT5 compatible", "Free lifetime access", "Simple installation guide"].map((label) => (
               <span key={label} className="flex items-center gap-1.5">
                 <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-300 text-[10px] border border-emerald-500/30">
@@ -345,54 +277,45 @@ export default function IndicatorsPage() {
         </div>
       </section>
 
-      {/* ── What You Get ── */}
-      <AnimatedSection>
-        {(isVisible) => (
-          <section className="relative overflow-x-clip border-b border-blue-900/40 bg-gradient-to-b from-[#020617] to-[#050816] py-14 sm:py-20 lg:py-24">
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.08),transparent_55%)]" />
-            <div className="relative mx-auto w-full min-w-0 max-w-3xl px-4 sm:px-6 lg:px-8">
-              <h2
-                className={`text-2xl font-bold text-white sm:text-3xl transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
-              >
-                What You Get
-              </h2>
-              <div
-                className={`mt-5 space-y-4 text-sm leading-relaxed text-gray-300 sm:text-base transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
-                style={{ transitionDelay: isVisible ? "150ms" : "0ms" }}
-              >
-                <p>
-                  This bundle contains a set of useful MetaTrader&nbsp;5
-                  indicators and utilities that help traders analyze markets and
-                  manage risk.
-                </p>
-                <p>
-                  These tools were built for active FX and futures traders who
-                  want practical chart tools without unnecessary complexity.
-                </p>
-                <p>
-                  You can download the entire bundle after creating a free
-                  TradersMarket account.
-                </p>
-              </div>
-            </div>
-          </section>
-        )}
-      </AnimatedSection>
+      {/* ── What You Get (no scroll-in: often visible with hero on first paint) ── */}
+      <section className="relative overflow-x-clip border-b border-blue-900/40 bg-gradient-to-b from-[#020617] to-[#050816] py-14 sm:py-20 lg:py-24">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.08),transparent_55%)]" />
+        <div className="relative mx-auto w-full min-w-0 max-w-3xl px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-white sm:text-3xl">
+            What You Get
+          </h2>
+          <div className="mt-5 space-y-4 text-sm leading-relaxed text-gray-300 sm:text-base">
+            <p>
+              This bundle contains a set of useful MetaTrader&nbsp;5
+              indicators and utilities that help traders analyze markets and
+              manage risk.
+            </p>
+            <p>
+              These tools were built for active FX and futures traders who
+              want practical chart tools without unnecessary complexity.
+            </p>
+            <p>
+              You can download the entire bundle after creating a free
+              TradersMarket account.
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* ── Indicator List ── */}
       <AnimatedSection>
-        {(isVisible) => (
+        {({ isVisible, animateEntrance }) => (
           <section className="relative overflow-x-clip border-b border-blue-900/40 bg-gradient-to-b from-[#050816] to-[#020617] py-14 sm:py-20 lg:py-24">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(15,118,110,0.1),transparent_60%)] opacity-70" />
             <div className="relative mx-auto w-full min-w-0 max-w-5xl px-4 sm:px-6 lg:px-8">
               <h2
-                className={`text-2xl font-bold text-white sm:text-3xl transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+                className={`text-2xl font-bold text-white sm:text-3xl ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")}`}
               >
                 Included Indicators
               </h2>
               <p
-                className={`mt-2 text-sm text-gray-400 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
-                style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}
+                className={`mt-2 text-sm text-gray-400 ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")}`}
+                style={{ transitionDelay: isVisible && animateEntrance ? "100ms" : "0ms" }}
               >
                 All indicators are for MetaTrader&nbsp;5 (.ex5).
               </p>
@@ -401,11 +324,12 @@ export default function IndicatorsPage() {
                 {TOOLS.map((tool, i) => (
                   <div
                     key={tool.id}
-                    className={`group flex min-h-0 min-w-0 flex-col rounded-2xl border border-blue-700/30 bg-gradient-to-br from-blue-950/50 via-[#020617] to-blue-900/40 p-6 shadow-[0_0_24px_rgba(15,23,42,0.9)] transition-all duration-700 hover:-translate-y-1.5 hover:border-blue-500/60 hover:shadow-[0_0_32px_rgba(59,130,246,0.35)] sm:p-7 min-h-[360px] ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+                    className={`group flex min-h-0 min-w-0 flex-col rounded-2xl border border-blue-700/30 bg-gradient-to-br from-blue-950/50 via-[#020617] to-blue-900/40 p-6 shadow-[0_0_24px_rgba(15,23,42,0.9)] hover:-translate-y-1.5 hover:border-blue-500/60 hover:shadow-[0_0_32px_rgba(59,130,246,0.35)] sm:p-7 min-h-[360px] ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")} hover:transition-[opacity,transform,box-shadow] hover:duration-300`}
                     style={{
-                      transitionDelay: isVisible
-                        ? `${200 + i * 120}ms`
-                        : "0ms",
+                      transitionDelay:
+                        isVisible && animateEntrance
+                          ? `${200 + i * 120}ms`
+                          : "0ms",
                     }}
                   >
                     <p className="text-[11px] uppercase tracking-wide text-blue-300/80">
@@ -436,11 +360,11 @@ export default function IndicatorsPage() {
 
       {/* ── Who This Is For ── */}
       <AnimatedSection>
-        {(isVisible) => (
+        {({ isVisible, animateEntrance }) => (
           <section className="relative overflow-x-clip border-b border-blue-900/40 bg-gradient-to-b from-[#020617] to-[#050816] py-14 sm:py-20 lg:py-24">
             <div className="relative mx-auto w-full min-w-0 max-w-3xl px-4 sm:px-6 lg:px-8">
               <h2
-                className={`text-2xl font-bold text-white sm:text-3xl transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+                className={`text-2xl font-bold text-white sm:text-3xl ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")}`}
               >
                 Built For MT5 Traders Who:
               </h2>
@@ -448,11 +372,12 @@ export default function IndicatorsPage() {
                 {AUDIENCE.map((item, i) => (
                   <li
                     key={i}
-                    className={`flex items-start gap-3 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+                    className={`flex items-start gap-3 ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-4", "opacity-100 translate-y-0")}`}
                     style={{
-                      transitionDelay: isVisible
-                        ? `${150 + i * 100}ms`
-                        : "0ms",
+                      transitionDelay:
+                        isVisible && animateEntrance
+                          ? `${150 + i * 100}ms`
+                          : "0ms",
                     }}
                   >
                     <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/30 text-[11px]">
@@ -469,12 +394,12 @@ export default function IndicatorsPage() {
 
       {/* ── How It Works ── */}
       <AnimatedSection>
-        {(isVisible) => (
+        {({ isVisible, animateEntrance }) => (
           <section className="relative overflow-x-clip border-b border-blue-900/40 bg-gradient-to-b from-[#050816] to-[#020617] py-14 sm:py-20 lg:py-24">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.06),transparent_55%)]" />
             <div className="relative mx-auto w-full min-w-0 max-w-3xl px-4 sm:px-6 lg:px-8">
               <h2
-                className={`text-2xl font-bold text-white sm:text-3xl transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+                className={`text-2xl font-bold text-white sm:text-3xl ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")}`}
               >
                 How It Works
               </h2>
@@ -483,11 +408,12 @@ export default function IndicatorsPage() {
                 {STEPS.map((step, i) => (
                   <div
                     key={step.number}
-                    className={`flex items-start gap-3 rounded-xl border border-blue-900/30 bg-blue-950/20 p-4 transition-all duration-700 hover:border-blue-800/40 sm:gap-4 sm:p-5 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+                    className={`flex items-start gap-3 rounded-xl border border-blue-900/30 bg-blue-950/20 p-4 sm:gap-4 sm:p-5 hover:border-blue-800/40 ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")} hover:transition-colors hover:duration-300`}
                     style={{
-                      transitionDelay: isVisible
-                        ? `${150 + i * 120}ms`
-                        : "0ms",
+                      transitionDelay:
+                        isVisible && animateEntrance
+                          ? `${150 + i * 120}ms`
+                          : "0ms",
                     }}
                   >
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-emerald-500/40 bg-emerald-500/10 text-sm font-semibold text-emerald-300 sm:h-9 sm:w-9">
@@ -511,34 +437,34 @@ export default function IndicatorsPage() {
 
       {/* ── Final CTA ── */}
       <AnimatedSection>
-        {(isVisible) => (
+        {({ isVisible, animateEntrance }) => (
           <section className="relative overflow-x-clip border-b border-blue-900/40 bg-gradient-to-b from-[#020617] to-[#050816] py-14 sm:py-20 lg:py-24">
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
               <div className="absolute bottom-0 left-1/2 h-60 w-[min(36rem,100vw)] max-w-[100vw] -translate-x-1/2 rounded-full bg-blue-700/10 blur-3xl" />
             </div>
             <div className="relative mx-auto w-full min-w-0 max-w-3xl px-4 text-center sm:px-6 lg:px-8">
               <h2
-                className={`text-2xl font-bold text-white sm:text-3xl transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+                className={`text-2xl font-bold text-white sm:text-3xl ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")}`}
               >
                 Download the Free MT5 Trader Toolkit
               </h2>
               <p
-                className={`mt-4 text-sm text-gray-300 sm:text-base transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
-                style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}
+                className={`mt-4 text-sm text-gray-300 sm:text-base ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")}`}
+                style={{ transitionDelay: isVisible && animateEntrance ? "100ms" : "0ms" }}
               >
                 Sessions markers, risk tools, analytics and more — all designed
                 for active traders.
               </p>
 
               <div
-                className={`mt-8 flex flex-col items-center gap-3 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
-                style={{ transitionDelay: isVisible ? "200ms" : "0ms" }}
+                className={`mt-8 flex flex-col items-center gap-3 ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")}`}
+                style={{ transitionDelay: isVisible && animateEntrance ? "200ms" : "0ms" }}
               >
                 <button
                   type="button"
                   onClick={handleCtaClick}
                   disabled={loading}
-                  className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_24px_rgba(59,130,246,0.5)] hover:scale-[1.02] border border-blue-600/40 disabled:opacity-50 disabled:cursor-not-allowed sm:px-8 sm:py-3.5 sm:text-base"
+                  className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-6 py-3 text-sm font-semibold text-white transition-[transform,box-shadow,background-color] duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_24px_rgba(59,130,246,0.5)] hover:scale-[1.02] border border-blue-600/40 disabled:opacity-50 disabled:cursor-not-allowed sm:px-8 sm:py-3.5 sm:text-base"
                 >
                   {ctaLabelShort}
                 </button>
@@ -553,11 +479,11 @@ export default function IndicatorsPage() {
 
       {/* ── Trust ── */}
       <AnimatedSection>
-        {(isVisible) => (
+        {({ isVisible, animateEntrance }) => (
           <section className="overflow-x-clip py-14 sm:py-20 lg:py-24">
             <div className="mx-auto w-full min-w-0 max-w-3xl px-4 text-center sm:px-6 lg:px-8">
               <div
-                className={`rounded-2xl border border-blue-900/30 bg-blue-950/20 px-5 py-7 transition-all duration-700 sm:px-6 sm:py-8 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+                className={`rounded-2xl border border-blue-900/30 bg-blue-950/20 px-5 py-7 sm:px-6 sm:py-8 ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")}`}
               >
                 <p className="text-sm font-medium text-gray-300">
                   No upsells. No hidden payments.

@@ -9,8 +9,9 @@ import { useRouter, usePathname } from "next/navigation";
 export default function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, signOut, hasActiveSubscription } = useAuth();
   const dashboardHref = "/dashboard";
+  const bundleHref = "/bundle";
   const router = useRouter();
   const pathname = usePathname();
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -125,17 +126,31 @@ export default function Navigation() {
                 </div>
               ) : (
                 <div className="flex items-center space-x-4">
-                  {/* Dashboard Link - paid users go straight to bots */}
-                  <Link
-                    href={dashboardHref}
-                    className="flex items-center space-x-2 rounded-lg border border-blue-600/30 bg-blue-950/30 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-950/50 hover:border-blue-500/50"
-                    onClick={(e) => handleNavLinkClick(e, dashboardHref)}
-                  >
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                    <span>Dashboard</span>
-                  </Link>
+                  {hasActiveSubscription === undefined ? (
+                    <div
+                      className="h-10 w-[140px] rounded-lg border border-blue-600/20 bg-blue-950/20 animate-pulse"
+                      aria-hidden
+                    />
+                  ) : hasActiveSubscription === true ? (
+                    <Link
+                      href={dashboardHref}
+                      className="flex items-center space-x-2 rounded-lg border border-blue-600/30 bg-blue-950/30 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-950/50 hover:border-blue-500/50"
+                      onClick={(e) => handleNavLinkClick(e, dashboardHref)}
+                    >
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                      <span>Dashboard</span>
+                    </Link>
+                  ) : (
+                    <Link
+                      href={bundleHref}
+                      className="flex items-center space-x-2 rounded-lg border border-amber-500/40 bg-amber-950/20 px-4 py-2 text-sm font-medium text-amber-100 transition-colors hover:bg-amber-950/40 hover:border-amber-400/60"
+                      onClick={(e) => handleNavLinkClick(e, bundleHref)}
+                    >
+                      <span>Get bundle</span>
+                    </Link>
+                  )}
 
                   {/* User Menu */}
                   <div className="relative" ref={userMenuRef}>
@@ -279,17 +294,37 @@ export default function Navigation() {
                     <p className="text-sm font-medium text-white truncate mb-4">{user.email}</p>
                   </div>
 
-                  {/* Dashboard Link - Mobile; paid users go straight to bots */}
-                  <Link
-                    href={dashboardHref}
-                    className="flex items-center gap-2 text-sm font-medium text-white transition-colors hover:text-blue-400"
-                    onClick={(e) => { handleNavLinkClick(e, dashboardHref); setIsMobileMenuOpen(false); }}
-                  >
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                    Dashboard
-                  </Link>
+                  {hasActiveSubscription === undefined ? (
+                    <div
+                      className="h-10 w-full rounded-lg border border-blue-600/20 bg-blue-950/20 animate-pulse mb-2"
+                      aria-hidden
+                    />
+                  ) : hasActiveSubscription === true ? (
+                    <Link
+                      href={dashboardHref}
+                      className="flex items-center gap-2 text-sm font-medium text-white transition-colors hover:text-blue-400"
+                      onClick={(e) => {
+                        handleNavLinkClick(e, dashboardHref);
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                      Dashboard
+                    </Link>
+                  ) : (
+                    <Link
+                      href={bundleHref}
+                      className="flex items-center gap-2 text-sm font-medium text-amber-200 transition-colors hover:text-amber-100 mb-2"
+                      onClick={(e) => {
+                        handleNavLinkClick(e, bundleHref);
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      Get bundle
+                    </Link>
+                  )}
 
                   {/* Settings Link - Mobile */}
                   <Link

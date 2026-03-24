@@ -21,58 +21,12 @@ import {
   trackPdfLeadFormViewed,
   trackPdfGuideRequested,
 } from '@/lib/posthog';
+import { AnimatedSection, reveal, useScrollReveal } from "@/lib/scrollReveal";
 
 // Lookup map: classificationId → TradingBot
 const botClassification = new Map<string, TradingBot>(
   tradingBots.map((b) => [b.id, b])
 );
-
-// Custom hook for scroll-triggered animations
-function useScrollAnimation(options = { threshold: 0.15, rootMargin: '0px 0px -100px 0px' }) {
-  const [isVisible, setIsVisible] = useState(false);
-  const hasAnimated = useRef(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const optionsRef = useRef(options);
-
-  // Update options ref when they change
-  useEffect(() => {
-    optionsRef.current = options;
-  }, [options.threshold, options.rootMargin]);
-
-  useEffect(() => {
-    // If already animated, don't set up observer again
-    if (hasAnimated.current) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          setIsVisible(true);
-          hasAnimated.current = true;
-        }
-      },
-      optionsRef.current
-    );
-
-    const currentRef = ref.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
-
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-    };
-  }, []); // Empty dependency array - only run once
-
-  return [ref, isVisible] as const;
-}
-
-// Wrapper component for animated sections
-function AnimatedSection({ children }: { children: (isVisible: boolean) => React.ReactNode }) {
-  const [ref, isVisible] = useScrollAnimation();
-  return <div ref={ref}>{children(isVisible)}</div>;
-}
 
 // Image Carousel Component for Backtesting Results (optional currencyLabel e.g. EURUSD / GBPUSD, strategyName for lightbox)
 function ImageCarousel({ images, altPrefix, currencyLabel, strategyName }: { images: string[]; altPrefix: string; currencyLabel?: string; strategyName?: string }) {
@@ -486,7 +440,7 @@ export default function BundleInfoPage() {
 
       {/* Cards Section */}
       <AnimatedSection>
-        {(isVisible) => (
+        {({ isVisible, animateEntrance }) => (
           <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
             <div className="mx-auto mt-6 max-w-5xl">
               <div
@@ -517,7 +471,7 @@ export default function BundleInfoPage() {
                           : "border-blue-600/25 bg-gradient-to-br from-blue-950/30 via-[#0f1f4a]/20 to-blue-900/20 hover:border-blue-500/45 hover:shadow-xl hover:shadow-blue-900/15"
                       }`}
                       style={{
-                        transitionDelay: isVisible ? `${120 + index * 60}ms` : "0ms",
+                        transitionDelay: isVisible && animateEntrance ? `${120 + index * 60}ms` : "0ms",
                       }}
                     >
                       {/* Ambient glow */}
@@ -646,11 +600,11 @@ export default function BundleInfoPage() {
 
       {/* Premium Bots Section */}
       <AnimatedSection>
-        {(isVisible) => (
+        {({ isVisible, animateEntrance }) => (
           <section className="relative bg-gradient-to-b from-[#0a0e27] via-[#0f172a] to-[#0f1f4a] py-20 border-y border-amber-500/10">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               {/* Section Header */}
-              <div className={`mx-auto max-w-5xl mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+              <div className={`mx-auto max-w-5xl mb-12 ${reveal(isVisible, animateEntrance)('opacity-0 translate-y-4', 'opacity-100 translate-y-0')}`}>
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-600/20 border border-amber-500/30 mb-6">
                   <svg className="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -669,8 +623,8 @@ export default function BundleInfoPage() {
               {/* Premium Bots Grid */}
               <div className="mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-5">
                 {/* Premium Bot #1: NewYork-London Breakout */}
-                <article className={`group relative overflow-hidden rounded-2xl border-2 border-amber-500/30 bg-gradient-to-br from-amber-950/30 via-[#0f172a]/90 to-amber-900/20 transition-all duration-700 hover:border-amber-500/50 hover:shadow-xl hover:shadow-amber-500/20 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
-                     style={{ transitionDelay: isVisible ? '120ms' : '0ms' }}>
+                <article className={`group relative overflow-hidden rounded-2xl border-2 border-amber-500/30 bg-gradient-to-br from-amber-950/30 via-[#0f172a]/90 to-amber-900/20 hover:border-amber-500/50 hover:shadow-xl hover:shadow-amber-500/20 ${reveal(isVisible, animateEntrance)('opacity-0 translate-y-6', 'opacity-100 translate-y-0')} hover:transition-[opacity,transform,box-shadow] hover:duration-300`}
+                     style={{ transitionDelay: isVisible && animateEntrance ? '120ms' : '0ms' }}>
                   <div className="absolute -inset-1 bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-600 rounded-2xl blur-lg opacity-20 group-hover:opacity-30 transition duration-500"></div>
                   
                   <div className="relative p-6">
@@ -759,8 +713,8 @@ export default function BundleInfoPage() {
                 </article>
 
                 {/* Premium Bot #2: Grid */}
-                <article className={`group relative overflow-hidden rounded-2xl border-2 border-amber-500/30 bg-gradient-to-br from-amber-950/30 via-[#0f172a]/90 to-amber-900/20 transition-all duration-700 hover:border-amber-500/50 hover:shadow-xl hover:shadow-amber-500/20 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
-                     style={{ transitionDelay: isVisible ? '180ms' : '0ms' }}>
+                <article className={`group relative overflow-hidden rounded-2xl border-2 border-amber-500/30 bg-gradient-to-br from-amber-950/30 via-[#0f172a]/90 to-amber-900/20 hover:border-amber-500/50 hover:shadow-xl hover:shadow-amber-500/20 ${reveal(isVisible, animateEntrance)('opacity-0 translate-y-6', 'opacity-100 translate-y-0')} hover:transition-[opacity,transform,box-shadow] hover:duration-300`}
+                     style={{ transitionDelay: isVisible && animateEntrance ? '180ms' : '0ms' }}>
                   <div className="absolute -inset-1 bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-600 rounded-2xl blur-lg opacity-20 group-hover:opacity-30 transition duration-500"></div>
                   
                   <div className="relative p-6">
@@ -850,8 +804,8 @@ export default function BundleInfoPage() {
               </div>
 
               {/* Bottom Note & CTA */}
-              <div className={`text-center mt-8 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                   style={{ transitionDelay: isVisible ? '300ms' : '0ms' }}>
+              <div className={`text-center mt-8 ${reveal(isVisible, animateEntrance)('opacity-0 translate-y-4', 'opacity-100 translate-y-0')}`}
+                   style={{ transitionDelay: isVisible && animateEntrance ? '300ms' : '0ms' }}>
                 <p className="text-gray-400 text-sm mb-6">
                   Both premium bots are included in the complete bundle
                 </p>
@@ -885,12 +839,12 @@ export default function BundleInfoPage() {
 
       {/* Works Seamlessly on MT5 */}
       <AnimatedSection>
-        {(isVisible) => (
+        {({ isVisible, animateEntrance }) => (
           <section className="relative bg-gradient-to-b from-[#0f1f4a] via-[#0f172a] to-[#050816] py-20 border-t border-blue-400/10">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="mx-auto max-w-5xl">
                 {/* Header */}
-                <div className={`text-center transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <div className={`text-center ${reveal(isVisible, animateEntrance)('opacity-0 translate-y-4', 'opacity-100 translate-y-0')}`}>
                   <div className="inline-flex items-center justify-center mb-6">
                     <div className="relative">
                       <div className="absolute inset-0 rounded-full bg-blue-600/20 blur-xl"></div>
@@ -910,8 +864,8 @@ export default function BundleInfoPage() {
                 </div>
 
                 {/* Feature Grid */}
-                <div className={`mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                     style={{ transitionDelay: isVisible ? '200ms' : '0ms' }}>
+                <div className={`mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 ${reveal(isVisible, animateEntrance)('opacity-0 translate-y-4', 'opacity-100 translate-y-0')}`}
+                     style={{ transitionDelay: isVisible && animateEntrance ? '200ms' : '0ms' }}>
                   {[
                     {
                       icon: (
@@ -944,7 +898,7 @@ export default function BundleInfoPage() {
                     <div
                       key={feature.title}
                       className="group relative overflow-hidden rounded-xl border border-blue-600/25 bg-gradient-to-br from-blue-950/30 via-[#0f1f4a]/20 to-blue-900/20 p-6 backdrop-blur-sm transition-all duration-300 hover:border-blue-500/40 hover:shadow-lg hover:shadow-blue-500/10 hover:scale-[1.02]"
-                      style={{ transitionDelay: isVisible ? `${300 + index * 100}ms` : '0ms' }}
+                      style={{ transitionDelay: isVisible && animateEntrance ? `${300 + index * 100}ms` : '0ms' }}
                     >
                       <div className="absolute -inset-0.5 rounded-xl bg-gradient-to-r from-blue-600/10 via-blue-700/10 to-blue-600/10 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-300"></div>
                       <div className="relative">
@@ -963,8 +917,8 @@ export default function BundleInfoPage() {
                 </div>
 
                 {/* Compatibility Badge */}
-                <div className={`mt-10 flex justify-center transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                     style={{ transitionDelay: isVisible ? '600ms' : '0ms' }}>
+                <div className={`mt-10 flex justify-center ${reveal(isVisible, animateEntrance)('opacity-0 translate-y-4', 'opacity-100 translate-y-0')}`}
+                     style={{ transitionDelay: isVisible && animateEntrance ? '600ms' : '0ms' }}>
                   <div className="inline-flex items-center gap-3 rounded-full border border-blue-500/30 bg-black/20 px-6 py-3 backdrop-blur-sm">
                     <svg className="w-5 h-5 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -985,12 +939,12 @@ export default function BundleInfoPage() {
 
       {/* Smarter, Safer Trading with Built-in Controls */}
       <AnimatedSection>
-        {(isVisible) => (
+        {({ isVisible, animateEntrance }) => (
           <section className="relative bg-gradient-to-b from-[#050816] via-[#0a0e27] to-[#050816] py-20 border-t border-blue-400/10">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
                 <div className="lg:col-span-7">
-            <div className={`transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <div className={`${reveal(isVisible, animateEntrance)('opacity-0 translate-y-4', 'opacity-100 translate-y-0')}`}>
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
                 Smarter, Safer Trading with Built-in Controls
               </h2>
@@ -999,8 +953,8 @@ export default function BundleInfoPage() {
               </p>
             </div>
 
-            <ul className={`mt-6 space-y-3 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                style={{ transitionDelay: isVisible ? '200ms' : '0ms' }}>
+            <ul className={`mt-6 space-y-3 ${reveal(isVisible, animateEntrance)('opacity-0 translate-y-4', 'opacity-100 translate-y-0')}`}
+                style={{ transitionDelay: isVisible && animateEntrance ? '200ms' : '0ms' }}>
               {[
                 ["Trailing Stop Losses", "lock in profits as the trade moves"],
                 ["Daily Profit & Loss Limits", "stop trading after your preset gain or loss"],
@@ -1024,8 +978,8 @@ export default function BundleInfoPage() {
               ))}
             </ul>
 
-            <div className={`mt-10 flex flex-col gap-3 sm:flex-row sm:items-center transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                 style={{ transitionDelay: isVisible ? '400ms' : '0ms' }}>
+            <div className={`mt-10 flex flex-col gap-3 sm:flex-row sm:items-center ${reveal(isVisible, animateEntrance)('opacity-0 translate-y-4', 'opacity-100 translate-y-0')}`}
+                 style={{ transitionDelay: isVisible && animateEntrance ? '400ms' : '0ms' }}>
               <Link
                 href="/bundle-offer"
                 className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_34px_rgba(59,130,246,0.65)] hover:scale-[1.03] border border-blue-600/30"
@@ -1043,8 +997,8 @@ export default function BundleInfoPage() {
             </div>
           </div>
 
-                <div className={`lg:col-span-5 transition-all duration-700 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'}`}
-               style={{ transitionDelay: isVisible ? '300ms' : '0ms' }}>
+                <div className={`lg:col-span-5 ${reveal(isVisible, animateEntrance)('opacity-0 translate-x-4', 'opacity-100 translate-x-0')}`}
+               style={{ transitionDelay: isVisible && animateEntrance ? '300ms' : '0ms' }}>
             <div className="relative overflow-hidden rounded-2xl border border-blue-600/25 bg-gradient-to-br from-blue-950/30 via-[#0f1f4a]/25 to-blue-900/20 p-6 shadow-xl shadow-blue-900/10">
               <div className="pointer-events-none absolute -inset-1 rounded-2xl bg-gradient-to-r from-blue-600/15 via-blue-700/15 to-blue-600/15 blur-xl" />
 
@@ -1181,7 +1135,7 @@ export default function BundleInfoPage() {
 
       {/* Bonus Section */}
       <AnimatedSection>
-        {(isVisible) => (
+        {({ isVisible, animateEntrance }) => (
           <section className="relative bg-gradient-to-b from-[#0f1f4a] via-[#0f172a] to-[#050816] py-20 border-t border-blue-400/10">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="mx-auto max-w-5xl">
@@ -1214,7 +1168,7 @@ export default function BundleInfoPage() {
                       className={`mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 transition-all duration-700 ${
                         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                       }`}
-                      style={{ transitionDelay: isVisible ? "200ms" : "0ms" }}
+                      style={{ transitionDelay: isVisible && animateEntrance ? "200ms" : "0ms" }}
                     >
                       {[
                         "Free Strategy Testing Guide",
@@ -1251,20 +1205,20 @@ export default function BundleInfoPage() {
 
       {/* Access & Purchase Section */}
       <AnimatedSection>
-        {(isVisible) => (
+        {({ isVisible, animateEntrance }) => (
           <section className="relative bg-gradient-to-b from-[#050816] via-[#0a0e27] to-[#050816] py-20 border-t border-blue-400/10">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="mx-auto max-w-5xl">
                 <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12">
                   <div className="lg:col-span-7">
-                  <div className={`transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                  <div className={`${reveal(isVisible, animateEntrance)('opacity-0 translate-y-4', 'opacity-100 translate-y-0')}`}>
                     <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
                       Get Instant Access to All 10+ Bots
                     </h2>
                   </div>
 
-                  <ul className={`mt-6 space-y-3 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                      style={{ transitionDelay: isVisible ? '200ms' : '0ms' }}>
+                  <ul className={`mt-6 space-y-3 ${reveal(isVisible, animateEntrance)('opacity-0 translate-y-4', 'opacity-100 translate-y-0')}`}
+                      style={{ transitionDelay: isVisible && animateEntrance ? '200ms' : '0ms' }}>
                 {[
                   "One-Time Payment – No Recurring Fees",
                   "Immediate Download",
@@ -1282,8 +1236,8 @@ export default function BundleInfoPage() {
                 ))}
               </ul>
 
-                  <div className={`mt-10 flex flex-col gap-4 sm:flex-row sm:items-center transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                       style={{ transitionDelay: isVisible ? '400ms' : '0ms' }}>
+                  <div className={`mt-10 flex flex-col gap-4 sm:flex-row sm:items-center ${reveal(isVisible, animateEntrance)('opacity-0 translate-y-4', 'opacity-100 translate-y-0')}`}
+                       style={{ transitionDelay: isVisible && animateEntrance ? '400ms' : '0ms' }}>
                     <button
                       onClick={handleGetBundle}
                       className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_34px_rgba(59,130,246,0.65)] hover:scale-[1.03] border border-blue-600/30"
@@ -1298,8 +1252,8 @@ export default function BundleInfoPage() {
                   </div>
                   </div>
 
-                  <div className={`lg:col-span-5 transition-all duration-700 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'}`}
-                     style={{ transitionDelay: isVisible ? '300ms' : '0ms' }}>
+                  <div className={`lg:col-span-5 ${reveal(isVisible, animateEntrance)('opacity-0 translate-x-4', 'opacity-100 translate-x-0')}`}
+                     style={{ transitionDelay: isVisible && animateEntrance ? '300ms' : '0ms' }}>
                   <div className="relative overflow-hidden rounded-2xl border border-blue-600/25 bg-gradient-to-br from-blue-950/35 via-[#0f1f4a]/25 to-blue-900/20 p-8 shadow-xl shadow-blue-900/10">
                     <div className="pointer-events-none absolute -inset-1 rounded-2xl bg-gradient-to-r from-blue-600/15 via-blue-700/15 to-blue-600/15 blur-xl" />
                     <div className="relative">
@@ -1329,8 +1283,8 @@ export default function BundleInfoPage() {
 
       {/* PDF Download Section (existing design/functionality) */}
       <AnimatedSection>
-        {(isVisible) => (
-          <div className={`transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+        {({ isVisible, animateEntrance }) => (
+          <div className={`${reveal(isVisible, animateEntrance)("opacity-0 translate-y-4", "opacity-100 translate-y-0")}`}>
             <EmailSubscriptionSection />
           </div>
         )}

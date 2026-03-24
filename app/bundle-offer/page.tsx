@@ -99,7 +99,7 @@ export default function BundleOffer() {
                 <h2 className="text-xl font-bold text-white mb-4">What's Included</h2>
                 <div className="space-y-3">
                   {[
-                    "10 MetaTrader 5 trading bots (EAs)",
+                    "10+ MetaTrader 5 trading bots (EAs)",
                     "Ready-to-use strategies with price action confirmation",
                     "Instant digital download",
                     "Lifetime license – no hidden fees",
