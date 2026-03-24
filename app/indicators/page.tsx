@@ -62,6 +62,7 @@ const INDICATOR_IMAGE_BASE: Record<string, string> = {
   "drawdown-limiter-indicator": "DrawdownLimiter",
   "risk-reward-visualizer-indicator": "RiskRewardVisualizer",
   "pair-history-analyzer-indicator": "PairHistoryAnalyzer",
+  "swing-high-low-scanner-indicator": "SwingHighLowScanner",
 };
 
 function getIndicatorImages(id: string) {
@@ -218,6 +219,12 @@ const TOOLS = [
     name: "Pair History Analyzer Indicator",
     description:
       "Displays comprehensive statistics of closed trades for the current symbol directly on the chart. The indicator analyzes historical performance within a customizable date range and presents key metrics such as total number of trades, win rate, average profit and loss, risk-to-reward ratio, profit factor, and overall net result. With built-in filters for trade direction and flexible display options (pips, currency, or percentage), it helps traders quickly evaluate strategy effectiveness and gain deeper insight into their trading performance.",
+  },
+  {
+    id: "swing-high-low-scanner-indicator",
+    name: "Swing High/Low Scanner Indicator",
+    description:
+      "Scans price history in real time and automatically identifies confirmed Swing High and Swing Low points based on a configurable lookback period. The indicator marks each detected swing directly on the chart with color-coded labels and optional horizontal dotted rays projected forward in time, giving traders an instant visual map of key structural levels. All detections are non-repainting - a swing is only confirmed once the required number of candles have fully closed on both sides of the candidate bar, ensuring reliable and accurate level identification without false early signals.",
   },
 ];
 

@@ -34,6 +34,10 @@ const INDICATOR_TOOLS: Record<string, { r2Key: string; filename: string }> = {
     r2Key: `${R2.INDICATORS_PREFIX}PairHistoryAnalyzer.ex5`,
     filename: "PairHistoryAnalyzer.ex5",
   },
+  "swing-high-low-scanner-indicator": {
+    r2Key: `${R2.INDICATORS_PREFIX}SwingHighLowScanner.ex5`,
+    filename: "SwingHighLowScanner.ex5",
+  },
 };
 
 async function streamToBuffer(stream: Readable): Promise<Buffer> {

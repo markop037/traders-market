@@ -57,7 +57,6 @@ function AnimatedSection({ children }: { children: (isVisible: boolean) => React
 function HeroImageCarousel() {
   const slides = [
     { src: "/Premium%20Bots%20sc.png", alt: "Premium Bots" },
-    { src: "/Standard%20Bots%20sc.png", alt: "Standard Bots" },
     { src: "/Indicators%20sc.png", alt: "Indicators" },
   ] as const;
 
