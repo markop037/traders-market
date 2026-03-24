@@ -303,7 +303,7 @@ export default function IndicatorsPage() {
       </section>
 
       {/* ── Indicator List ── */}
-      <AnimatedSection>
+      <AnimatedSection options={{ threshold: 0.02 }}>
         {({ isVisible, animateEntrance }) => (
           <section className="relative overflow-x-clip border-b border-blue-900/40 bg-gradient-to-b from-[#050816] to-[#020617] py-14 sm:py-20 lg:py-24">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(15,118,110,0.1),transparent_60%)] opacity-70" />

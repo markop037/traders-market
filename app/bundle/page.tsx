@@ -3,7 +3,6 @@
 import Link from "next/link";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ImageLightboxModal } from "../components/ImageLightboxModal";
-import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { tradingBots } from "@/lib/bot-picker/bots";
 import {
@@ -337,7 +336,6 @@ const bots: Bot[] = [
 
 export default function BundleInfoPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const { user } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -345,12 +343,7 @@ export default function BundleInfoPage() {
   }, []);
 
   const handleGetBundle = () => {
-    if (user?.email) {
-      const checkoutUrl = `https://www.momentumdigital.online/checkout?email=${encodeURIComponent(user.email)}`;
-      window.location.href = checkoutUrl;
-    } else {
-      router.push('/bundle-offer');
-    }
+    router.push("/bundle-offer");
   };
 
   return (
