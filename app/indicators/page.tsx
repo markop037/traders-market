@@ -230,10 +230,16 @@ export default function IndicatorsPage() {
             Instant download after signup
           </p>
 
-          <div className="mt-6 flex flex-col items-center gap-2.5">
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/25 bg-blue-500/10 px-3 py-1 text-xs">
-              <span className="text-gray-400 line-through">$97</span>
-              <span className="text-white font-semibold">FREE today</span>
+          <div className="mt-7 flex flex-col items-center gap-3">
+            <div className="flex w-full justify-center">
+              <div className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-5 py-2 text-xs backdrop-blur-sm">
+                <span className="text-[#666] line-through decoration-[#666]/70 decoration-1">
+                  $97
+                </span>
+                <span className="font-bold uppercase tracking-[0.14em] text-sky-100">
+                  FREE TODAY
+                </span>
+              </div>
             </div>
             <button
               type="button"
@@ -359,9 +365,15 @@ export default function IndicatorsPage() {
                 className={`mt-8 flex flex-col items-center gap-3 ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")}`}
                 style={{ transitionDelay: isVisible && animateEntrance ? "200ms" : "0ms" }}
               >
-                <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/25 bg-blue-500/10 px-3 py-1 text-xs">
-                  <span className="text-gray-400 line-through">$97</span>
-                  <span className="text-white font-semibold">FREE today</span>
+                <div className="flex w-full justify-center">
+                  <div className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-5 py-2 text-xs backdrop-blur-sm">
+                    <span className="text-[#666] line-through decoration-[#666]/70 decoration-1">
+                      $97
+                    </span>
+                    <span className="font-bold uppercase tracking-[0.14em] text-sky-100">
+                      FREE TODAY
+                    </span>
+                  </div>
                 </div>
                 <button
                   type="button"
