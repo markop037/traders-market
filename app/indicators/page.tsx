@@ -216,7 +216,7 @@ export default function IndicatorsPage() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(59,130,246,0.12),transparent_60%)]" />
         </div>
 
-        <div className="relative mx-auto w-full min-w-0 max-w-3xl px-4 pt-16 pb-12 text-center sm:px-6 sm:pt-20 sm:pb-16 lg:pt-24 lg:pb-20">
+        <div className="relative mx-auto w-full min-w-0 max-w-3xl px-4 pt-16 pb-7 text-center sm:px-6 sm:pt-20 sm:pb-12 lg:pt-24 lg:pb-16">
           <p className="inline-flex items-center rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-blue-200/90">
             MT5 Indicators Pack
           </p>
@@ -224,9 +224,6 @@ export default function IndicatorsPage() {
           <h1 className="mt-5 text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl">
             Free MT5 Indicators for Prop Firm Traders
           </h1>
-          <p className="mt-3 text-sm font-medium text-blue-200/90">
-            As requested — your free MT5 indicators
-          </p>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-gray-300 sm:text-lg">
             Sessions markers, risk tools &amp; trade analytics
             <br />
@@ -234,6 +231,10 @@ export default function IndicatorsPage() {
           </p>
 
           <div className="mt-6 flex flex-col items-center gap-2.5">
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/25 bg-blue-500/10 px-3 py-1 text-xs">
+              <span className="text-gray-400 line-through">$97</span>
+              <span className="text-white font-semibold">FREE today</span>
+            </div>
             <button
               type="button"
               onClick={handleCtaClick}
@@ -262,33 +263,15 @@ export default function IndicatorsPage() {
 
       {/* ── Indicator List ── */}
       <AnimatedSection options={{ threshold: 0.02 }}>
-        {({ isVisible, animateEntrance }) => (
-          <section className="relative overflow-x-clip border-b border-blue-900/40 bg-gradient-to-b from-[#050816] to-[#020617] py-14 sm:py-20 lg:py-24">
+        {() => (
+          <section className="relative overflow-x-clip border-b border-blue-900/40 bg-gradient-to-b from-[#050816] to-[#020617] pt-6 pb-14 sm:pt-10 sm:pb-20 lg:pt-12 lg:pb-24">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(15,118,110,0.1),transparent_60%)] opacity-70" />
             <div className="relative mx-auto w-full min-w-0 max-w-5xl px-4 sm:px-6 lg:px-8">
-              <h2
-                className={`text-2xl font-bold text-white sm:text-3xl ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")}`}
-              >
-                Included Indicators
-              </h2>
-              <p
-                className={`mt-2 text-sm text-gray-400 ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")}`}
-                style={{ transitionDelay: isVisible && animateEntrance ? "100ms" : "0ms" }}
-              >
-                All indicators are for MetaTrader&nbsp;5 (.ex5).
-              </p>
-
-              <div className="mt-8 grid grid-cols-1 gap-6 sm:gap-7 md:grid-cols-2">
-                {TOOLS.map((tool, i) => (
+              <div className="mt-0 grid grid-cols-1 gap-6 sm:mt-2 sm:gap-7 md:grid-cols-2">
+                {TOOLS.map((tool) => (
                   <div
                     key={tool.id}
-                    className={`group flex min-h-0 min-w-0 flex-col rounded-2xl border border-blue-700/30 bg-gradient-to-br from-blue-950/50 via-[#020617] to-blue-900/40 p-6 shadow-[0_0_24px_rgba(15,23,42,0.9)] hover:-translate-y-1.5 hover:border-blue-500/60 hover:shadow-[0_0_32px_rgba(59,130,246,0.35)] sm:p-7 min-h-[360px] ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")} hover:transition-[opacity,transform,box-shadow] hover:duration-300`}
-                    style={{
-                      transitionDelay:
-                        isVisible && animateEntrance
-                          ? `${200 + i * 120}ms`
-                          : "0ms",
-                    }}
+                    className="group flex min-h-0 min-w-0 flex-col rounded-2xl border border-blue-700/30 bg-gradient-to-br from-blue-950/50 via-[#020617] to-blue-900/40 p-6 shadow-[0_0_24px_rgba(15,23,42,0.9)] hover:-translate-y-1.5 hover:border-blue-500/60 hover:shadow-[0_0_32px_rgba(59,130,246,0.35)] sm:p-7 min-h-[360px] hover:transition-[transform,box-shadow] hover:duration-300"
                   >
                     <p className="text-[11px] uppercase tracking-wide text-blue-300/80">
                       MT5 Indicator
@@ -307,19 +290,8 @@ export default function IndicatorsPage() {
                         disabled={loading}
                         className="inline-flex w-full items-center justify-center rounded-lg bg-gradient-to-r from-sky-600 to-blue-500 px-5 py-3 text-sm font-semibold text-white transition-[transform,box-shadow,background-color] duration-300 hover:from-sky-500 hover:to-blue-400 hover:shadow-[0_0_20px_rgba(56,189,248,0.45)] hover:scale-[1.01] border border-sky-400/25 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        Download it
+                        Download for FREE
                       </button>
-                      <p className="mt-2 text-center text-[11px] text-gray-400">
-                        Instant access after signup
-                      </p>
-                    </div>
-                    <div className="mt-5 flex items-center justify-between border-t border-blue-900/40 pt-4">
-                      <span className="inline-block rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-300">
-                        Included free
-                      </span>
-                      <span className="text-[11px] text-gray-500">
-                        MetaTrader 5
-                      </span>
                     </div>
                   </div>
                 ))}
@@ -387,6 +359,10 @@ export default function IndicatorsPage() {
                 className={`mt-8 flex flex-col items-center gap-3 ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")}`}
                 style={{ transitionDelay: isVisible && animateEntrance ? "200ms" : "0ms" }}
               >
+                <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/25 bg-blue-500/10 px-3 py-1 text-xs">
+                  <span className="text-gray-400 line-through">$97</span>
+                  <span className="text-white font-semibold">FREE today</span>
+                </div>
                 <button
                   type="button"
                   onClick={handleCtaClick}
