@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { ImageLightboxModal } from "../components/ImageLightboxModal";
@@ -181,29 +181,10 @@ const TOOLS = [
   },
 ];
 
-const STEPS = [
-  {
-    number: "1",
-    title: "Create a Free TradersMarket Account",
-    text: "Takes less than 30 seconds.",
-  },
-  {
-    number: "2",
-    title: "Access the Indicator Bundle",
-    text: "Download the full package of MT5 indicators.",
-  },
-  {
-    number: "3",
-    title: "Install in MetaTrader 5",
-    text: "Simple installation instructions included.",
-  },
-];
-
 const AUDIENCE = [
-  <>Trade forex or futures using MetaTrader&nbsp;5</>,
-  "Want simple tools to improve chart analysis",
-  "Trade prop firm accounts and need risk limits",
-  <>Prefer lightweight indicators that don&apos;t slow down MT5</>,
+  <>Trade forex or futures on MetaTrader&nbsp;5</>,
+  "Use prop firm rules",
+  "Want simple tools",
 ];
 
 /* ─── Page ─── */
@@ -223,8 +204,8 @@ export default function IndicatorsPage() {
 
   const ctaLabel = user
     ? "Go to Downloads"
-    : "Create Free Account to Download";
-  const ctaLabelShort = user ? "Go to Downloads" : "Create Free Account";
+    : "Get Free Indicators";
+  const ctaLabelShort = user ? "Go to Downloads" : "Download for FREE";
 
   return (
     <div className="min-h-screen w-full min-w-0 max-w-[100vw] overflow-x-clip bg-gradient-to-b from-[#050816] via-[#050816] to-[#020617]">
@@ -235,32 +216,34 @@ export default function IndicatorsPage() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(59,130,246,0.12),transparent_60%)]" />
         </div>
 
-        <div className="relative mx-auto w-full min-w-0 max-w-3xl px-4 pt-24 pb-16 text-center sm:px-6 sm:pt-28 sm:pb-20 lg:pt-32 lg:pb-24">
+        <div className="relative mx-auto w-full min-w-0 max-w-3xl px-4 pt-16 pb-12 text-center sm:px-6 sm:pt-20 sm:pb-16 lg:pt-24 lg:pb-20">
           <p className="inline-flex items-center rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-blue-200/90">
-            MT5 Trader Toolkit
+            MT5 Indicators Pack
           </p>
 
           <h1 className="mt-5 text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl">
-            Free MT5 Trader Toolkit
+            Free MT5 Indicators for Prop Firm Traders
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-gray-300 sm:text-lg">
-            Download a bundle of practical indicators and utilities for
-            MetaTrader&nbsp;5 — designed for discretionary traders.
-            <br className="hidden sm:block" />
-            Sessions markers, drawdown limiters, trade analytics and more.
+          <p className="mt-3 text-sm font-medium text-blue-200/90">
+            As requested — your free MT5 indicators
+          </p>
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-gray-300 sm:text-lg">
+            Sessions markers, risk tools &amp; trade analytics
+            <br />
+            Instant download after signup
           </p>
 
-          <div className="mt-8 flex flex-col items-center gap-3">
+          <div className="mt-6 flex flex-col items-center gap-2.5">
             <button
               type="button"
               onClick={handleCtaClick}
               disabled={loading}
-              className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-6 py-3 text-sm font-semibold text-white transition-[transform,box-shadow,background-color] duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_24px_rgba(59,130,246,0.5)] hover:scale-[1.02] border border-blue-600/40 disabled:opacity-50 disabled:cursor-not-allowed sm:px-8 sm:py-3.5 sm:text-base"
+              className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-sky-600 to-blue-500 px-8 py-4 text-base font-semibold text-white transition-[transform,box-shadow,background-color] duration-300 hover:from-sky-500 hover:to-blue-400 hover:shadow-[0_0_28px_rgba(56,189,248,0.55)] hover:scale-[1.02] border border-sky-400/30 disabled:opacity-50 disabled:cursor-not-allowed sm:px-10 sm:py-4 sm:text-lg"
             >
               {ctaLabel}
             </button>
-            <p className="text-xs text-gray-400 sm:text-sm">
-              No payment required. Instant download after signup.
+            <p className="text-xs font-semibold text-gray-200/90 sm:text-sm">
+              ⚡ Instant access after signup
             </p>
           </div>
 
@@ -273,31 +256,6 @@ export default function IndicatorsPage() {
                 {label}
               </span>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── What You Get (no scroll-in: often visible with hero on first paint) ── */}
-      <section className="relative overflow-x-clip border-b border-blue-900/40 bg-gradient-to-b from-[#020617] to-[#050816] py-14 sm:py-20 lg:py-24">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.08),transparent_55%)]" />
-        <div className="relative mx-auto w-full min-w-0 max-w-3xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-white sm:text-3xl">
-            What You Get
-          </h2>
-          <div className="mt-5 space-y-4 text-sm leading-relaxed text-gray-300 sm:text-base">
-            <p>
-              This bundle contains a set of useful MetaTrader&nbsp;5
-              indicators and utilities that help traders analyze markets and
-              manage risk.
-            </p>
-            <p>
-              These tools were built for active FX and futures traders who
-              want practical chart tools without unnecessary complexity.
-            </p>
-            <p>
-              You can download the entire bundle after creating a free
-              TradersMarket account.
-            </p>
           </div>
         </div>
       </section>
@@ -342,6 +300,19 @@ export default function IndicatorsPage() {
                     <p className="mt-3 flex-1 break-words text-sm leading-relaxed text-gray-300">
                       {tool.description}
                     </p>
+                    <div className="mt-5">
+                      <button
+                        type="button"
+                        onClick={handleCtaClick}
+                        disabled={loading}
+                        className="inline-flex w-full items-center justify-center rounded-lg bg-gradient-to-r from-sky-600 to-blue-500 px-5 py-3 text-sm font-semibold text-white transition-[transform,box-shadow,background-color] duration-300 hover:from-sky-500 hover:to-blue-400 hover:shadow-[0_0_20px_rgba(56,189,248,0.45)] hover:scale-[1.01] border border-sky-400/25 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Download it
+                      </button>
+                      <p className="mt-2 text-center text-[11px] text-gray-400">
+                        Instant access after signup
+                      </p>
+                    </div>
                     <div className="mt-5 flex items-center justify-between border-t border-blue-900/40 pt-4">
                       <span className="inline-block rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-300">
                         Included free
@@ -392,49 +363,6 @@ export default function IndicatorsPage() {
         )}
       </AnimatedSection>
 
-      {/* ── How It Works ── */}
-      <AnimatedSection>
-        {({ isVisible, animateEntrance }) => (
-          <section className="relative overflow-x-clip border-b border-blue-900/40 bg-gradient-to-b from-[#050816] to-[#020617] py-14 sm:py-20 lg:py-24">
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.06),transparent_55%)]" />
-            <div className="relative mx-auto w-full min-w-0 max-w-3xl px-4 sm:px-6 lg:px-8">
-              <h2
-                className={`text-2xl font-bold text-white sm:text-3xl ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")}`}
-              >
-                How It Works
-              </h2>
-
-              <div className="mt-8 space-y-4 sm:space-y-5">
-                {STEPS.map((step, i) => (
-                  <div
-                    key={step.number}
-                    className={`flex items-start gap-3 rounded-xl border border-blue-900/30 bg-blue-950/20 p-4 sm:gap-4 sm:p-5 hover:border-blue-800/40 ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")} hover:transition-colors hover:duration-300`}
-                    style={{
-                      transitionDelay:
-                        isVisible && animateEntrance
-                          ? `${150 + i * 120}ms`
-                          : "0ms",
-                    }}
-                  >
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-emerald-500/40 bg-emerald-500/10 text-sm font-semibold text-emerald-300 sm:h-9 sm:w-9">
-                      {step.number}
-                    </span>
-                    <div>
-                      <p className="text-sm font-semibold text-white sm:text-base">
-                        {step.title}
-                      </p>
-                      <p className="mt-0.5 text-xs text-gray-400 sm:mt-1 sm:text-sm">
-                        {step.text}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-      </AnimatedSection>
-
       {/* ── Final CTA ── */}
       <AnimatedSection>
         {({ isVisible, animateEntrance }) => (
@@ -446,14 +374,13 @@ export default function IndicatorsPage() {
               <h2
                 className={`text-2xl font-bold text-white sm:text-3xl ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")}`}
               >
-                Download the Free MT5 Trader Toolkit
+                Download the Free MT5 Indicators Pack
               </h2>
               <p
                 className={`mt-4 text-sm text-gray-300 sm:text-base ${reveal(isVisible, animateEntrance)("opacity-0 translate-y-6", "opacity-100 translate-y-0")}`}
                 style={{ transitionDelay: isVisible && animateEntrance ? "100ms" : "0ms" }}
               >
-                Sessions markers, risk tools, analytics and more — all designed
-                for active traders.
+                Sessions markers, risk tools &amp; trade analytics.
               </p>
 
               <div
@@ -464,12 +391,12 @@ export default function IndicatorsPage() {
                   type="button"
                   onClick={handleCtaClick}
                   disabled={loading}
-                  className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-6 py-3 text-sm font-semibold text-white transition-[transform,box-shadow,background-color] duration-300 hover:from-blue-600 hover:to-blue-500 hover:shadow-[0_0_24px_rgba(59,130,246,0.5)] hover:scale-[1.02] border border-blue-600/40 disabled:opacity-50 disabled:cursor-not-allowed sm:px-8 sm:py-3.5 sm:text-base"
+                  className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-sky-600 to-blue-500 px-8 py-4 text-base font-semibold text-white transition-[transform,box-shadow,background-color] duration-300 hover:from-sky-500 hover:to-blue-400 hover:shadow-[0_0_28px_rgba(56,189,248,0.55)] hover:scale-[1.02] border border-sky-400/30 disabled:opacity-50 disabled:cursor-not-allowed sm:px-10 sm:py-4 sm:text-lg"
                 >
                   {ctaLabelShort}
                 </button>
-                <p className="text-xs text-gray-400 sm:text-sm">
-                  Instant download after signup.
+                <p className="text-xs font-semibold text-gray-200/90 sm:text-sm">
+                  ⚡ Instant access after signup
                 </p>
               </div>
             </div>

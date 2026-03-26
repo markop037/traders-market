@@ -10,6 +10,9 @@ export default function Footer() {
   const [copied, setCopied] = useState(false);
   const emailAddress = "admin@tradersmarket.io";
 
+  // Landing/opt-in page: keep a single focused action (no footer distractions)
+  if (pathname === "/indicators") return null;
+
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (pathname === href) {
       e.preventDefault();
