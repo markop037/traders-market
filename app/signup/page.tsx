@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { 
   createUserWithEmailAndPassword, 
   signInWithPopup 
@@ -11,8 +11,11 @@ import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, googleProvider, db } from '@/lib/firebase';
 import { trackSignupStarted, trackSignupCompleted, trackSignupFailed } from '@/lib/posthog';
 
-export default function SignUpPage() {
+function SignUpContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const signupSource =
+    searchParams.get('from') === 'indicators' ? 'indicators' : undefined;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -45,16 +48,16 @@ export default function SignUpPage() {
     }
 
     setLoading(true);
-    trackSignupStarted('email');
+    trackSignupStarted('email', signupSource);
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await createUserDocument(userCredential.user.uid, userCredential.user.email || email);
-      trackSignupCompleted('email', userCredential.user.uid);
+      trackSignupCompleted('email', userCredential.user.uid, signupSource);
       router.replace('/auth/redirect');
     } catch (error: any) {
       console.error('Sign up error:', error);
-      trackSignupFailed('email', error.message || 'Sign up failed');
+      trackSignupFailed('email', error.message || 'Sign up failed', signupSource);
       if (error.code === 'auth/email-already-in-use') {
         setError('This email is already registered');
       } else if (error.code === 'auth/invalid-email') {
@@ -72,16 +75,16 @@ export default function SignUpPage() {
   const handleGoogleSignUp = async () => {
     setError('');
     setLoading(true);
-    trackSignupStarted('google');
+    trackSignupStarted('google', signupSource);
 
     try {
       const result = await signInWithPopup(auth, googleProvider);
       await createUserDocument(result.user.uid, result.user.email || '');
-      trackSignupCompleted('google', result.user.uid);
+      trackSignupCompleted('google', result.user.uid, signupSource);
       router.replace('/auth/redirect');
     } catch (error: any) {
       console.error('Google sign up error:', error);
-      trackSignupFailed('google', error.message || 'Google sign up failed');
+      trackSignupFailed('google', error.message || 'Google sign up failed', signupSource);
       if (error.code === 'auth/popup-closed-by-user') {
         setError('Sign up cancelled');
       } else {
@@ -214,5 +217,22 @@ export default function SignUpPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-[#050816] via-[#0f172a] to-[#050816]">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-gray-400 text-sm">Loading...</p>
+          </div>
+        </main>
+      }
+    >
+      <SignUpContent />
+    </Suspense>
   );
 }

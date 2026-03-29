@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { trackIndicatorsCtaClicked, type IndicatorsCtaPlacement } from "@/lib/posthog";
 import { ImageLightboxModal } from "../components/ImageLightboxModal";
 import { AnimatedSection, reveal } from "@/lib/scrollReveal";
 
@@ -200,12 +201,19 @@ export default function IndicatorsPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
 
-  const handleCtaClick = () => {
+  const handleCtaClick = (
+    ctaPlacement: IndicatorsCtaPlacement,
+    indicatorId?: string,
+  ) => {
     if (loading) return;
+    const destination = user ? "/dashboard/indicators" : "/signup?from=indicators";
+    trackIndicatorsCtaClicked(ctaPlacement, destination, {
+      ...(indicatorId && { indicatorId }),
+    });
     if (user) {
       router.push("/dashboard/indicators");
     } else {
-      router.push("/signup");
+      router.push("/signup?from=indicators");
     }
   };
 
@@ -250,7 +258,7 @@ export default function IndicatorsPage() {
             </div>
             <button
               type="button"
-              onClick={handleCtaClick}
+              onClick={() => handleCtaClick("hero")}
               disabled={loading}
               className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-sky-600 to-blue-500 px-8 py-4 text-base font-semibold text-white transition-[transform,box-shadow,background-color] duration-300 hover:from-sky-500 hover:to-blue-400 hover:shadow-[0_0_28px_rgba(56,189,248,0.55)] hover:scale-[1.02] border border-sky-400/30 disabled:opacity-50 disabled:cursor-not-allowed sm:px-10 sm:py-4 sm:text-lg"
             >
@@ -299,7 +307,7 @@ export default function IndicatorsPage() {
                     <div className="mt-5">
                       <button
                         type="button"
-                        onClick={handleCtaClick}
+                        onClick={() => handleCtaClick("tool_card", tool.id)}
                         disabled={loading}
                         className="inline-flex w-full items-center justify-center rounded-lg bg-gradient-to-r from-sky-600 to-blue-500 px-5 py-3 text-sm font-semibold text-white transition-[transform,box-shadow,background-color] duration-300 hover:from-sky-500 hover:to-blue-400 hover:shadow-[0_0_20px_rgba(56,189,248,0.45)] hover:scale-[1.01] border border-sky-400/25 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
@@ -384,7 +392,7 @@ export default function IndicatorsPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={handleCtaClick}
+                  onClick={() => handleCtaClick("final_cta")}
                   disabled={loading}
                   className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-sky-600 to-blue-500 px-8 py-4 text-base font-semibold text-white transition-[transform,box-shadow,background-color] duration-300 hover:from-sky-500 hover:to-blue-400 hover:shadow-[0_0_28px_rgba(56,189,248,0.55)] hover:scale-[1.02] border border-sky-400/30 disabled:opacity-50 disabled:cursor-not-allowed sm:px-10 sm:py-4 sm:text-lg"
                 >

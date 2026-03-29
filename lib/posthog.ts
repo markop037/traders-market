@@ -37,16 +37,27 @@ export function capture(event: string, properties?: Record<string, any>) {
 }
 
 // Auth events
-export function trackSignupStarted(method: 'email' | 'google') {
-  capture('signup_started', { method });
+export function trackSignupStarted(method: 'email' | 'google', signupSource?: string) {
+  capture('signup_started', {
+    method,
+    ...(signupSource && { signup_source: signupSource }),
+  });
 }
 
-export function trackSignupCompleted(method: 'email' | 'google', userId: string) {
-  capture('signup_completed', { method, user_id: userId });
+export function trackSignupCompleted(method: 'email' | 'google', userId: string, signupSource?: string) {
+  capture('signup_completed', {
+    method,
+    user_id: userId,
+    ...(signupSource && { signup_source: signupSource }),
+  });
 }
 
-export function trackSignupFailed(method: 'email' | 'google', error: string) {
-  capture('signup_failed', { method, error });
+export function trackSignupFailed(method: 'email' | 'google', error: string, signupSource?: string) {
+  capture('signup_failed', {
+    method,
+    error,
+    ...(signupSource && { signup_source: signupSource }),
+  });
 }
 
 export function trackLoginStarted(method: 'email' | 'google') {
@@ -211,6 +222,22 @@ export function trackWelcomeModalDismissed() {
 
 export function trackCtaClicked(ctaName: string, ctaText: string, ctaLocation: string, destination: string) {
   capture('cta_clicked', { cta_name: ctaName, cta_text: ctaText, cta_location: ctaLocation, destination });
+}
+
+export type IndicatorsCtaPlacement = 'hero' | 'tool_card' | 'final_cta';
+
+/** Single `cta_clicked` for all /indicators CTAs; use PostHog breakdown on `cta_placement`. */
+export function trackIndicatorsCtaClicked(
+  ctaPlacement: IndicatorsCtaPlacement,
+  destination: string,
+  options?: { indicatorId?: string },
+) {
+  capture('cta_clicked', {
+    cta_name: 'indicators_pack',
+    cta_placement: ctaPlacement,
+    destination,
+    ...(options?.indicatorId && { indicator_id: options.indicatorId }),
+  });
 }
 
 // Dashboard events

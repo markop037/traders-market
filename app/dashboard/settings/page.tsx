@@ -299,11 +299,11 @@ export default function SettingsPage() {
                 </div>
               )}
 
-              <div className="space-y-4">
+              <div className="min-w-0 space-y-4">
                 {/* Email (read-only) */}
-                <div>
+                <div className="min-w-0">
                   <label className="block text-sm font-medium text-gray-400 mb-2">Email</label>
-                  <div className="w-full rounded-lg border border-blue-600/30 bg-blue-950/30 px-4 py-3 text-gray-500">
+                  <div className="w-full min-w-0 break-words rounded-lg border border-blue-600/30 bg-blue-950/30 px-4 py-3 text-gray-500">
                     {user.email}
                   </div>
                 </div>
@@ -349,18 +349,20 @@ export default function SettingsPage() {
                   />
                 </div>
 
-                {/* Date of Birth */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">Date of Birth</label>
-                  <input
-                    type="date"
-                    value={dateOfBirth}
-                    onChange={(e) => setDateOfBirth(e.target.value)}
-                    onKeyDown={(e) => e.preventDefault()}
-                    onPaste={(e) => e.preventDefault()}
-                    disabled={!isEditingProfile}
-                    className="w-full rounded-lg border border-blue-600/30 bg-blue-950/30 px-4 py-3 text-white focus:border-blue-600 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-calendar-picker-indicator]:cursor-pointer"
-                  />
+                {/* Date of Birth — native date inputs need min-w-0 + webkit fixes to avoid overflow on narrow screens */}
+                <div className="min-w-0 w-full max-w-full">
+                  <label className="mb-2 block text-sm font-medium text-gray-400">Date of Birth</label>
+                  <div className="w-full min-w-0 max-w-full overflow-hidden rounded-lg border border-blue-600/30 bg-blue-950/30">
+                    <input
+                      type="date"
+                      value={dateOfBirth}
+                      onChange={(e) => setDateOfBirth(e.target.value)}
+                      onKeyDown={(e) => e.preventDefault()}
+                      onPaste={(e) => e.preventDefault()}
+                      disabled={!isEditingProfile}
+                      className="box-border block w-full min-w-0 max-w-full appearance-none rounded-lg border-0 bg-transparent px-3 py-3 text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-600/50 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-90 [&::-webkit-datetime-edit]:min-w-0 [&::-webkit-datetime-edit-fields-wrapper]:min-w-0 [&::-webkit-datetime-edit-text]:text-white"
+                    />
+                  </div>
                   <p className="mt-1 text-xs text-gray-500">Click the calendar icon to select a date</p>
                 </div>
 
