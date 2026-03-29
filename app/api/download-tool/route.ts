@@ -38,6 +38,10 @@ const INDICATOR_TOOLS: Record<string, { r2Key: string; filename: string }> = {
     r2Key: `${R2.INDICATORS_PREFIX}SwingHighLowScanner.ex5`,
     filename: "SwingHighLowScanner.ex5",
   },
+  "stop-hunt-detector-indicator": {
+    r2Key: `${R2.INDICATORS_PREFIX}StopHuntDetector.ex5`,
+    filename: "StopHuntDetector.ex5",
+  },
 };
 
 async function streamToBuffer(stream: Readable): Promise<Buffer> {

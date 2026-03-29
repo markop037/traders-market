@@ -17,6 +17,7 @@ const INDICATOR_IMAGE_BASE: Record<string, string> = {
   "risk-reward-visualizer-indicator": "RiskRewardVisualizer",
   "pair-history-analyzer-indicator": "PairHistoryAnalyzer",
   "swing-high-low-scanner-indicator": "SwingHighLowScanner",
+  "stop-hunt-detector-indicator": "StopHuntDetector",
 };
 
 function getIndicatorImages(id: string) {
@@ -178,6 +179,12 @@ const TOOLS = [
     name: "Swing High/Low Scanner Indicator",
     description:
       "Scans price history in real time and automatically identifies confirmed Swing High and Swing Low points based on a configurable lookback period. The indicator marks each detected swing directly on the chart with color-coded labels and optional horizontal dotted rays projected forward in time, giving traders an instant visual map of key structural levels. All detections are non-repainting - a swing is only confirmed once the required number of candles have fully closed on both sides of the candidate bar, ensuring reliable and accurate level identification without false early signals.",
+  },
+  {
+    id: "stop-hunt-detector-indicator",
+    name: "Stop Hunt Detector Indicator",
+    description:
+      "Tracks swept swing highs and lows across multiple timeframes within a configurable look-back period, displaying the results in an on-chart table while optionally marking the detected swing levels directly on the chart to highlight potential liquidity zones and stop hunts.",
   },
 ];
 
