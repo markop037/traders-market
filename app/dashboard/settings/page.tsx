@@ -240,29 +240,29 @@ export default function SettingsPage() {
   };
 
   return (
-    <main className="min-h-screen px-4 py-12">
-      <div className="max-w-7xl mx-auto">
-        <div className="relative overflow-hidden rounded-2xl border border-blue-600/25 bg-gradient-to-br from-blue-950/30 via-[#0f1f4a]/25 to-blue-900/20 p-8 shadow-2xl backdrop-blur-sm">
+    <main className="min-h-screen w-full min-w-0 px-3 py-8 sm:px-4 sm:py-12">
+      <div className="mx-auto max-w-7xl">
+        <div className="relative overflow-hidden rounded-2xl border border-blue-600/25 bg-gradient-to-br from-blue-950/30 via-[#0f1f4a]/25 to-blue-900/20 p-4 shadow-2xl backdrop-blur-sm sm:p-6 md:p-8">
           <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-blue-600/20 via-blue-700/20 to-blue-600/20 blur-xl" />
           
-          <div className="relative">
-            <h1 className="text-4xl font-bold text-white mb-2">
+          <div className="relative min-w-0">
+            <h1 className="text-2xl font-bold text-white sm:text-3xl md:text-4xl mb-2">
               Settings
             </h1>
-            <p className="text-gray-400 text-lg mb-8">
+            <p className="text-gray-400 text-base sm:text-lg mb-6 sm:mb-8">
               Manage your profile and account settings
             </p>
 
             {/* Profile Card */}
-            <div className="mb-8 rounded-xl border border-blue-600/30 bg-gradient-to-br from-blue-950/40 to-blue-900/30 p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-blue-600/20 flex items-center justify-center">
-                    <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="mb-6 sm:mb-8 rounded-xl border border-blue-600/30 bg-gradient-to-br from-blue-950/40 to-blue-900/30 p-4 sm:p-6">
+              <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-blue-600/20 sm:h-12 sm:w-12">
+                    <svg className="h-5 w-5 text-blue-400 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   </div>
-                  <h2 className="text-2xl font-semibold text-white">Profile</h2>
+                  <h2 className="text-xl font-semibold text-white sm:text-2xl">Profile</h2>
                 </div>
                 {!isEditingProfile && (
                   <button
@@ -270,7 +270,7 @@ export default function SettingsPage() {
                       setIsEditingProfile(true);
                       setProfileMessage(null);
                     }}
-                    className="px-4 py-2 rounded-lg bg-blue-600/20 border border-blue-600/30 text-blue-400 hover:bg-blue-600/30 transition-colors"
+                    className="w-full shrink-0 rounded-lg border border-blue-600/30 bg-blue-600/20 px-4 py-2.5 text-sm font-medium text-blue-400 transition-colors hover:bg-blue-600/30 sm:w-auto"
                   >
                     Edit Profile
                   </button>
@@ -366,11 +366,11 @@ export default function SettingsPage() {
 
                 {/* Save/Cancel buttons */}
                 {isEditingProfile && (
-                  <div className="flex gap-3 pt-4">
+                  <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:flex-wrap">
                     <button
                       onClick={handleSaveProfile}
                       disabled={isSavingProfile}
-                      className="px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                     >
                       {isSavingProfile ? (
                         <>
@@ -384,7 +384,7 @@ export default function SettingsPage() {
                     <button
                       onClick={handleCancelEdit}
                       disabled={isSavingProfile}
-                      className="px-6 py-2 rounded-lg bg-gray-600/20 border border-gray-600/30 text-gray-300 hover:bg-gray-600/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full rounded-lg border border-gray-600/30 bg-gray-600/20 px-6 py-2.5 text-gray-300 transition-colors hover:bg-gray-600/30 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                     >
                       Cancel
                     </button>
@@ -499,11 +499,11 @@ export default function SettingsPage() {
                         )}
                       </div>
 
-                      <div className="flex gap-3">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                         <button
                           onClick={handleChangePassword}
                           disabled={isUpdatingPassword}
-                          className="px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                          className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                         >
                           {isUpdatingPassword ? (
                             <>
@@ -524,7 +524,7 @@ export default function SettingsPage() {
                             setPasswordMessage(null);
                           }}
                           disabled={isUpdatingPassword}
-                          className="px-6 py-2 rounded-lg bg-gray-600/20 border border-gray-600/30 text-gray-300 hover:bg-gray-600/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-full rounded-lg border border-gray-600/30 bg-gray-600/20 px-6 py-2.5 text-gray-300 transition-colors hover:bg-gray-600/30 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                         >
                           Cancel
                         </button>

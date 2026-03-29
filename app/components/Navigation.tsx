@@ -50,14 +50,9 @@ export default function Navigation() {
     }
   };
 
-  const hideNavOnMobile = pathname === "/indicators";
-
   return (
     <nav
-      className={[
-        "sticky top-0 w-full border-b border-blue-900/40 bg-gradient-to-r from-[#050816] via-[#0f172a] to-[#050816] backdrop-blur-sm z-[1000]",
-        hideNavOnMobile ? "hidden md:block" : "",
-      ].join(" ")}
+      className="sticky top-0 w-full border-b border-blue-900/40 bg-gradient-to-r from-[#050816] via-[#0f172a] to-[#050816] backdrop-blur-sm z-[1000]"
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         {/* Logo - always navigates to home */}

@@ -45,12 +45,12 @@ function ImageCarousel({ images, altPrefix, currencyLabel, strategyName }: { ima
   };
 
   return (
-    <div className="relative w-full mb-6">
+    <div className="relative mb-6 w-full min-w-0 max-w-full">
       {currencyLabel && (
         <p className="text-xs font-semibold text-amber-400/90 uppercase tracking-wider mb-2">{currencyLabel}</p>
       )}
       {/* Carousel Container */}
-      <div className="relative aspect-[16/9] rounded-lg overflow-hidden bg-gradient-to-br from-slate-900/90 to-black/90 border border-amber-500/20">
+      <div className="relative aspect-[16/9] w-full max-w-full min-w-0 rounded-lg overflow-hidden bg-gradient-to-br from-slate-900/90 to-black/90 border border-amber-500/20">
         {/* Current Image - click to open full-screen lightbox */}
         <button
           type="button"
@@ -616,26 +616,31 @@ export default function BundleInfoPage() {
               {/* Premium Bots Grid */}
               <div className="mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-5">
                 {/* Premium Bot #1: NewYork-London Breakout */}
-                <article className={`group relative overflow-hidden rounded-2xl border-2 border-amber-500/30 bg-gradient-to-br from-amber-950/30 via-[#0f172a]/90 to-amber-900/20 hover:border-amber-500/50 hover:shadow-xl hover:shadow-amber-500/20 ${reveal(isVisible, animateEntrance)('opacity-0 translate-y-6', 'opacity-100 translate-y-0')} hover:transition-[opacity,transform,box-shadow] hover:duration-300`}
+                <article className={`group relative min-w-0 max-w-full overflow-hidden rounded-2xl border-2 border-amber-500/30 bg-gradient-to-br from-amber-950/30 via-[#0f172a]/90 to-amber-900/20 hover:border-amber-500/50 hover:shadow-xl hover:shadow-amber-500/20 ${reveal(isVisible, animateEntrance)('opacity-0 translate-y-6', 'opacity-100 translate-y-0')} hover:transition-[opacity,transform,box-shadow] hover:duration-300`}
                      style={{ transitionDelay: isVisible && animateEntrance ? '120ms' : '0ms' }}>
                   <div className="absolute -inset-1 bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-600 rounded-2xl blur-lg opacity-20 group-hover:opacity-30 transition duration-500"></div>
                   
-                  <div className="relative p-6">
-                    {/* Premium Badge */}
-                    <div className="absolute top-4 right-4">
-                      <div className="px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-600/20 border border-amber-500/40">
-                        <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Premium</span>
+                  <div className="relative p-4 sm:p-6">
+                    {/* Premium Badge + title: avoid overlap on narrow screens */}
+                    <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                      <div className="min-w-0 flex-1">
+                        <div className="mb-2 sm:hidden">
+                          <span className="inline-flex rounded-full border border-amber-500/40 bg-gradient-to-r from-amber-500/20 to-yellow-600/20 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-400">
+                            Premium
+                          </span>
+                        </div>
+                        <h3 className="text-lg font-bold leading-snug text-white sm:text-xl break-words">
+                          NewYork–London Breakout
+                        </h3>
+                        <p className="mt-2 text-amber-400/90 font-medium text-sm leading-relaxed">
+                          Session-based breakout strategy with ATR risk control and smart trade management
+                        </p>
                       </div>
-                    </div>
-
-                    {/* Bot Header */}
-                    <div className="mb-4">
-                      <h3 className="text-xl font-bold text-white mb-2">
-                        NewYork–London Breakout
-                      </h3>
-                      <p className="text-amber-400/90 font-medium text-sm">
-                        Session-based breakout strategy with ATR risk control and smart trade management
-                      </p>
+                      <div className="hidden shrink-0 sm:block">
+                        <div className="rounded-full border border-amber-500/40 bg-gradient-to-r from-amber-500/20 to-yellow-600/20 px-3 py-1">
+                          <span className="text-xs font-bold uppercase tracking-wider text-amber-400">Premium</span>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Classification Tags */}
@@ -683,7 +688,7 @@ export default function BundleInfoPage() {
 
                       <div className="rounded-xl border border-amber-500/15 bg-black/20 px-4 py-3">
                         <p className="text-[11px] uppercase tracking-wider text-amber-400 mb-1">Key Highlights</p>
-                        <div className="grid grid-cols-2 gap-2 mt-2">
+                        <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
                           {[
                             "ATR-Based Stop Loss",
                             "Fixed R:R Take Profit",
@@ -692,11 +697,11 @@ export default function BundleInfoPage() {
                             "Daily P&L Limits",
                             "Session Control"
                           ].map((feature, idx) => (
-                            <div key={idx} className="flex items-center gap-2">
-                              <svg className="w-3 h-3 text-amber-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div key={idx} className="flex min-w-0 items-start gap-2">
+                              <svg className="mt-0.5 h-3 w-3 flex-shrink-0 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                               </svg>
-                              <span className="text-gray-300 text-xs">{feature}</span>
+                              <span className="text-gray-300 text-xs leading-snug">{feature}</span>
                             </div>
                           ))}
                         </div>
