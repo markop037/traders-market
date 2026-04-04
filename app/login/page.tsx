@@ -9,6 +9,10 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { auth, googleProvider, db } from '@/lib/firebase';
+import {
+  buildNewUserDocument,
+  mergePatchForMissingUserSchema,
+} from '@/lib/firestoreUserDocument';
 import { measureOperation, TraderMarketTraces } from '@/lib/performance';
 import { trackAuthError, trackFirestoreError } from '@/lib/errorTracking';
 import { useRenderPerformance } from '@/hooks/usePerformance';
@@ -32,12 +36,25 @@ export default function LoginPage() {
         async () => {
           const userDocRef = doc(db, 'users', userId);
           const userDoc = await getDoc(userDocRef);
-          
+
           if (!userDoc.exists()) {
-            await setDoc(userDocRef, {
-              email: userEmail,
-              createdAt: serverTimestamp(),
-            });
+            await setDoc(
+              userDocRef,
+              buildNewUserDocument({
+                email: userEmail,
+                emailConsent: false,
+                createdAt: serverTimestamp(),
+              })
+            );
+          } else {
+            const raw = userDoc.data() as Record<string, unknown>;
+            const schemaPatch = mergePatchForMissingUserSchema(raw);
+            if (!raw.email && userEmail) {
+              schemaPatch.email = userEmail;
+            }
+            if (Object.keys(schemaPatch).length > 0) {
+              await setDoc(userDocRef, schemaPatch, { merge: true });
+            }
           }
         },
         { operation: 'ensureUserDocument', userId }

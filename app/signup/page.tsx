@@ -7,8 +7,9 @@ import {
   createUserWithEmailAndPassword, 
   signInWithPopup 
 } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, googleProvider, db } from '@/lib/firebase';
+import { buildNewUserDocument } from '@/lib/firestoreUserDocument';
 import { trackSignupStarted, trackSignupCompleted, trackSignupFailed } from '@/lib/posthog';
 
 function SignUpContent() {
@@ -21,13 +22,26 @@ function SignUpContent() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [emailConsent, setEmailConsent] = useState(false);
 
-  const createUserDocument = async (userId: string, userEmail: string) => {
+  const createUserDocument = async (
+    userId: string,
+    userEmail: string,
+    consent: boolean
+  ) => {
     try {
-      await setDoc(doc(db, 'users', userId), {
-        email: userEmail,
-        createdAt: serverTimestamp(),
-      });
+      const userRef = doc(db, 'users', userId);
+      const existing = await getDoc(userRef);
+      if (existing.exists()) return;
+
+      await setDoc(
+        userRef,
+        buildNewUserDocument({
+          email: userEmail,
+          emailConsent: consent,
+          createdAt: serverTimestamp(),
+        })
+      );
     } catch (error) {
       console.error('Error creating user document:', error);
     }
@@ -52,7 +66,11 @@ function SignUpContent() {
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await createUserDocument(userCredential.user.uid, userCredential.user.email || email);
+      await createUserDocument(
+        userCredential.user.uid,
+        userCredential.user.email || email,
+        emailConsent
+      );
       trackSignupCompleted('email', userCredential.user.uid, signupSource);
       router.replace('/auth/redirect');
     } catch (error: any) {
@@ -79,7 +97,11 @@ function SignUpContent() {
 
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      await createUserDocument(result.user.uid, result.user.email || '');
+      await createUserDocument(
+        result.user.uid,
+        result.user.email || '',
+        emailConsent
+      );
       trackSignupCompleted('google', result.user.uid, signupSource);
       router.replace('/auth/redirect');
     } catch (error: any) {
@@ -159,6 +181,28 @@ function SignUpContent() {
                   className="w-full px-4 py-3 rounded-lg border border-blue-600/30 bg-[#050816] text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors"
                   placeholder="Confirm your password"
                 />
+              </div>
+
+              <div className="flex items-start gap-3 rounded-lg border border-blue-600/20 bg-[#050816]/80 p-4">
+                <input
+                  id="emailConsent"
+                  type="checkbox"
+                  checked={emailConsent}
+                  onChange={(e) => setEmailConsent(e.target.checked)}
+                  className="mt-1 h-4 w-4 shrink-0 rounded border-blue-600/50 bg-[#050816] text-blue-600 focus:ring-blue-500/30"
+                />
+                <label htmlFor="emailConsent" className="text-sm leading-snug text-gray-300">
+                  Email me product updates, tips, and promotional messages from Traders Market. You can
+                  unsubscribe anytime. See our{' '}
+                  <Link href="/privacy-policy" className="text-blue-400 hover:text-blue-300 underline-offset-2 hover:underline">
+                    Privacy Policy
+                  </Link>{' '}
+                  and{' '}
+                  <Link href="/terms-and-conditions" className="text-blue-400 hover:text-blue-300 underline-offset-2 hover:underline">
+                    Terms
+                  </Link>
+                  .
+                </label>
               </div>
 
               <button

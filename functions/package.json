@@ -1,0 +1,24 @@
+{
+  "name": "traders-market-functions",
+  "private": true,
+  "main": "lib/index.js",
+  "engines": {
+    "node": "20"
+  },
+  "scripts": {
+    "build": "tsc",
+    "import:users": "npm run build && node lib/scripts/importAllUsers.js",
+    "prune:orphan-users": "npm run build && node lib/scripts/pruneOrphanUserDocs.js",
+    "backfill:users": "npm run build && node lib/scripts/backfillUserDocuments.js",
+    "reconcile:mailerlite": "npm run build && node lib/scripts/reconcileMailerLite.js",
+    "users:set-email-consent-true": "npm run build && node lib/scripts/setAllUsersEmailConsentTrue.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "firebase-admin": "^13.6.0",
+    "firebase-functions": "^6.3.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

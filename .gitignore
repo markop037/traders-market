@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+functions/node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -19,6 +20,13 @@
 
 # production
 /build
+
+# firebase functions (compiled)
+/functions/lib
+
+# local only — MailerLite API token for `firebase functions:secrets:set --data-file`
+/functions/.mailerlite-api-token
+/functions/.mailerlite-webhook-secret
 
 # misc
 .DS_Store

@@ -4,7 +4,12 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { db, auth } from '@/lib/firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import {
+  buildNewUserDocument,
+  mergePatchForMissingUserSchema,
+  profileFieldsFromUserDoc,
+} from '@/lib/firestoreUserDocument';
 import { updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
 import { trackDashboardVisited, trackProfileUpdated, trackPasswordChanged } from '@/lib/posthog';
 
@@ -65,20 +70,41 @@ export default function SettingsPage() {
           const userDoc = await getDoc(userDocRef);
           
           if (userDoc.exists()) {
-            const data = userDoc.data();
-            
-            // Load profile data
-            const profileData = {
-              firstName: data.firstName || '',
-              lastName: data.lastName || '',
-              location: data.location || '',
-              dateOfBirth: data.dateOfBirth || '',
-            };
+            const raw = userDoc.data() as Record<string, unknown>;
+            const schemaPatch = mergePatchForMissingUserSchema(raw);
+            if (!raw.email && user.email) {
+              schemaPatch.email = user.email;
+            }
+            if (Object.keys(schemaPatch).length > 0) {
+              await setDoc(userDocRef, schemaPatch, { merge: true });
+            }
+            const merged = { ...raw, ...schemaPatch };
+            const profileData = profileFieldsFromUserDoc(merged);
             setFirstName(profileData.firstName);
             setLastName(profileData.lastName);
             setLocation(profileData.location);
             setDateOfBirth(profileData.dateOfBirth);
             setOriginalProfile(profileData);
+          } else {
+            await setDoc(
+              userDocRef,
+              buildNewUserDocument({
+                email: user.email || '',
+                emailConsent: false,
+                createdAt: serverTimestamp(),
+              })
+            );
+            const empty: UserProfile = {
+              firstName: '',
+              lastName: '',
+              location: '',
+              dateOfBirth: '',
+            };
+            setFirstName(empty.firstName);
+            setLastName(empty.lastName);
+            setLocation(empty.location);
+            setDateOfBirth(empty.dateOfBirth);
+            setOriginalProfile(empty);
           }
         } catch (error) {
           console.error('Error loading user profile:', error);
@@ -114,12 +140,12 @@ export default function SettingsPage() {
       // Save profile data to Firestore
       const userDocRef = doc(db, 'users', user.uid);
       const profileData: UserProfile = {
-        firstName,
-        lastName,
-        location,
-        dateOfBirth,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        location: location.trim(),
+        dateOfBirth: dateOfBirth.trim(),
       };
-      
+
       await setDoc(userDocRef, profileData, { merge: true });
 
       // Update Firebase Auth displayName
