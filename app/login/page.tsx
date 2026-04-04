@@ -17,6 +17,7 @@ import { measureOperation, TraderMarketTraces } from '@/lib/performance';
 import { trackAuthError, trackFirestoreError } from '@/lib/errorTracking';
 import { useRenderPerformance } from '@/hooks/usePerformance';
 import { trackLoginStarted, trackLoginCompleted, trackLoginFailed } from '@/lib/posthog';
+import { trySendPasswordReset } from '@/lib/passwordReset';
 
 export default function LoginPage() {
   // Track component render performance
@@ -27,6 +28,9 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetSending, setResetSending] = useState(false);
+  const [resetFeedback, setResetFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const ensureUserDocument = async (userId: string, userEmail: string) => {
     try {
@@ -113,6 +117,26 @@ export default function LoginPage() {
     }
   };
 
+  const handleSendPasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResetFeedback(null);
+    setResetSending(true);
+    try {
+      const result = await trySendPasswordReset(email, { ambiguousOnUserNotFound: true });
+      if (result.ok) {
+        setResetFeedback({
+          type: 'success',
+          text:
+            "If this email is registered for password sign-in, you'll get a message with a reset link in the next few minutes. Check your inbox and spam or junk folder.",
+        });
+      } else {
+        setResetFeedback({ type: 'error', text: result.message });
+      }
+    } finally {
+      setResetSending(false);
+    }
+  };
+
   const handleGoogleLogin = async () => {
     setError('');
     setLoading(true);
@@ -192,23 +216,63 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-                  Password
-                </label>
+                <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-300">
+                    Password
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowForgotPassword((v) => !v);
+                      setResetFeedback(null);
+                    }}
+                    className="text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors"
+                  >
+                    {showForgotPassword ? 'Back to sign in' : 'Forgot password?'}
+                  </button>
+                </div>
                 <input
                   id="password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 rounded-lg border border-blue-600/30 bg-[#050816] text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors"
+                  required={!showForgotPassword}
+                  disabled={showForgotPassword}
+                  className="w-full px-4 py-3 rounded-lg border border-blue-600/30 bg-[#050816] text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Enter your password"
                 />
               </div>
 
+              {showForgotPassword && (
+                <div className="rounded-lg border border-blue-600/25 bg-blue-950/20 p-4 space-y-3">
+                  <p className="text-sm text-gray-400">
+                    Enter the email for your account. We will send a link to reset your password.
+                  </p>
+                  {resetFeedback && (
+                    <div
+                      className={`rounded-lg border p-3 text-sm ${
+                        resetFeedback.type === 'success'
+                          ? 'border-green-500/40 bg-green-500/10 text-green-400'
+                          : 'border-red-500/40 bg-red-500/10 text-red-400'
+                      }`}
+                    >
+                      {resetFeedback.text}
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleSendPasswordReset}
+                    disabled={resetSending || !email.trim()}
+                    className="w-full py-2.5 px-4 rounded-lg border border-blue-600/40 bg-blue-600/15 text-blue-200 font-medium hover:bg-blue-600/25 focus:outline-none focus:ring-2 focus:ring-blue-500/40 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {resetSending ? 'Sending…' : 'Send reset link'}
+                  </button>
+                </div>
+              )}
+
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || showForgotPassword}
                 className="w-full py-3 px-4 rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 text-white font-semibold hover:from-blue-600 hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]"
               >
                 {loading ? 'Logging In...' : 'Log In'}

@@ -12,6 +12,7 @@ import {
 } from '@/lib/firestoreUserDocument';
 import { updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
 import { trackDashboardVisited, trackProfileUpdated, trackPasswordChanged } from '@/lib/posthog';
+import { trySendPasswordReset, userHasEmailPasswordProvider } from '@/lib/passwordReset';
 
 interface UserProfile {
   firstName: string;
@@ -45,6 +46,12 @@ export default function SettingsPage() {
     newPassword?: string;
     confirmPassword?: string;
   }>({});
+  const [resetLinkSending, setResetLinkSending] = useState(false);
+  const [resetLinkMessage, setResetLinkMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(
+    null,
+  );
+
+  const emailPasswordUser = userHasEmailPasswordProvider(user);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -265,6 +272,26 @@ export default function SettingsPage() {
     }
   };
 
+  const handleSendPasswordResetFromSettings = async () => {
+    if (!user?.email) return;
+    setResetLinkMessage(null);
+    setResetLinkSending(true);
+    try {
+      const result = await trySendPasswordReset(user.email, { ambiguousOnUserNotFound: false });
+      if (result.ok) {
+        setResetLinkMessage({
+          type: 'success',
+          text: 'Check your email for a link to set a new password. You can stay signed in until you complete the reset.',
+        });
+        setTimeout(() => setResetLinkMessage(null), 8000);
+      } else {
+        setResetLinkMessage({ type: 'error', text: result.message });
+      }
+    } finally {
+      setResetLinkSending(false);
+    }
+  };
+
   return (
     <main className="min-h-screen w-full min-w-0 px-3 py-8 sm:px-4 sm:py-12">
       <div className="mx-auto max-w-7xl">
@@ -421,6 +448,18 @@ export default function SettingsPage() {
 
                 {/* Change Password Section */}
                 <div className="pt-6 border-t border-blue-600/20">
+                  {emailPasswordUser && resetLinkMessage && (
+                    <div
+                      className={`mb-4 p-4 rounded-lg border ${
+                        resetLinkMessage.type === 'success'
+                          ? 'bg-green-500/10 border-green-500/50 text-green-400'
+                          : 'bg-red-500/10 border-red-500/50 text-red-400'
+                      }`}
+                    >
+                      <span className="font-medium text-sm">{resetLinkMessage.text}</span>
+                    </div>
+                  )}
+
                   {/* Success/Error Messages for Password */}
                   {passwordMessage && (
                     <div className={`mb-4 p-4 rounded-lg border ${
@@ -444,19 +483,36 @@ export default function SettingsPage() {
                   )}
 
                   {!isChangingPassword ? (
-                    <button
-                      onClick={() => {
-                        setIsChangingPassword(true);
-                        setPasswordMessage(null);
-                        setPasswordErrors({});
-                      }}
-                      className="text-blue-400 hover:text-blue-300 font-medium flex items-center gap-2"
-                    >
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                      </svg>
-                      Change Password
-                    </button>
+                    <div className="space-y-4">
+                      <button
+                        onClick={() => {
+                          setIsChangingPassword(true);
+                          setPasswordMessage(null);
+                          setPasswordErrors({});
+                        }}
+                        className="text-blue-400 hover:text-blue-300 font-medium flex items-center gap-2"
+                      >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                        </svg>
+                        Change Password
+                      </button>
+                      {emailPasswordUser && (
+                        <div className="rounded-lg border border-blue-600/20 bg-blue-950/20 p-4">
+                          <p className="text-sm text-gray-400 mb-3">
+                            Forgot your password? We will email a secure link to <span className="text-gray-300">{user.email}</span>.
+                          </p>
+                          <button
+                            type="button"
+                            onClick={handleSendPasswordResetFromSettings}
+                            disabled={resetLinkSending}
+                            className="rounded-lg border border-blue-600/40 bg-blue-600/15 px-4 py-2 text-sm font-medium text-blue-200 transition-colors hover:bg-blue-600/25 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {resetLinkSending ? 'Sending…' : 'Email me a reset link'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <div className="space-y-4">
                       <h3 className="text-lg font-semibold text-white mb-4">Change Password</h3>
@@ -557,6 +613,19 @@ export default function SettingsPage() {
                           Cancel
                         </button>
                       </div>
+                      {emailPasswordUser && (
+                        <p className="text-sm text-gray-500 pt-2">
+                          Don&apos;t remember your current password?{' '}
+                          <button
+                            type="button"
+                            onClick={handleSendPasswordResetFromSettings}
+                            disabled={resetLinkSending || isUpdatingPassword}
+                            className="font-medium text-blue-400 hover:text-blue-300 disabled:opacity-50"
+                          >
+                            Email a reset link
+                          </button>
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
