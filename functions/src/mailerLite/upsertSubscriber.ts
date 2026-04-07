@@ -80,11 +80,8 @@ export function buildMailerLiteFields(user: FirestoreUser): Record<string, strin
   const sid = optionalTrimString(user.stripeSessionId);
   if (sid) fields[FIELD_KEYS.stripeSessionId] = sid;
 
-  const fn = optionalTrimString(user.firstName);
-  if (fn) fields[FIELD_KEYS.firstName] = fn;
-
-  const ln = optionalTrimString(user.lastName);
-  if (ln) fields[FIELD_KEYS.lastName] = ln;
+  fields[FIELD_KEYS.firstName] = optionalTrimString(user.firstName) ?? "";
+  fields[FIELD_KEYS.lastName] = optionalTrimString(user.lastName) ?? "";
 
   const loc = optionalTrimString(user.location);
   if (loc) fields[FIELD_KEYS.location] = loc;

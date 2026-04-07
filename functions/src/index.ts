@@ -180,7 +180,9 @@ export const onUserDeletedSyncMailerLite = onDocumentDeleted(
 );
 
 /**
- * MailerLite → Firestore: `subscriber.unsubscribed` updates `emailConsent` to `false`.
+ * MailerLite → Firestore webhook.
+ * - `subscriber.unsubscribed` → `emailConsent: false`
+ * - `subscriber.active`       → `emailConsent: true`
  * Verify `Signature` header (HMAC-SHA256 of raw body). Register in MailerLite with this URL.
  */
 export const httpMailerLiteWebhook = onRequest(
@@ -219,7 +221,13 @@ export const httpMailerLiteWebhook = onRequest(
       return;
     }
 
-    if (payload.event !== "subscriber.unsubscribed") {
+    const consentByEvent: Record<string, boolean> = {
+      "subscriber.unsubscribed": false,
+      "subscriber.active": true,
+    };
+
+    const newConsent = consentByEvent[payload.event ?? ""];
+    if (newConsent === undefined) {
       res.status(200).send("OK");
       return;
     }
@@ -253,7 +261,7 @@ export const httpMailerLiteWebhook = onRequest(
       }
 
       if (snap.empty) {
-        logger.info("MailerLite webhook unsubscribed: no Firestore user for email", {
+        logger.info(`MailerLite webhook ${payload.event}: no Firestore user for email`, {
           email: emailRaw,
         });
         res.status(200).send("OK");
@@ -264,14 +272,15 @@ export const httpMailerLiteWebhook = onRequest(
       let updates = 0;
       for (const doc of snap.docs) {
         const cur = doc.get("emailConsent");
-        if (cur === false) continue;
-        batch.update(doc.ref, { emailConsent: false });
+        if (cur === newConsent) continue;
+        batch.update(doc.ref, { emailConsent: newConsent });
         updates++;
       }
       if (updates > 0) {
         await batch.commit();
-        logger.info("MailerLite webhook: set emailConsent false", {
+        logger.info(`MailerLite webhook: set emailConsent ${newConsent}`, {
           email: emailRaw,
+          event: payload.event,
           docsUpdated: updates,
         });
       }
@@ -279,6 +288,7 @@ export const httpMailerLiteWebhook = onRequest(
       logger.error("MailerLite webhook: Firestore error", {
         err: e instanceof Error ? e.message : String(e),
         email: emailRaw,
+        event: payload.event,
       });
       res.status(500).send("Internal Server Error");
       return;

@@ -16,7 +16,7 @@ export const FIELD_KEYS = {
   paymentAmount: "payment_amount",
   paymentCurrency: "payment_currency",
   stripeSessionId: "stripe_session_id",
-  firstName: "first_name",
+  firstName: "name",
   lastName: "last_name",
   location: "location",
   dateOfBirth: "date_of_birth",
