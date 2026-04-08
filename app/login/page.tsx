@@ -46,7 +46,7 @@ export default function LoginPage() {
               userDocRef,
               buildNewUserDocument({
                 email: userEmail,
-                emailConsent: false,
+                emailConsent: true,
                 createdAt: serverTimestamp(),
               })
             );

@@ -97,7 +97,7 @@ export default function SettingsPage() {
               userDocRef,
               buildNewUserDocument({
                 email: user.email || '',
-                emailConsent: false,
+                emailConsent: true,
                 createdAt: serverTimestamp(),
               })
             );

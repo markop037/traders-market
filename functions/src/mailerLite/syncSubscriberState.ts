@@ -125,6 +125,9 @@ export async function syncFirestoreUserToMailerLite(
           fields,
           groups: [allUsersGroupId],
           status: "active",
+          // Upsert may match a previously unsubscribed subscriber; without this,
+          // MailerLite can leave status unsubscribed despite status: "active".
+          resubscribe: true,
         }),
       });
       const text = await res.text();

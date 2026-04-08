@@ -48,9 +48,7 @@ function snapshotToUser(data: DocumentData | undefined): FirestoreUser {
     lastName: data.lastName,
     location: data.location,
     dateOfBirth: data.dateOfBirth,
-    ...(Object.prototype.hasOwnProperty.call(data, "emailConsent")
-      ? { emailConsent: data.emailConsent }
-      : {}),
+    emailConsent: data.emailConsent as FirestoreUser["emailConsent"],
   };
 }
 
