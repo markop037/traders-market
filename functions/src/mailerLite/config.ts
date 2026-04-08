@@ -10,15 +10,12 @@ export const INVALID_GROUP_ID_SENTINEL = "YOUR_ALL_USERS_GROUP_ID";
  */
 export const FIELD_KEYS = {
   hasPaid: "has_paid",
-  createdAt: "created_at",
+  createdAt: "signup_date",
   emailConsent: "email_consent",
-  paymentDate: "payment_date",
-  paymentAmount: "payment_amount",
-  paymentCurrency: "payment_currency",
-  stripeSessionId: "stripe_session_id",
-  firstName: "first_name",
+  firstName: "name",
   lastName: "last_name",
-  location: "location",
+  city: "city",
+  country: "country",
   dateOfBirth: "date_of_birth",
 } as const;
 

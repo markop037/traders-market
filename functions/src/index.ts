@@ -46,7 +46,8 @@ function snapshotToUser(data: DocumentData | undefined): FirestoreUser {
     stripeSessionId: data.stripeSessionId,
     firstName: data.firstName,
     lastName: data.lastName,
-    location: data.location,
+    city: data.city,
+    country: data.country,
     dateOfBirth: data.dateOfBirth,
     emailConsent: data.emailConsent as FirestoreUser["emailConsent"],
   };
@@ -110,21 +111,18 @@ export const onUserUpdatedSyncMailerLite = onDocumentUpdated(
     const hasPaidChanged = before?.hasPaid !== after.hasPaid;
     const emailConsentChanged = before?.emailConsent !== after.emailConsent;
     const emailChanged = before?.email !== after.email;
-    const profileOrPaymentChanged =
-      before?.paymentDate !== after.paymentDate ||
-      before?.paymentAmount !== after.paymentAmount ||
-      before?.paymentCurrency !== after.paymentCurrency ||
-      before?.stripeSessionId !== after.stripeSessionId ||
+    const profileChanged =
       before?.firstName !== after.firstName ||
       before?.lastName !== after.lastName ||
-      before?.location !== after.location ||
+      before?.city !== after.city ||
+      before?.country !== after.country ||
       before?.dateOfBirth !== after.dateOfBirth;
 
     if (
       !hasPaidChanged &&
       !emailConsentChanged &&
       !emailChanged &&
-      !profileOrPaymentChanged
+      !profileChanged
     ) {
       return;
     }
@@ -136,7 +134,7 @@ export const onUserUpdatedSyncMailerLite = onDocumentUpdated(
         ? "onUpdate:emailConsent"
         : emailChanged
           ? "onUpdate:email"
-          : "onUpdate:profileOrPayment";
+          : "onUpdate:profile";
     await syncUserToMailerLite(user, reason);
   }
 );

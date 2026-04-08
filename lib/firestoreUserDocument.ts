@@ -4,7 +4,8 @@ import type { FieldValue } from 'firebase/firestore';
 export const USER_DOC_PROFILE_KEYS = [
   'firstName',
   'lastName',
-  'location',
+  'city',
+  'country',
   'dateOfBirth',
 ] as const;
 
@@ -23,7 +24,8 @@ export function buildNewUserDocument(params: {
     emailConsent: !!params.emailConsent,
     firstName: '',
     lastName: '',
-    location: '',
+    city: '',
+    country: '',
     dateOfBirth: '',
   };
 }
@@ -60,14 +62,16 @@ export function profileFieldsFromUserDoc(
     return {
       firstName: '',
       lastName: '',
-      location: '',
+      city: '',
+      country: '',
       dateOfBirth: '',
     };
   }
   return {
     firstName: stringFieldFromFirestore(data.firstName),
     lastName: stringFieldFromFirestore(data.lastName),
-    location: stringFieldFromFirestore(data.location),
+    city: stringFieldFromFirestore(data.city),
+    country: stringFieldFromFirestore(data.country),
     dateOfBirth: stringFieldFromFirestore(data.dateOfBirth),
   };
 }

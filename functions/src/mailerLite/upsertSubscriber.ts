@@ -21,35 +21,10 @@ function timestampToIso(value: Timestamp | undefined): string | undefined {
   }
 }
 
-function paymentDateToString(
-  value: FirestoreUser["paymentDate"]
-): string | undefined {
-  if (value == null) return undefined;
-  if (typeof value === "string" && value.trim()) return value.trim();
-  if (typeof (value as Timestamp).toDate === "function") {
-    try {
-      return (value as Timestamp).toDate().toISOString();
-    } catch {
-      return undefined;
-    }
-  }
-  return undefined;
-}
-
 function optionalTrimString(value: unknown): string | undefined {
   if (value == null) return undefined;
   const s = typeof value === "string" ? value.trim() : String(value).trim();
   return s || undefined;
-}
-
-function paymentAmountToString(
-  value: FirestoreUser["paymentAmount"]
-): string | undefined {
-  if (value == null) return undefined;
-  if (typeof value === "number" && Number.isFinite(value)) {
-    return value.toFixed(2);
-  }
-  return optionalTrimString(value);
 }
 
 /** Marketing opt-in as stored in MailerLite `email_consent` (missing Firestore field = false). */
@@ -68,26 +43,17 @@ export function buildMailerLiteFields(user: FirestoreUser): Record<string, strin
   };
   if (createdIso) fields[FIELD_KEYS.createdAt] = createdIso;
 
-  const payDate = paymentDateToString(user.paymentDate);
-  if (payDate) fields[FIELD_KEYS.paymentDate] = payDate;
-
-  const payAmt = paymentAmountToString(user.paymentAmount);
-  if (payAmt) fields[FIELD_KEYS.paymentAmount] = payAmt;
-
-  const payCur = optionalTrimString(user.paymentCurrency);
-  if (payCur) fields[FIELD_KEYS.paymentCurrency] = payCur;
-
-  const sid = optionalTrimString(user.stripeSessionId);
-  if (sid) fields[FIELD_KEYS.stripeSessionId] = sid;
-
   const fn = optionalTrimString(user.firstName);
   if (fn) fields[FIELD_KEYS.firstName] = fn;
 
   const ln = optionalTrimString(user.lastName);
   if (ln) fields[FIELD_KEYS.lastName] = ln;
 
-  const loc = optionalTrimString(user.location);
-  if (loc) fields[FIELD_KEYS.location] = loc;
+  const ct = optionalTrimString(user.city);
+  if (ct) fields[FIELD_KEYS.city] = ct;
+
+  const co = optionalTrimString(user.country);
+  if (co) fields[FIELD_KEYS.country] = co;
 
   const dob = optionalTrimString(user.dateOfBirth);
   if (dob) fields[FIELD_KEYS.dateOfBirth] = dob;

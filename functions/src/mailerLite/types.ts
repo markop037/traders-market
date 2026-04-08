@@ -13,6 +13,7 @@ export interface FirestoreUser {
   stripeSessionId?: string | null;
   firstName?: string;
   lastName?: string;
-  location?: string;
+  city?: string;
+  country?: string;
   dateOfBirth?: string;
 }

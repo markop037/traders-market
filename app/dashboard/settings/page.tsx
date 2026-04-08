@@ -17,7 +17,8 @@ import { trySendPasswordReset, userHasEmailPasswordProvider } from '@/lib/passwo
 interface UserProfile {
   firstName: string;
   lastName: string;
-  location: string;
+  city: string;
+  country: string;
   dateOfBirth: string;
 }
 
@@ -28,7 +29,8 @@ export default function SettingsPage() {
   // Profile form states
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [location, setLocation] = useState('');
+  const [city, setCity] = useState('');
+  const [country, setCountry] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -64,7 +66,8 @@ export default function SettingsPage() {
   const [originalProfile, setOriginalProfile] = useState<UserProfile>({
     firstName: '',
     lastName: '',
-    location: '',
+    city: '',
+    country: '',
     dateOfBirth: '',
   });
 
@@ -89,7 +92,8 @@ export default function SettingsPage() {
             const profileData = profileFieldsFromUserDoc(merged);
             setFirstName(profileData.firstName);
             setLastName(profileData.lastName);
-            setLocation(profileData.location);
+            setCity(profileData.city);
+            setCountry(profileData.country);
             setDateOfBirth(profileData.dateOfBirth);
             setOriginalProfile(profileData);
           } else {
@@ -104,12 +108,14 @@ export default function SettingsPage() {
             const empty: UserProfile = {
               firstName: '',
               lastName: '',
-              location: '',
+              city: '',
+              country: '',
               dateOfBirth: '',
             };
             setFirstName(empty.firstName);
             setLastName(empty.lastName);
-            setLocation(empty.location);
+            setCity(empty.city);
+            setCountry(empty.country);
             setDateOfBirth(empty.dateOfBirth);
             setOriginalProfile(empty);
           }
@@ -149,7 +155,8 @@ export default function SettingsPage() {
       const profileData: UserProfile = {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
-        location: location.trim(),
+        city: city.trim(),
+        country: country.trim(),
         dateOfBirth: dateOfBirth.trim(),
       };
 
@@ -188,7 +195,8 @@ export default function SettingsPage() {
     // Restore original values
     setFirstName(originalProfile.firstName);
     setLastName(originalProfile.lastName);
-    setLocation(originalProfile.location);
+    setCity(originalProfile.city);
+    setCountry(originalProfile.country);
     setDateOfBirth(originalProfile.dateOfBirth);
     setIsEditingProfile(false);
     setProfileMessage(null);
@@ -389,17 +397,30 @@ export default function SettingsPage() {
                   </div>
                 </div>
 
-                {/* Location */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">Location</label>
-                  <input
-                    type="text"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    disabled={!isEditingProfile}
-                    placeholder="Enter location (e.g., New York, USA)"
-                    className="w-full rounded-lg border border-blue-600/30 bg-blue-950/30 px-4 py-3 text-white placeholder-gray-500 focus:border-blue-600 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
+                {/* City & Country */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">City</label>
+                    <input
+                      type="text"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      disabled={!isEditingProfile}
+                      placeholder="Enter city"
+                      className="w-full rounded-lg border border-blue-600/30 bg-blue-950/30 px-4 py-3 text-white placeholder-gray-500 focus:border-blue-600 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">Country</label>
+                    <input
+                      type="text"
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
+                      disabled={!isEditingProfile}
+                      placeholder="Enter country"
+                      className="w-full rounded-lg border border-blue-600/30 bg-blue-950/30 px-4 py-3 text-white placeholder-gray-500 focus:border-blue-600 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                  </div>
                 </div>
 
                 {/* Date of Birth — native date inputs need min-w-0 + webkit fixes to avoid overflow on narrow screens */}

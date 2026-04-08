@@ -20,7 +20,8 @@ export const ALLOWED_USER_FIELDS = new Set([
   "paymentCurrency",
   "firstName",
   "lastName",
-  "location",
+  "city",
+  "country",
   "dateOfBirth",
 ]);
 
@@ -34,7 +35,8 @@ const PAYMENT_FIELDS = [
 const PROFILE_FIELDS = [
   "firstName",
   "lastName",
-  "location",
+  "city",
+  "country",
   "dateOfBirth",
 ] as const;
 
