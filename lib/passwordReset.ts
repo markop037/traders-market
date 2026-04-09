@@ -7,8 +7,18 @@ export function userHasEmailPasswordProvider(user: User | null): boolean {
   return user.providerData.some((p) => p.providerId === 'password');
 }
 
+const PRODUCTION_ORIGIN = 'https://www.tradersmarket.io';
+
+function getAppOrigin(): string {
+  if (typeof window === 'undefined') return PRODUCTION_ORIGIN;
+  const { origin } = window.location;
+  // Use the real domain in production; fall back to localhost during development.
+  return origin.includes('localhost') ? origin : PRODUCTION_ORIGIN;
+}
+
 /**
- * Sends Firebase password-reset email. Call only from the client (uses window.location.origin).
+ * Sends Firebase password-reset email.
+ * The continueUrl uses the production domain in all non-localhost environments.
  */
 export async function sendPasswordResetToEmail(email: string): Promise<void> {
   const trimmed = email.trim();
@@ -16,12 +26,9 @@ export async function sendPasswordResetToEmail(email: string): Promise<void> {
     throw new Error('auth/invalid-email');
   }
 
-  const url =
-    typeof window !== 'undefined'
-      ? `${window.location.origin}/login`
-      : undefined;
+  const url = `${getAppOrigin()}/login?passwordChanged=true`;
 
-  await sendPasswordResetEmail(auth, trimmed, url ? { url, handleCodeInApp: false } : undefined);
+  await sendPasswordResetEmail(auth, trimmed, { url, handleCodeInApp: false });
 }
 
 export type PasswordResetSendResult =

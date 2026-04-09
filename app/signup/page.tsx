@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { 
@@ -11,17 +11,30 @@ import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, googleProvider, db } from '@/lib/firebase';
 import { buildNewUserDocument } from '@/lib/firestoreUserDocument';
 import { trackSignupStarted, trackSignupCompleted, trackSignupFailed } from '@/lib/posthog';
+import { useAuth } from '@/contexts/AuthContext';
 
 function SignUpContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const signupSource =
     searchParams.get('from') === 'indicators' ? 'indicators' : undefined;
+
+  const { user, loading: authLoading } = useAuth();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Redirect already-authenticated users away from the signup page.
+  // This also handles cross-tab login: if the user signs in on another tab,
+  // onAuthStateChanged fires here and this effect redirects automatically.
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.replace('/dashboard');
+    }
+  }, [user, authLoading, router]);
 
   const createUserDocument = async (userId: string, userEmail: string) => {
     try {
